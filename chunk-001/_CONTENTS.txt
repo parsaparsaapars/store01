@@ -1,0 +1,7 @@
+Contains:
+backend/Dockerfile
+backend/apps/__init__.py
+backend/apps/accounts
+backend/apps/core
+backend/apps/customers
+backend/apps/finance

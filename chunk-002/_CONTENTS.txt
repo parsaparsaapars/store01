@@ -1,0 +1,5 @@
+Contains:
+backend/apps/inventory
+backend/apps/notifications
+backend/apps/products
+backend/apps/purchases
