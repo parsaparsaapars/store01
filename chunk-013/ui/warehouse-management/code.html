@@ -1,0 +1,778 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Main Modular Container -->
+<main class="w-full px-4 sm:px-6 lg:px-8 pt-6 space-y-8">
+<!-- Top Modular Header & Controls -->
+<header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-outline-variant/40 dark:border-dark-border">
+<div class="space-y-1.5">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-on-surface-variant dark:text-outline text-label-md font-label-md">
+<a class="hover:text-primary dark:hover:text-inverse-primary transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[16px]">home</span>
+            سامانه جامع سازمانی
+          </a>
+<span class="material-symbols-outlined text-[14px]">chevron_left</span>
+<a class="hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#">انبارداری و لجستیک</a>
+<span class="material-symbols-outlined text-[14px]">chevron_left</span>
+<span class="text-primary dark:text-inverse-primary font-bold">انبارها و انتقال بین انبارها</span>
+</nav>
+<h1 class="text-headline-xl font-headline-xl text-on-surface dark:text-white flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-3xl">warehouse</span>
+          مدیریت انبارها و انتقال بین انبارها
+        </h1>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-slate-400">
+          نظارت بر ظرفیت موجودی ۴ انبار منطقه‌ای، ثبت حواله‌های لجستیکی و مانیتورینگ انتقال در زنجیره تأمین
+        </p>
+</div>
+<!-- Action Buttons & Dark Mode Switcher -->
+<div class="flex items-center flex-wrap gap-2.5">
+<!-- Theme Toggle -->
+
+<!-- New Warehouse Modal Trigger -->
+<button class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg border border-outline-variant dark:border-dark-border bg-surface-container-lowest dark:bg-dark-card hover:bg-surface-container-low dark:hover:bg-dark-hover text-on-surface dark:text-slate-200 text-title-md font-title-md transition-all shadow-sm" onclick="toggleModal('newWarehouseModal')">
+<span class="material-symbols-outlined text-[18px]">add_home_work</span>
+<span class="">ثبت انبار جدید</span>
+</button>
+<!-- New Transfer Trigger -->
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary-container hover:bg-primary text-white text-title-md font-title-md shadow-sm transition-all active:scale-[0.98]" onclick="toggleModal('transferModal')">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+<span class="">انتقال بین‌انباری جدید</span>
+</button>
+</div>
+</header>
+<!-- SECTION 1: WAREHOUSE CARDS (Bento Grid) -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="h-5 w-1.5 rounded-full bg-primary-container"></span>
+<h2 class="text-headline-md font-headline-md text-on-surface dark:text-white">واحدهای انبارداری فعال</h2>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high dark:bg-dark-border text-primary dark:text-inverse-primary">{{ wh_warehouses|length }} انبار</span>
+</div>
+<div class="text-label-md font-label-md text-on-surface-variant dark:text-slate-400">
+          مجموع موجودی سازمان: <strong class="text-on-surface dark:text-slate-200 font-tabular-num text-tabular-num">{{ wh_total_value|floatformat:"-0" }} میلیون ریال</strong>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+{% for w in wh_warehouses %}
+<article class="bg-surface-container-lowest dark:bg-dark-card border border-outline-variant/60 dark:border-dark-border rounded-xl p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between gap-2 mb-3">
+<div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 ml-1.5 animate-pulse"></span>
+              فعال و عملیاتی
+            </span>
+<h3 class="text-title-lg font-title-lg text-on-surface dark:text-white mt-1.5 font-bold">{{ w.name }}</h3>
+<span class="text-label-sm font-label-sm text-outline dark:text-slate-400 font-tabular-num">کد سیستمی: WH-{{ w.id|stringformat:"d" }}</span>
+</div>
+<div class="relative group">
+<button class="p-1.5 rounded-lg hover:bg-surface-container-low dark:hover:bg-dark-hover text-outline-variant hover:text-on-surface dark:text-slate-400 dark:hover:text-white">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Details -->
+<div class="space-y-2 py-2 text-body-sm font-body-sm text-on-surface-variant dark:text-slate-300 border-y border-outline-variant/30 dark:border-dark-border/60">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary dark:text-inverse-primary">person</span>
+<span class="">مسئول انبار:</span>
+<span class="font-medium text-on-surface dark:text-white">{{ w.manager }}</span>
+</div>
+<div class="flex items-center gap-1.5 truncate">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+<span class="truncate">{{ w.address }}</span>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-1 font-tabular-num">
+<div class="bg-surface-container-low/70 dark:bg-dark-hover/40 p-2 rounded-lg">
+<div class="text-label-sm font-label-sm text-outline dark:text-slate-400">تنوع اقلام (SKU)</div>
+<div class="text-title-md font-title-md font-bold text-on-surface dark:text-white mt-0.5">{{ w.sku_count }} قلم</div>
+</div>
+<div class="bg-surface-container-low/70 dark:bg-dark-hover/40 p-2 rounded-lg">
+<div class="text-label-sm font-label-sm text-outline dark:text-slate-400">ارزش کل موجودی</div>
+<div class="text-title-md font-title-md font-bold text-primary dark:text-inverse-primary mt-0.5">{{ w.total_value|floatformat:"-0" }} م.ت</div>
+</div>
+</div>
+</div>
+<!-- Capacity Progress -->
+<div class="mt-3 space-y-1.5">
+<div class="flex justify-between text-label-sm font-label-sm">
+<span class="text-on-surface-variant dark:text-slate-400">درصد ظرفیت فیزیکی:</span>
+<span class="font-bold text-on-surface dark:text-white font-tabular-num">{{ w.capacity_pct }}٪{% if w.capacity_pct > 80 %} (هشدار تراکم){% elif w.capacity_pct > 50 %} (وضعیت پایدار){% else %} (ظرفیت آزاد){% endif %}</span>
+</div>
+<div class="w-full h-2 bg-surface-container dark:bg-dark-border rounded-full overflow-hidden">
+<div class="{% if w.capacity_pct > 80 %}bg-amber-500{% elif w.capacity_pct > 50 %}bg-emerald-500{% else %}bg-cyan-500{% endif %} h-full rounded-full" style="width: {{ w.capacity_pct }}%;"></div>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="pt-3 mt-3 border-t border-outline-variant/30 dark:border-dark-border/60 flex items-center justify-between gap-1 text-label-md font-label-md">
+<button class="text-primary dark:text-inverse-primary hover:underline flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+          مشاهده کاردکس
+        </button>
+<button class="text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-white flex items-center gap-0.5" onclick="openPrefilledTransfer('WH-{{ w.id }}')">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+          انتقال از اینجا
+        </button>
+</div>
+</article>
+{% empty %}
+<article class="bg-surface-container-lowest dark:bg-dark-card border border-outline-variant/60 dark:border-dark-border rounded-xl p-4 shadow-sm text-center py-8">
+<p class="text-on-surface-variant dark:text-slate-400">هیچ انباری ثبت نشده است.</p>
+</article>
+{% endfor %}
+</div>
+</section>
+<!-- SECTION 2: INTER-WAREHOUSE TRANSFER HUB -->
+<section class="space-y-6">
+<!-- Stepper Explanation Component -->
+<div class="bg-surface-container-lowest dark:bg-dark-card border border-outline-variant/60 dark:border-dark-border rounded-xl p-5 shadow-sm">
+<div class="flex items-center justify-between mb-4 pb-3 border-b border-outline-variant/30 dark:border-dark-border">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary">linear_scale</span>
+<h3 class="text-headline-md font-headline-md text-on-surface dark:text-white">چرخه استاندارد انتقال بین انبارها (5-Step Lifecycle)</h3>
+</div>
+<span class="text-label-sm font-label-sm text-outline dark:text-slate-400 hidden sm:inline-block">مطابق دستورالعمل شماره ۱۲ سیستم انبارداری</span>
+</div>
+<!-- 5-Step Stepper Component -->
+<div class="relative">
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+<!-- Step 1 -->
+<div class="relative flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low/50 dark:bg-dark-hover/30 border border-emerald-500/30">
+<div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-tabular-num mb-2 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<span class="text-title-md font-title-md font-bold text-on-surface dark:text-white">۱. ایجاد درخواست</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 mt-1">تایید سرپرست مبدأ و مقصد</span>
+</div>
+<!-- Step 2 -->
+<div class="relative flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low/50 dark:bg-dark-hover/30 border border-emerald-500/30">
+<div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-tabular-num mb-2 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<span class="text-title-md font-title-md font-bold text-on-surface dark:text-white">۲. آماده‌سازی و بسته‌بندی</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 mt-1">انبارگردانی و الصاق بارکد</span>
+</div>
+<!-- Step 3 -->
+<div class="relative flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low/50 dark:bg-dark-hover/30 border border-emerald-500/30">
+<div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-tabular-num mb-2 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<span class="text-title-md font-title-md font-bold text-on-surface dark:text-white">۳. ارسال و خروج</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 mt-1">صدور بارنامه و پلمب بار</span>
+</div>
+<!-- Step 4 (Active) -->
+<div class="relative flex flex-col items-center text-center p-3 rounded-xl bg-primary-fixed/20 dark:bg-primary-container/20 border-2 border-primary-container">
+<div class="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-tabular-num mb-2 shadow-sm animate-pulse">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+</div>
+<span class="text-title-md font-title-md font-bold text-primary dark:text-inverse-primary">۴. در راه (ترانزیت)</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-300 mt-1">ردیابی ناوگان حمل‌ونقل</span>
+</div>
+<!-- Step 5 (Pending) -->
+<div class="relative col-span-2 md:col-span-1 flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low/40 dark:bg-dark-hover/20 border border-outline-variant/30 dark:border-dark-border opacity-70">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest dark:bg-dark-border text-on-surface-variant dark:text-slate-400 flex items-center justify-center font-bold text-tabular-num mb-2">
+                ۵
+              </div>
+<span class="text-title-md font-title-md text-on-surface dark:text-slate-300">۵. دریافت و تأیید نهایی</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 mt-1">بررسی سلامت و ثبت در سند</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Transfer Form & Real-time Calculator Inline Banner -->
+<div class="bg-surface-container-lowest dark:bg-dark-card border border-outline-variant/60 dark:border-dark-border rounded-xl p-5 shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary">swap_horiz</span>
+              فرم عملیاتی ارسال سریع بین‌انباری
+            </h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-slate-400">
+              ثبت مستقیم حواله انتقال کالا با قابلیت کسر آنی از کاردکس مبدأ
+            </p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-slate-400">شماره پیش‌نویس سند:</span>
+<span class="px-2.5 py-1 bg-surface-container dark:bg-dark-hover text-on-surface dark:text-white font-tabular-num rounded-md text-tabular-num font-bold">TR-1403-8892</span>
+</div>
+</div>
+<form class="space-y-4" id="inlineTransferForm" onsubmit="handleQuickSubmit(event)">
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
+<!-- Source Warehouse -->
+<div class="space-y-1">
+<label class="text-label-md font-label-md text-on-surface-variant dark:text-slate-300">انبار مبدأ</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover/80 text-on-surface dark:text-white text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" id="fromWhSelect" required="">
+<option value="WH-101">انبار مرکزی شورآباد (تهران)</option>
+<option value="WH-204">انبار آهن‌آلات اصفهان</option>
+<option value="WH-310">سردخانه و مواد البرز</option>
+<option value="WH-409">ترانزیت بندرعباس</option>
+</select>
+</div>
+<!-- Destination Warehouse -->
+<div class="space-y-1">
+<label class="text-label-md font-label-md text-on-surface-variant dark:text-slate-300">انبار مقصد</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover/80 text-on-surface dark:text-white text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" id="toWhSelect" required="">
+<option value="WH-204">انبار آهن‌آلات اصفهان</option>
+<option value="WH-101">انبار مرکزی شورآباد (تهران)</option>
+<option value="WH-310">سردخانه و مواد البرز</option>
+<option value="WH-409">ترانزیت بندرعباس</option>
+</select>
+</div>
+<!-- Item Selection -->
+<div class="space-y-1 lg:col-span-2">
+<label class="text-label-md font-label-md text-on-surface-variant dark:text-slate-300">انتخاب کالا (SKU)</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover/80 text-on-surface dark:text-white text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" required="">
+<option value="SKU-8092">میلگرد آجدار ۱۶ استاندارد A3 (موجودی: ۲,۵۰۰ شاخه)</option>
+<option value="SKU-1022">پروفیل قوطی صنعتی ۴۰*۸۰ (موجودی: ۱,۱۰۰ شاخه)</option>
+<option value="SKU-4410">شیرآلات دروازه‌ای فشار قوی ۳ اینچ (موجودی: ۴۵۰ عدد)</option>
+<option value="SKU-9921">ورق روغنی فولاد مبارکه ۲ میل (موجودی: ۳۵ بندیل)</option>
+</select>
+</div>
+<!-- Quantity -->
+<div class="space-y-1">
+<label class="text-label-md font-label-md text-on-surface-variant dark:text-slate-300">تعداد درخواستی</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover/80 text-on-surface dark:text-white text-tabular-num font-tabular-num focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" max="1000" min="1" required="" type="number" value="120">
+</div>
+<!-- Carrier & Driver -->
+<div class="space-y-1">
+<label class="text-label-md font-label-md text-on-surface-variant dark:text-slate-300">ناوگان / راننده</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover/80 text-on-surface dark:text-white text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" placeholder="مثال: کامیون جفت - علیزاده" required="" type="text">
+</div>
+</div>
+<!-- Bottom Row: Reason & Submit -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+<div class="w-full sm:w-2/3 flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[20px]">notes</span>
+<input class="w-full h-9 px-3 text-body-sm rounded-lg border border-outline-variant/60 dark:border-dark-border bg-white/70 dark:bg-dark-hover/50 text-on-surface dark:text-slate-200" placeholder="علت انتقال / توضیحات بارنامه (اختیاری)" type="text">
+</div>
+<div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+<button class="px-3.5 py-2 text-label-md font-label-md text-on-surface-variant dark:text-slate-400 hover:bg-surface-container dark:hover:bg-dark-hover rounded-lg transition-colors" type="reset">
+                پاک‌سازی فرم
+              </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container hover:bg-primary text-white text-title-md font-title-md shadow-sm transition-all flex items-center gap-1.5 active:scale-95" type="submit">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span class="">ثبت و صدور مجوز خروج</span>
+</button>
+</div>
+</div>
+</form>
+</div>
+<!-- Historical & Ongoing Transfers Data Table -->
+<div class="bg-surface-container-lowest dark:bg-dark-card border border-outline-variant/60 dark:border-dark-border rounded-xl shadow-sm overflow-hidden">
+<!-- Table Toolbar & Filters -->
+<div class="p-4 border-b border-outline-variant/40 dark:border-dark-border flex flex-col md:flex-row md:items-center justify-between gap-3 bg-surface-container-low/30 dark:bg-dark-card">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary">history</span>
+<h3 class="text-headline-md font-headline-md text-on-surface dark:text-white">تاریخچه و وضعیت انتقال‌های جاری</h3>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-fixed dark:bg-dark-border text-primary dark:text-inverse-primary font-tabular-num">۸ سند فعال</span>
+</div>
+<!-- Quick Filters -->
+<div class="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1 md:pb-0">
+<div class="relative min-w-[200px]">
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-outline text-[18px]">search</span>
+<input class="w-full h-9 pr-9 pl-3 text-body-sm rounded-lg border border-outline-variant/70 dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white focus:border-primary-container" placeholder="جستجوی کد سند، راننده..." type="text">
+</div>
+<select class="h-9 px-3 rounded-lg border border-outline-variant/70 dark:border-dark-border bg-white dark:bg-dark-hover text-body-sm text-on-surface dark:text-slate-300">
+<option value="">همه وضعیت‌ها</option>
+<option value="in_transit">در حال حمل (ترانزیت)</option>
+<option value="completed">تکمیل شده</option>
+<option value="partial">تحویل ناقص</option>
+<option value="loading">در حال بارگیری</option>
+</select>
+<button class="p-2 border border-outline-variant/70 dark:border-dark-border rounded-lg hover:bg-surface-container dark:hover:bg-dark-hover text-on-surface-variant dark:text-slate-300 flex items-center" title="خروجی اکسل">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+</div>
+</div>
+<!-- Responsive Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low dark:bg-dark-hover/60 border-b border-outline-variant/40 dark:border-dark-border text-label-md font-label-md text-on-surface-variant dark:text-slate-300">
+<th class="py-3 px-4 font-semibold">کد سند انتقال</th>
+<th class="py-3 px-4 font-semibold">تاریخ و ساعت</th>
+<th class="py-3 px-4 font-semibold">مسیر جابجایی (مبدأ به مقصد)</th>
+<th class="py-3 px-4 font-semibold">شرح اقلام انتقالی</th>
+<th class="py-3 px-4 font-semibold text-center">تعداد / وزن</th>
+<th class="py-3 px-4 font-semibold">راننده و بارنامه</th>
+<th class="py-3 px-4 font-semibold text-center">وضعیت انتقال</th>
+<th class="py-3 px-4 font-semibold text-center">عملیات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 dark:divide-dark-border text-body-sm font-body-sm">
+<!-- Row 1: In Transit -->
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-dark-hover/40 transition-colors">
+<td class="py-3.5 px-4 font-bold font-tabular-num text-primary dark:text-inverse-primary">
+                  TR-1403-8871
+                </td>
+<td class="py-3.5 px-4 font-tabular-num text-on-surface-variant dark:text-slate-300">
+                  ۱۴۰۳/۰۸/۲۲ - ۰۹:۴۰
+                </td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 font-medium text-on-surface dark:text-white">
+<span class="">انبار مرکزی تهران</span>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_left</span>
+<span class="">انبار اصفهان</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface dark:text-slate-200">
+                  میلگرد آجدار ۱۶ (بندیل صادراتی)
+                </td>
+<td class="py-3.5 px-4 text-center font-tabular-num font-bold text-on-surface dark:text-white">
+                  ۲۴ تن (۱۲۰ شاخه)
+                </td>
+<td class="py-3.5 px-4 text-on-surface-variant dark:text-slate-300">
+<div class="font-medium">رضا صمدی</div>
+<div class="text-label-sm font-label-sm text-outline dark:text-slate-400 font-tabular-num">بارنامه: ۹۹۸۴۲۱</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-blue-100 text-blue-800 dark:bg-blue-950/70 dark:text-blue-300">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-600 ml-1.5 animate-ping"></span>
+                    در حال حمل (ترانزیت)
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 hover:bg-surface-container dark:hover:bg-dark-hover rounded-md text-primary dark:text-inverse-primary" title="ردیابی زنده">
+<span class="material-symbols-outlined text-[18px]">gps_fixed</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container dark:hover:bg-dark-hover rounded-md text-outline hover:text-on-surface dark:text-slate-400 dark:hover:text-white" title="چاپ حواله">
+<span class="material-symbols-outlined text-[18px]">print</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Completed -->
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-dark-hover/40 transition-colors">
+<td class="py-3.5 px-4 font-bold font-tabular-num text-primary dark:text-inverse-primary">
+                  TR-1403-8869
+                </td>
+<td class="py-3.5 px-4 font-tabular-num text-on-surface-variant dark:text-slate-300">
+                  ۱۴۰۳/۰۸/۲۱ - ۱۶:۱۵
+                </td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 font-medium text-on-surface dark:text-white">
+<span class="">انبار بندرعباس</span>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_left</span>
+<span class="">سردخانه سیمین‌دشت</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface dark:text-slate-200">
+                  بشکه ۲۲۰ لیتری کنسانتره دارویی
+                </td>
+<td class="py-3.5 px-4 text-center font-tabular-num font-bold text-on-surface dark:text-white">
+                  ۸۰ بشکه (۱۷.۶ تن)
+                </td>
+<td class="py-3.5 px-4 text-on-surface-variant dark:text-slate-300">
+<div class="font-medium">اکبر نوری</div>
+<div class="text-label-sm font-label-sm text-outline dark:text-slate-400 font-tabular-num">بارنامه: ۸۴۲۰۱۱</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 ml-1.5"></span>
+                    تکمیل و تأیید شد
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 hover:bg-surface-container dark:hover:bg-dark-hover rounded-md text-emerald-600 dark:text-emerald-400" title="مشاهده رسید مقصد">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container dark:hover:bg-dark-hover rounded-md text-outline hover:text-on-surface dark:text-slate-400 dark:hover:text-white" title="چاپ حواله">
+<span class="material-symbols-outlined text-[18px]">print</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Partial / Discrepancy -->
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-dark-hover/40 transition-colors">
+<td class="py-3.5 px-4 font-bold font-tabular-num text-primary dark:text-inverse-primary">
+                  TR-1403-8854
+                </td>
+<td class="py-3.5 px-4 font-tabular-num text-on-surface-variant dark:text-slate-300">
+                  ۱۴۰۳/۰۸/۲۰ - ۱۱:۳۰
+                </td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 font-medium text-on-surface dark:text-white">
+<span class="">انبار مرکزی شورآباد</span>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_left</span>
+<span class="">انبار بندرعباس</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface dark:text-slate-200">
+                  شیرآلات صنعتی برنجی ۳ اینچ
+                </td>
+<td class="py-3.5 px-4 text-center font-tabular-num font-bold text-amber-600 dark:text-amber-400">
+                  ۲۸۰ از ۳۰۰ عدد
+                </td>
+<td class="py-3.5 px-4 text-on-surface-variant dark:text-slate-300">
+<div class="font-medium">کریم اسدی</div>
+<div class="text-label-sm font-label-sm text-outline dark:text-slate-400 font-tabular-num">بارنامه: ۷۷۱۸۰۹</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300" title="۲۰ قلم به علت آسیب عودت داده شد">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500 ml-1.5"></span>
+                    تحویل با کسری/مغایرت
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 hover:bg-surface-container dark:hover:bg-dark-hover rounded-md text-amber-600 dark:text-amber-400" title="صورتجلسه مغایرت">
+<span class="material-symbols-outlined text-[18px]">report_problem</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container dark:hover:bg-dark-hover rounded-md text-outline hover:text-on-surface dark:text-slate-400 dark:hover:text-white" title="چاپ حواله">
+<span class="material-symbols-outlined text-[18px]">print</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Loading -->
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-dark-hover/40 transition-colors">
+<td class="py-3.5 px-4 font-bold font-tabular-num text-primary dark:text-inverse-primary">
+                  TR-1403-8848
+                </td>
+<td class="py-3.5 px-4 font-tabular-num text-on-surface-variant dark:text-slate-300">
+                  ۱۴۰۳/۰۸/۲۲ - ۱۲:۰۰
+                </td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 font-medium text-on-surface dark:text-white">
+<span class="">انبار اصفهان</span>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_left</span>
+<span class="">شورآباد تهران</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface dark:text-slate-200">
+                  پروفیل سنگین ساختمانی (سفارش ویژه)
+                </td>
+<td class="py-3.5 px-4 text-center font-tabular-num font-bold text-on-surface dark:text-white">
+                  ۴۰۰ شاخه
+                </td>
+<td class="py-3.5 px-4 text-on-surface-variant dark:text-slate-300">
+<div class="font-medium">سهراب مرادی</div>
+<div class="text-label-sm font-label-sm text-outline dark:text-slate-400 font-tabular-num">بارنامه: در حال صدور</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-purple-100 text-purple-800 dark:bg-purple-950/70 dark:text-purple-300">
+<span class="w-1.5 h-1.5 rounded-full bg-purple-600 ml-1.5 animate-pulse"></span>
+                    در حال بارگیری در مبدأ
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 hover:bg-surface-container dark:hover:bg-dark-hover rounded-md text-outline hover:text-on-surface dark:text-slate-400 dark:hover:text-white" title="لغو یا ویرایش">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 hover:bg-error-container/40 rounded-md text-error" title="ابطال سند">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Footer -->
+<div class="p-3.5 border-t border-outline-variant/40 dark:border-dark-border flex flex-col sm:flex-row items-center justify-between gap-3 text-label-md font-label-md text-on-surface-variant dark:text-slate-400">
+<div class="">
+            نمایش ردیف ۱ تا ۴ از مجموع ۲۸ سند انتقال ثبت‌شده
+          </div>
+<div class="flex items-center gap-1 font-tabular-num">
+<button class="px-2.5 py-1 rounded border border-outline-variant dark:border-dark-border hover:bg-surface-container dark:hover:bg-dark-hover disabled:opacity-40" disabled="">قبلی</button>
+<button class="px-3 py-1 rounded bg-primary-container text-white font-bold">۱</button>
+<button class="px-3 py-1 rounded border border-outline-variant dark:border-dark-border hover:bg-surface-container dark:hover:bg-dark-hover">۲</button>
+<button class="px-3 py-1 rounded border border-outline-variant dark:border-dark-border hover:bg-surface-container dark:hover:bg-dark-hover">۳</button>
+<button class="px-2.5 py-1 rounded border border-outline-variant dark:border-dark-border hover:bg-surface-container dark:hover:bg-dark-hover">بعدی</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- MODAL: Comprehensive Inter-Warehouse Transfer Modal -->
+<div class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" id="transferModal">
+<div class="bg-surface-container-lowest dark:bg-dark-card border border-outline-variant dark:border-dark-border w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden transition-all my-8">
+<!-- Modal Header -->
+<div class="p-5 border-b border-outline-variant/40 dark:border-dark-border flex items-center justify-between bg-surface-container-low/40 dark:bg-dark-card">
+<div class="flex items-center gap-2.5">
+<div class="p-2 rounded-lg bg-primary-container/10 text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface dark:text-white">صدور حواله رسمی انتقال بین انبارها</h3>
+<p class="text-label-sm font-label-sm text-outline dark:text-slate-400">کد سند تولید خودکار: TR-REQ-9941</p>
+</div>
+</div>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface dark:text-slate-400 dark:hover:text-white hover:bg-surface-container dark:hover:bg-dark-hover" onclick="toggleModal('transferModal')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="p-6 space-y-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">انبار مبدأ (فرستنده)</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md focus:border-primary-container" id="fromWhSelect">
+<option value="">انتخاب انبار مبدأ</option>
+{% for w in wh_warehouses %}
+<option value="{{ w.id }}">{{ w.name }}</option>
+{% endfor %}
+</select>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">انبار مقصد (گیرنده)</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md focus:border-primary-container" id="toWhSelect">
+<option value="">انتخاب انبار مقصد</option>
+{% for w in wh_warehouses %}
+<option value="{{ w.id }}">{{ w.name }}</option>
+{% endfor %}
+</select>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">تاریخ حواله / بارنامه</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white font-tabular-num text-tabular-num" type="text" value="۱۴۰۳/۰۸/۲۲">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">شماره بارنامه دولتی / سند حمل</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md font-tabular-num" placeholder="مثال: BL-984021" type="text">
+</div>
+<div class="sm:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">کالا و اقلام مورد انتقال</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md" placeholder="جستجوی نام یا بارکد کالا برای افزودن..." type="text">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">تعداد / مقدار درخواستی</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md font-tabular-num" placeholder="مثال: ۵۰" type="number">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">راننده و شماره پلاک ناوگان</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md" placeholder="مثال: علی احمدی - ۲۲ ایران ۳۴۲ ب ۱۲" type="text">
+</div>
+<div class="sm:col-span-2">
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">بارگذاری اسناد پیوست یا تصویر بارنامه فیزیکی</label>
+<div class="border-2 border-dashed border-outline-variant dark:border-dark-border rounded-xl p-4 text-center hover:bg-surface-container-low dark:hover:bg-dark-hover/40 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-outline text-3xl">cloud_upload</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-slate-300 mt-1">کلیک کنید یا فایل را به اینجا بکشید (PDF، JPG تا حداکثر ۵ مگابایت)</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="p-4 border-t border-outline-variant/40 dark:border-dark-border flex items-center justify-end gap-2.5 bg-surface-container-low/20 dark:bg-dark-card">
+<button class="px-4 py-2 rounded-lg border border-outline-variant dark:border-dark-border text-on-surface dark:text-slate-300 hover:bg-surface-container dark:hover:bg-dark-hover text-title-md font-title-md" onclick="toggleModal('transferModal')">
+          انصراف
+        </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container hover:bg-primary text-white text-title-md font-title-md shadow-sm transition-all" onclick="handleModalSubmit()">
+          تأیید و صدور نهایی سند
+        </button>
+</div>
+</div>
+</div>
+<!-- MODAL: Add New Warehouse Modal -->
+<div class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" id="newWarehouseModal">
+<div class="bg-surface-container-lowest dark:bg-dark-card border border-outline-variant dark:border-dark-border w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transition-all my-8">
+<div class="p-5 border-b border-outline-variant/40 dark:border-dark-border flex items-center justify-between bg-surface-container-low/40 dark:bg-dark-card">
+<div class="flex items-center gap-2.5">
+<div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined">add_home_work</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface dark:text-white">ثبت و پیکربندی انبار جدید</h3>
+</div>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface dark:text-slate-400 dark:hover:text-white" onclick="toggleModal('newWarehouseModal')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 space-y-3.5">
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">نام رسمی انبار</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md focus:border-primary-container" placeholder="مثال: انبار قطعات یدکی مشهد" type="text">
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">کد انبار</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-tabular-num font-tabular-num" placeholder="WH-502" type="text">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">نوع انبار</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md">
+<option>مسقف / استاندارد</option>
+<option>روباز / محوطه سنگین</option>
+<option>سردخانه‌ای مکانیزه</option>
+<option>گمرکی امانی</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">نام و شماره مدیر انبار</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md" placeholder="مثال: مهندس راد - ۰۹۱۲xxxxxxx" type="text">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">نشانی دقیق پستی و لوکیشن</label>
+<textarea class="w-full p-2.5 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md" placeholder="استان، شهر، شهرک صنعتی، پلاک..." rows="2"></textarea>
+</div>
+</div>
+<div class="p-4 border-t border-outline-variant/40 dark:border-dark-border flex items-center justify-end gap-2.5">
+<button class="px-4 py-2 rounded-lg border border-outline-variant dark:border-dark-border text-on-surface dark:text-slate-300 hover:bg-surface-container dark:hover:bg-dark-hover text-title-md font-title-md" onclick="toggleModal('newWarehouseModal')">
+          انصراف
+        </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container hover:bg-primary text-white text-title-md font-title-md shadow-sm" onclick="handleWarehouseSubmit()">
+          ثبت واحد انبار
+        </button>
+</div>
+</div>
+</div>
+<!-- Toast Notification Feedback Container -->
+<div class="fixed bottom-6 left-6 z-50 hidden items-center gap-3 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl border border-outline/30 animate-bounce" id="toastNotification">
+<span class="material-symbols-outlined text-secondary-fixed">check_circle</span>
+<span class="text-body-md font-body-md" id="toastMessage">عملیات با موفقیت انجام شد.</span>
+</div>
+<!-- Inline Script for Theme & Micro-interactions -->
+<script>
+    // 1. Dark Mode / Light Mode Logic
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const htmlEl = document.documentElement;
+
+    // Check system or saved preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      htmlEl.classList.add('dark');
+      htmlEl.classList.remove('light');
+      themeIcon.textContent = 'light_mode';
+    } else {
+      htmlEl.classList.remove('dark');
+      htmlEl.classList.add('light');
+      themeIcon.textContent = 'dark_mode';
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        htmlEl.classList.add('light');
+        themeIcon.textContent = 'dark_mode';
+        localStorage.setItem('theme', 'light');
+      } else {
+        htmlEl.classList.add('dark');
+        htmlEl.classList.remove('light');
+        themeIcon.textContent = 'light_mode';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+
+    // 2. Modal Management
+    function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } else {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }
+
+    function openPrefilledTransfer(warehouseId) {
+      const fromSelect = document.getElementById('fromWhSelect');
+      if (fromSelect) {
+        fromSelect.value = warehouseId;
+      }
+      toggleModal('transferModal');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const toastText = document.getElementById('toastMessage');
+      toastText.textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 4000);
+    }
+
+    function handleQuickSubmit(e) {
+      e.preventDefault();
+      showToast('حواله انتقال سریع با موفقیت صادر گردید و در وضعیت آماده‌سازی قرار گرفت.');
+      e.target.reset();
+    }
+
+    async function handleModalSubmit() {
+      const fromWh = document.getElementById('fromWhSelect').value;
+      const toWh = document.getElementById('toWhSelect').value;
+      if (!fromWh || !toWh) { showToast('انتخاب انبار مبدأ و مقصد الزامی است'); return; }
+      const btn = document.querySelector('#transferModal button[onclick="handleModalSubmit()"]');
+      if (btn) { btn.disabled = true; btn.textContent = 'در حال صدور سند...'; }
+      const csrf = (document.cookie.match(/(^| )csrftoken=([^;]+)/) || [, ''])[2];
+      try {
+        const res = await fetch('/api/inventory/transfers/', {
+          method: 'POST', credentials: 'same-origin',
+          headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},
+          body: JSON.stringify({
+            from_warehouse: parseInt(fromWh),
+            to_warehouse: parseInt(toWh),
+            transfer_date: new Date().toISOString().slice(0, 10),
+            document_no: 'TR-' + Date.now(),
+            status: 'requested',
+            note: 'صدور از مودال بارسی'
+          })
+        });
+        if (btn) { btn.disabled = false; btn.textContent = 'تأیید و صدور نهایی سند'; }
+        if (res.ok) {
+          toggleModal('transferModal');
+          showToast('حواله رسمی انتقال بین انبارها با کد رهگیری ثبت گردید.');
+          setTimeout(() => location.reload(), 700);
+        } else {
+          const txt = await res.text().catch(() => '');
+          showToast('خطا در صدور approx: ' + (txt || res.status));
+        }
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = 'تأیید و صدور نهایی سند'; }
+        showToast('ارتباط با سرور برقرار نشد.');
+      }
+    }
+
+    async function handleWarehouseSubmit() {
+      const modal = document.getElementById('newWarehouseModal');
+      const nameInput = modal.querySelector('input[placeholder*="نام رسمی انبار"]');
+      const codeInput = modal.querySelector('input[placeholder*="WH-502"]');
+      const managerInput = modal.querySelector('input[placeholder*="مهندس راد"]');
+      const addressInput = modal.querySelector('textarea[placeholder*="استان، شهر"]');
+      const typeSelect = modal.querySelector('select');
+      if (!nameInput || !nameInput.value.trim()) { showToast('نام انبار الزامی است'); return; }
+      const btn = document.querySelector('#newWarehouseModal button[onclick="handleWarehouseSubmit()"]');
+      if (btn) { btn.disabled = true; btn.textContent = 'در حال ثبت...'; }
+      const csrf = (document.cookie.match(/(^| )csrftoken=([^;]+)/) || [, ''])[2];
+      try {
+        const res = await fetch('/api/inventory/warehouses/', {
+          method: 'POST', credentials: 'same-origin',
+          headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},
+          body: JSON.stringify({
+            name: nameInput.value.trim(),
+            address: addressInput ? addressInput.value.trim() : '',
+            manager: managerInput ? managerInput.value.trim() : '',
+            is_active: true
+          })
+        });
+        if (btn) { btn.disabled = false; btn.textContent = 'ثبت واحد انبار'; }
+        if (res.ok) {
+          toggleModal('newWarehouseModal');
+          showToast('انبار جدید با موفقیت ثبت شد.');
+          setTimeout(() => location.reload(), 700);
+        } else {
+          const txt = await res.text().catch(() => '');
+          showToast('خطا در ثبت انبار: ' + (txt || res.status));
+        }
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = 'ثبت واحد انبار'; }
+        showToast('ارتباط با سرور برقرار نشد.');
+      }
+    }
+  </script>
+
+{% csrf_token %}
+
+
+
+{% endblock %}

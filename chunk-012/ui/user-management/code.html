@@ -1,0 +1,967 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Main Container (Embedded Master-page Ready) -->
+<main class="] space-y-6">
+<!-- Local Header & Primary Action Toolbar -->
+<header class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-5 border border-[#e2e8f0] dark:border-[#334155] shadow-sm flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4">
+<!-- Title & Version Info -->
+<div class="flex items-center gap-3.5 flex-wrap">
+<div class="w-12 h-12 rounded-xl bg-primary/10 dark:bg-primary/20 text-primary-container dark:text-inverse-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]" data-icon="admin_panel_settings">admin_panel_settings</span>
+</div>
+<div>
+<div class="flex items-center gap-2.5 flex-wrap">
+<h1 class="text-headline-lg font-headline-lg text-[#0f172a] dark:text-white">۲۱. مدیریت کاربران، نقش‌ها و لاگ فعالیت</h1>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-md font-label-md bg-primary/10 dark:bg-primary/20 text-primary-container dark:text-inverse-primary border border-primary/20 dark:border-primary/40">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+              نسخه سازمانی ۲.۴
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-[#64748b] dark:text-[#94a3b8] mt-1">مدیریت دسترسی‌های پرسنل، ماتریس مجوزهای سیستمی و پایش برخط رویدادهای ممیزی امنیتی</p>
+</div>
+</div>
+<!-- Action Buttons & Theme Switcher -->
+<div class="flex items-center flex-wrap gap-2.5 w-full xl:w-auto justify-end">
+<!-- Live Dark Mode Toggle -->
+
+<!-- Export Logs & Reports -->
+<button class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] dark:border-[#334155] bg-surface-container-lowest dark:bg-[#1e293b] text-body-md font-body-md text-[#334155] dark:text-[#e2e8f0] hover:bg-[#f8fafc] dark:hover:bg-[#334155] transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="file_download">file_download</span>
+<span>خروجی لاگ و گزارشات</span>
+</button>
+<!-- New Role Button -->
+<button class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-primary/30 dark:border-primary/50 bg-primary/5 dark:bg-primary/10 text-body-md font-body-md text-primary-container dark:text-inverse-primary hover:bg-primary/10 transition-colors" onclick="switchTab('roles-tab')" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="assignment_ind">assignment_ind</span>
+<span>+ نقش سازمانی جدید</span>
+</button>
+<!-- Primary Invite User Button -->
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-white text-body-md font-body-md shadow-sm transition-all active:scale-[0.98]" onclick="openDrawer()" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="person_add">person_add</span>
+<span class="font-semibold">+ دعوت و تعریف کاربر جدید</span>
+</button>
+</div>
+</header>
+<!-- SECTION 1: Key Performance Indicators (KPI Cards) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1: Active Users -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-5 border border-[#e2e8f0] dark:border-[#334155] shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-body-md font-body-md text-[#64748b] dark:text-[#94a3b8]">کاربران فعال سامانه</span>
+<div class="w-9 h-9 rounded-lg bg-[#dcfce7] dark:bg-[#064e3b] text-[#15803d] dark:text-[#6ee7b7] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="person_check">person_check</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between gap-2">
+<div class="text-display-lg font-display-lg text-[#0f172a] dark:text-white tracking-tight">{{ um_user_count }} <span class="text-body-md font-body-md text-[#64748b] dark:text-[#94a3b8] font-normal">کاربر</span></div>
+<span class="inline-flex items-center gap-1 text-label-md font-label-md px-2 py-0.5 rounded-full bg-[#dcfce7] dark:bg-[#064e3b] text-[#15803d] dark:text-[#6ee7b7]">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+            ۹۳٪ فعالیت هفتگی
+          </span>
+</div>
+<!-- Sparkline indicator -->
+<div class="mt-3 pt-3 border-t border-[#f1f5f9] dark:border-[#334155] flex items-center justify-between text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8]">
+<span>۳۶ کاربر از ۲ شعبه فعال</span>
+<span class="text-[#15803d] dark:text-[#4ade80]">+۴ نفر این ماه</span>
+</div>
+</div>
+<!-- KPI 2: Pending Invitations -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-5 border border-[#e2e8f0] dark:border-[#334155] shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-body-md font-body-md text-[#64748b] dark:text-[#94a3b8]">دعوت‌شده و در انتظار تأیید</span>
+<div class="w-9 h-9 rounded-lg bg-[#fef3c7] dark:bg-[#78350f] text-[#b45309] dark:text-[#fde68a] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="mail">mail</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between gap-2">
+<div class="text-display-lg font-display-lg text-[#0f172a] dark:text-white tracking-tight">۵ <span class="text-body-md font-body-md text-[#64748b] dark:text-[#94a3b8] font-normal">نفر</span></div>
+<span class="inline-flex items-center gap-1 text-label-md font-label-md px-2 py-0.5 rounded-full bg-[#fef3c7] dark:bg-[#78350f] text-[#b45309] dark:text-[#fde68a]">
+            انقضا در ۴۸ ساعت
+          </span>
+</div>
+<div class="mt-3 pt-3 border-t border-[#f1f5f9] dark:border-[#334155] flex items-center justify-between text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8]">
+<span>لینک فعال‌سازی پیامک/ایمیل شد</span>
+<button class="text-primary-container dark:text-inverse-primary hover:underline">ارسال مجدد</button>
+</div>
+</div>
+<!-- KPI 3: Inactive / Suspended -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-5 border border-[#e2e8f0] dark:border-[#334155] shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-body-md font-body-md text-[#64748b] dark:text-[#94a3b8]">کاربران غیرفعال یا معلق</span>
+<div class="w-9 h-9 rounded-lg bg-[#fee2e2] dark:bg-[#7f1d1d] text-[#b91c1c] dark:text-[#fca5a5] flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="person_off">person_off</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between gap-2">
+<div class="text-display-lg font-display-lg text-[#0f172a] dark:text-white tracking-tight">۳ <span class="text-body-md font-body-md text-[#64748b] dark:text-[#94a3b8] font-normal">حساب</span></div>
+<span class="inline-flex items-center gap-1 text-label-md font-label-md px-2 py-0.5 rounded-full bg-[#fee2e2] dark:bg-[#7f1d1d] text-[#b91c1c] dark:text-[#fca5a5]">
+            بررسی امنیتی
+          </span>
+</div>
+<div class="mt-3 pt-3 border-t border-[#f1f5f9] dark:border-[#334155] flex items-center justify-between text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8]">
+<span>اتمام قرارداد یا ۵ تلاش ناموفق</span>
+<span class="text-[#dc2626]">مسدود موقت</span>
+</div>
+</div>
+<!-- KPI 4: Security & Last Session -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-5 border border-[#e2e8f0] dark:border-[#334155] shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<span class="text-body-md font-body-md text-[#64748b] dark:text-[#94a3b8]">آخرین ورود و امنیت ۲FA</span>
+<div class="w-9 h-9 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary-container dark:text-inverse-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="lock_clock">lock_clock</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between gap-2">
+<div class="text-headline-xl font-headline-xl text-[#0f172a] dark:text-white tracking-tight">۲ دقیقه پیش</div>
+<span class="inline-flex items-center gap-1 text-label-md font-label-md px-2 py-0.5 rounded-full bg-[#dcfce7] dark:bg-[#064e3b] text-[#15803d] dark:text-[#6ee7b7]">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified_user">verified_user</span>
+            ۹۸٪ پوشش 2FA
+          </span>
+</div>
+<div class="mt-3 pt-3 border-t border-[#f1f5f9] dark:border-[#334155] flex items-center justify-between text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8]">
+<span>توسط مدیر انبار مرکزی (شعبه شادآباد)</span>
+<span class="text-primary-container dark:text-inverse-primary font-medium">IP مجاز تهران</span>
+</div>
+</div>
+</section>
+<!-- SECTION 2: Modular Tab Navigation -->
+<nav aria-label="بخش‌های مدیریت دسترسی" class="flex items-center gap-2 border-b border-[#e2e8f0] dark:border-[#334155] pb-2 overflow-x-auto select-none">
+<button class="tab-button inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-title-md text-title-md transition-all border-b-2 border-primary-container text-primary-container dark:text-inverse-primary bg-primary/5 dark:bg-primary/10 font-bold" id="tabBtn-users" onclick="switchTab('users-tab')" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span>فهرست کاربران و دسترسی‌ها</span>
+<span class="px-2 py-0.5 text-label-sm font-label-sm rounded-full bg-primary-container text-white">{{ um_user_count }}</span>
+</button>
+<button class="tab-button inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-title-md text-title-md transition-all text-[#64748b] dark:text-[#94a3b8] hover:text-[#0f172a] dark:hover:text-white border-b-2 border-transparent" id="tabBtn-roles" onclick="switchTab('roles-tab')" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="security">security</span>
+<span>مدیریت نقش‌ها و ماتریس دسترسی</span>
+<span class="px-2 py-0.5 text-label-sm font-label-sm rounded-full bg-[#e2e8f0] dark:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]">۵ نقش</span>
+</button>
+<button class="tab-button inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-title-md text-title-md transition-all text-[#64748b] dark:text-[#94a3b8] hover:text-[#0f172a] dark:hover:text-white border-b-2 border-transparent" id="tabBtn-audit" onclick="switchTab('audit-tab')" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="history_toggle_off">history_toggle_off</span>
+<span>لاگ ممیزی و رویدادهای امنیتی</span>
+<span class="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse"></span>
+</button>
+</nav>
+<!-- ==========================================
+         TAB 1: USERS DIRECTORY & MANAGEMENT
+         ========================================== -->
+<div class="tab-pane space-y-4" id="users-tab">
+<!-- Search & Filters Toolbar -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-4 border border-[#e2e8f0] dark:border-[#334155] shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+<div class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+<!-- Text Search -->
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#94a3b8] text-[20px]" data-icon="search">search</span>
+<input class="w-full pr-10 pl-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 text-[#0f172a] dark:text-white placeholder-[#94a3b8]" placeholder="جستجوی نام کاربر، کدملی، موبایل یا ایمیل..." type="text"/>
+</div>
+<!-- Role Filter -->
+<div class="relative">
+<select class="w-full px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md text-[#334155] dark:text-[#cbd5e1] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option value="">همه نقش‌های سازمانی</option>
+<option value="admin">مدیر کل سیستم (Super Admin)</option>
+<option value="sales_manager">مدیر فروش و بازرگانی</option>
+<option value="warehouse_head">سرپرست انبار مرکزی</option>
+<option value="accountant">حسابدار ارشد مالی</option>
+<option value="cashier">صندوق‌دار فروشگاه</option>
+</select>
+</div>
+<!-- Branch Filter -->
+<div class="relative">
+<select class="w-full px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md text-[#334155] dark:text-[#cbd5e1] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option value="">همه شعب و مراکز</option>
+<option value="central">دفتر مرکزی (تهران - میرداماد)</option>
+<option value="warehouse_shadabad">انبار مرکزی شادآباد</option>
+<option value="branch_mall">شعبه فروشگاهی مگامال</option>
+<option value="branch_esfahan">نمایندگی استان اصفهان</option>
+</select>
+</div>
+<!-- Status Filter -->
+<div class="relative">
+<select class="w-full px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md text-[#334155] dark:text-[#cbd5e1] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option value="">همه وضعیت‌ها</option>
+<option value="active">فعال</option>
+<option value="pending">در انتظار تایید دعوت</option>
+<option value="suspended">معلق / مسدود موقت</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-2 justify-end pt-2 lg:pt-0 border-t lg:border-t-0 border-[#f1f5f9] dark:border-[#334155]">
+<button class="p-2 border border-[#e2e8f0] dark:border-[#334155] rounded-lg hover:bg-[#f1f5f9] dark:hover:bg-[#334155] text-[#64748b] dark:text-[#94a3b8]" title="تازه‌سازی فهرست" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="refresh">refresh</span>
+</button>
+<span class="text-body-sm font-body-sm text-[#64748b] dark:text-[#94a3b8] whitespace-nowrap">نمایش {{ um_user_count }} از {{ um_user_count }} کاربر</span>
+</div>
+</div>
+<!-- Users Data Table -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl border border-[#e2e8f0] dark:border-[#334155] shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-[#f8fafc] dark:bg-[#0f172a]/70 border-b border-[#e2e8f0] dark:border-[#334155] text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8]">
+<th class="p-3.5 w-10 text-center">
+<input class="rounded border-[#cbd5e1] dark:border-[#475569] text-primary-container focus:ring-primary-container/30" type="checkbox"/>
+</th>
+<th class="p-3.5">نام و مشخصات کاربر</th>
+<th class="p-3.5">اطلاعات تماس</th>
+<th class="p-3.5">نقش سازمانی</th>
+<th class="p-3.5">شعبه و واحد اداری</th>
+<th class="p-3.5">آخرین ورود</th>
+<th class="p-3.5 text-center">احراز دو مرحله‌ای (2FA)</th>
+<th class="p-3.5 text-center">وضعیت حساب</th>
+<th class="p-3.5 text-left pl-6">عملیات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e2e8f0] dark:divide-[#334155] text-body-md font-body-md text-[#1e293b] dark:text-[#e2e8f0]">
+{% for user in um_users %}
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5 text-center">
+<input class="rounded border-[#cbd5e1] dark:border-[#475569] text-primary-container focus:ring-primary-container/30" type="checkbox"/>
+</td>
+<td class="p-3.5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 text-primary-container dark:text-inverse-primary font-bold flex items-center justify-center border border-primary/20">
+{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+</div>
+<div>
+<div class="font-semibold text-[#0f172a] dark:text-white flex items-center gap-1.5">
+<span>{{ user.get_full_name }}</span>
+{% if user.is_superuser %}
+<span class="material-symbols-outlined text-[16px] text-primary-container" data-icon="verified" title="مالک اصلی سیستم">verified</span>
+{% endif %}
+</div>
+<span class="text-body-sm font-body-sm text-[#64748b] dark:text-[#94a3b8]">کد پرسنلی: USR-{{ user.id|stringformat:"04d" }}</span>
+</div>
+</div>
+</td>
+<td class="p-3.5 text-body-sm font-body-sm">
+<div class="font-tabular-num text-tabular-num dir-ltr text-right">{{ user.phone }}</div>
+<div class="text-[#64748b] dark:text-[#94a3b8] truncate max-w-[180px]">{{ user.email }}</div>
+</td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-label-md font-label-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+<span class="material-symbols-outlined text-[16px]" data-icon="shield_person">shield_person</span>
+{{ user.get_role_display|default:user.role }}
+</span>
+</td>
+<td class="p-3.5 text-body-sm font-body-sm">
+<div>{{ user.branch|default:"دفتر مرکزی" }}</div>
+<div class="text-[#64748b] dark:text-[#94a3b8]">{{ user.get_role_display|default:"احداثی" }}</div>
+</td>
+<td class="p-3.5 text-body-sm font-body-sm">
+{% if user.last_login %}
+<div class="font-semibold text-[#15803d] dark:text-[#4ade80]">هم‌اکنون آنلاین</div>
+<div class="text-[#64748b] dark:text-[#94a3b8]">{{ user.last_login|date:"Y/m/d H:i" }}</div>
+{% else %}
+<div class="font-semibold text-[#64748b] dark:text-[#94a3b8]">備اب نشده</div>
+<div class="text-[#64748b] dark:text-[#94a3b8]">-</div>
+{% endif %}
+</td>
+<td class="p-3.5 text-center">
+{% if user.is_active %}
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#dcfce7] dark:bg-[#064e3b] text-[#15803d] dark:text-[#86efac]">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+فعال
+</span>
+{% else %}
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fee2e2] dark:bg-[#450a0a] text-[#991b1b] dark:text-[#fca5a5]">
+<span class="material-symbols-outlined text-[14px]" data-icon="block">block</span>
+غیرفعال
+</span>
+{% endif %}
+</td>
+<td class="p-3.5 text-center">
+{% if user.is_active %}
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#dcfce7] dark:bg-[#064e3b] text-[#15803d] dark:text-[#86efac]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#15803d] dark:bg-[#86efac]"></span>
+فعال
+</span>
+{% else %}
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fee2e2] dark:bg-[#450a0a] text-[#991b1b] dark:text-[#fca5a5]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#991b1b] dark:bg-[#fca5a5]"></span>
+غیرفعال
+</span>
+{% endif %}
+</td>
+<td class="p-3.5 text-left pl-6">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]" title="ویرایش اطلاعات">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]" title="تغییر رمز عبور">
+<span class="material-symbols-outlined text-[18px]" data-icon="key">key</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-primary-container dark:text-inverse-primary" onclick="switchTab('audit-tab')" title="لاگ اختصاصی کاربر">
+<span class="material-symbols-outlined text-[18px]" data-icon="receipt_long">receipt_long</span>
+</button>
+</div>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="9" class="text-center py-8 text-[#64748b] dark:text-[#94a3b8]">هیچ کاربر ثبت نشده است.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-4 border-t border-[#e2e8f0] dark:border-[#334155] bg-[#f8fafc]/60 dark:bg-[#0f172a]/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm font-body-sm text-[#64748b] dark:text-[#94a3b8]">
+<div class="flex items-center gap-2">
+<span>تعداد در صفحه:</span>
+<select class="px-2 py-1 bg-surface-container-lowest dark:bg-[#1e293b] border border-[#e2e8f0] dark:border-[#334155] rounded text-body-sm">
+<option>۱۰</option>
+<option selected="">۲۵</option>
+<option>۵۰</option>
+</select>
+<span>از مجموع {{ um_user_count }} رکورد کاربر</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded border border-[#e2e8f0] dark:border-[#334155] disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="px-3 py-1 rounded bg-primary-container text-white font-semibold">۱</button>
+<button class="px-3 py-1 rounded border border-[#e2e8f0] dark:border-[#334155] hover:bg-[#f1f5f9] dark:hover:bg-[#334155]">۲</button>
+<button class="p-1.5 rounded border border-[#e2e8f0] dark:border-[#334155] hover:bg-[#f1f5f9] dark:hover:bg-[#334155]">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ==========================================
+         TAB 2: ROLES & PERMISSIONS MATRIX
+         ========================================== -->
+<div class="tab-pane hidden space-y-6" id="roles-tab">
+<!-- Role Summary Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+<!-- Role 1 -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-4 border-2 border-primary-container dark:border-primary-container shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<span class="material-symbols-outlined text-primary-container text-[24px]" data-icon="shield_person">shield_person</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-primary/10 text-primary-container">۲ کاربر</span>
+</div>
+<div class="mt-3">
+<h4 class="font-title-md text-title-md text-[#0f172a] dark:text-white font-bold">مدیر کل سیستم</h4>
+<p class="text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8] mt-0.5">دسترسی تام و بدون محدودیت</p>
+</div>
+<div class="mt-3 pt-2 border-t border-[#f1f5f9] dark:border-[#334155] flex justify-between items-center text-label-md">
+<span class="text-[#16a34a]">مجوز ۱۰۰٪</span>
+<span class="text-primary-container font-medium">نقش پیش‌فرض</span>
+</div>
+</div>
+<!-- Role 2 -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-4 border border-[#e2e8f0] dark:border-[#334155] shadow-sm flex flex-col justify-between hover:border-primary-container/40 transition-colors">
+<div class="flex items-start justify-between">
+<span class="material-symbols-outlined text-blue-600 text-[24px]" data-icon="point_of_sale">point_of_sale</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-blue-50 dark:bg-blue-900/40 text-blue-600">۶ کاربر</span>
+</div>
+<div class="mt-3">
+<h4 class="font-title-md text-title-md text-[#0f172a] dark:text-white font-bold">مدیر فروش و بازرگانی</h4>
+<p class="text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8] mt-0.5">فاکتورها، تخفیفات و مشتریان</p>
+</div>
+<div class="mt-3 pt-2 border-t border-[#f1f5f9] dark:border-[#334155] flex justify-between items-center text-label-md">
+<span class="text-[#64748b] dark:text-[#94a3b8]">۳۲ مجوز فعال</span>
+<button class="text-primary-container hover:underline">ویرایش</button>
+</div>
+</div>
+<!-- Role 3 -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-4 border border-[#e2e8f0] dark:border-[#334155] shadow-sm flex flex-col justify-between hover:border-primary-container/40 transition-colors">
+<div class="flex items-start justify-between">
+<span class="material-symbols-outlined text-amber-600 text-[24px]" data-icon="warehouse">warehouse</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-amber-50 dark:bg-amber-900/40 text-amber-600">۴ کاربر</span>
+</div>
+<div class="mt-3">
+<h4 class="font-title-md text-title-md text-[#0f172a] dark:text-white font-bold">سرپرست انبار</h4>
+<p class="text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8] mt-0.5">حواله، رسید و انبارگردانی</p>
+</div>
+<div class="mt-3 pt-2 border-t border-[#f1f5f9] dark:border-[#334155] flex justify-between items-center text-label-md">
+<span class="text-[#64748b] dark:text-[#94a3b8]">۲۴ مجوز فعال</span>
+<button class="text-primary-container hover:underline">ویرایش</button>
+</div>
+</div>
+<!-- Role 4 -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-4 border border-[#e2e8f0] dark:border-[#334155] shadow-sm flex flex-col justify-between hover:border-primary-container/40 transition-colors">
+<div class="flex items-start justify-between">
+<span class="material-symbols-outlined text-emerald-600 text-[24px]" data-icon="account_balance">account_balance</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600">۳ کاربر</span>
+</div>
+<div class="mt-3">
+<h4 class="font-title-md text-title-md text-[#0f172a] dark:text-white font-bold">حسابدار ارشد مالی</h4>
+<p class="text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8] mt-0.5">اسناد، خزانه‌داری و مغایرت</p>
+</div>
+<div class="mt-3 pt-2 border-t border-[#f1f5f9] dark:border-[#334155] flex justify-between items-center text-label-md">
+<span class="text-[#64748b] dark:text-[#94a3b8]">۴۰ مجوز فعال</span>
+<button class="text-primary-container hover:underline">ویرایش</button>
+</div>
+</div>
+<!-- Role 5 -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-4 border border-[#e2e8f0] dark:border-[#334155] shadow-sm flex flex-col justify-between hover:border-primary-container/40 transition-colors">
+<div class="flex items-start justify-between">
+<span class="material-symbols-outlined text-teal-600 text-[24px]" data-icon="storefront">storefront</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-teal-50 dark:bg-teal-900/40 text-teal-600">۱۵ کاربر</span>
+</div>
+<div class="mt-3">
+<h4 class="font-title-md text-title-md text-[#0f172a] dark:text-white font-bold">صندوق‌دار فروشگاه</h4>
+<p class="text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8] mt-0.5">فروش سریع POS و صدور فاکتور</p>
+</div>
+<div class="mt-3 pt-2 border-t border-[#f1f5f9] dark:border-[#334155] flex justify-between items-center text-label-md">
+<span class="text-[#64748b] dark:text-[#94a3b8]">۱۲ مجوز فعال</span>
+<button class="text-primary-container hover:underline">ویرایش</button>
+</div>
+</div>
+</div>
+<!-- Comprehensive Permissions Matrix (Module × Action) -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl border border-[#e2e8f0] dark:border-[#334155] shadow-sm overflow-hidden">
+<div class="p-4 border-b border-[#e2e8f0] dark:border-[#334155] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div>
+<h3 class="text-title-lg font-title-lg font-bold text-[#0f172a] dark:text-white">ماتریس جامع مجوزهای عملیاتی (Role Permissions Matrix)</h3>
+<p class="text-body-sm font-body-sm text-[#64748b] dark:text-[#94a3b8]">تعیین سطح دسترسی تفکیک‌شده برای نقش انتخاب‌شده: <strong class="text-primary-container dark:text-inverse-primary">«مدیر فروش و بازرگانی»</strong></p>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-[#e2e8f0] dark:border-[#334155] text-body-sm hover:bg-[#f1f5f9] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]">
+              انتخاب همه
+            </button>
+<button class="px-4 py-1.5 rounded-lg bg-primary-container hover:bg-primary text-white text-body-sm font-medium shadow-sm">
+              ذخیره ماتریس دسترسی
+            </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-[#f8fafc] dark:bg-[#0f172a]/70 border-b border-[#e2e8f0] dark:border-[#334155] text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8]">
+<th class="p-3.5 w-64">ماژول سیستمی</th>
+<th class="p-3.5 text-center">مشاهده (Read)</th>
+<th class="p-3.5 text-center">ایجاد (Create)</th>
+<th class="p-3.5 text-center">ویرایش (Edit)</th>
+<th class="p-3.5 text-center">حذف (Delete)</th>
+<th class="p-3.5 text-center">تأیید نهایی (Approve)</th>
+<th class="p-3.5 text-center">خروجی اکسل/چاپ (Export)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e2e8f0] dark:divide-[#334155] text-body-md font-body-md text-[#1e293b] dark:text-[#e2e8f0]">
+<!-- Module 1: Dashboard -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="flex items-center gap-2.5 font-medium">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="dashboard">dashboard</span>
+<span>داشبورد و شاخص‌های کلیدی</span>
+</div>
+</td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-[#94a3b8] opacity-30" disabled="" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-[#94a3b8] opacity-30" disabled="" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-[#94a3b8] opacity-30" disabled="" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-[#94a3b8] opacity-30" disabled="" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+</tr>
+<!-- Module 2: Sales & Invoicing -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors bg-primary/5 dark:bg-primary/[0.03]">
+<td class="p-3.5">
+<div class="flex items-center gap-2.5 font-semibold text-primary-container dark:text-inverse-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="point_of_sale">point_of_sale</span>
+<span>مدیریت فروش و فاکتورها</span>
+</div>
+</td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+</tr>
+<!-- Module 3: Customers -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="flex items-center gap-2.5 font-medium">
+<span class="material-symbols-outlined text-[#64748b] text-[20px]" data-icon="group">group</span>
+<span>مشتریان و حسابداری اشخاص</span>
+</div>
+</td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+</tr>
+<!-- Module 4: Products & Pricing -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="flex items-center gap-2.5 font-medium">
+<span class="material-symbols-outlined text-[#64748b] text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span>کالاها، خدمات و لیست قیمت</span>
+</div>
+</td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+</tr>
+<!-- Module 5: Warehouse & Cardex -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="flex items-center gap-2.5 font-medium">
+<span class="material-symbols-outlined text-[#64748b] text-[20px]" data-icon="warehouse">warehouse</span>
+<span>انبارداری و کاردکس کالا</span>
+</div>
+</td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+</tr>
+<!-- Module 6: Procurement -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="flex items-center gap-2.5 font-medium">
+<span class="material-symbols-outlined text-[#64748b] text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+<span>خرید و تدارکات زنجیره تأمین</span>
+</div>
+</td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+</tr>
+<!-- Module 7: Financial & Treasury -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="flex items-center gap-2.5 font-medium">
+<span class="material-symbols-outlined text-[#64748b] text-[20px]" data-icon="account_balance">account_balance</span>
+<span>عملیات مالی، چک و خزانه‌داری</span>
+</div>
+</td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+</tr>
+<!-- Module 8: Analytics Reports -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="flex items-center gap-2.5 font-medium">
+<span class="material-symbols-outlined text-[#64748b] text-[20px]" data-icon="bar_chart">bar_chart</span>
+<span>گزارش‌های تحلیلی و مدیریتی</span>
+</div>
+</td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-[#94a3b8] opacity-30" disabled="" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-[#94a3b8] opacity-30" disabled="" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-[#94a3b8] opacity-30" disabled="" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-[#94a3b8] opacity-30" disabled="" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+</tr>
+<!-- Module 9: System Settings -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="flex items-center gap-2.5 font-medium text-[#94a3b8]">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span>تنظیمات سیستم و پیکربندی اصلی</span>
+</div>
+</td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+<td class="p-3.5 text-center"><input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ==========================================
+         TAB 3: AUDIT LOG & SECURITY TRAIL
+         ========================================== -->
+<div class="tab-pane hidden space-y-6" id="audit-tab">
+<!-- Live Audit Search & Date Filter -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl p-4 border border-[#e2e8f0] dark:border-[#334155] shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+<div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#94a3b8] text-[20px]" data-icon="search">search</span>
+<input class="w-full pr-10 pl-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md text-[#0f172a] dark:text-white" placeholder="فیلتر رویداد بر اساس کاربر، IP یا شناسه سند..." type="text"/>
+</div>
+<select class="px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md text-[#334155] dark:text-[#cbd5e1]">
+<option value="">همه انواع عملیات (Action Types)</option>
+<option value="login">ورود / خروج و احراز هویت</option>
+<option value="invoice_edit">ویرایش یا حذف فاکتور</option>
+<option value="price_mod">تغییر نرخ و سقف تخفیف</option>
+<option value="role_change">تغییر دسترسی و رول‌ها</option>
+<option value="warehouse_out">خروج غیرعادی از انبار</option>
+</select>
+<select class="px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md text-[#334155] dark:text-[#cbd5e1]">
+<option value="today">امروز (۱۴۰۳/۰۸/۲۴)</option>
+<option value="week">۷ روز اخیر</option>
+<option value="month">۳۰ روز اخیر</option>
+<option value="custom">بازه سفارشی تاریخ شمسی</option>
+</select>
+</div>
+<div class="flex items-center gap-2 justify-end">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-[#15803d] dark:text-[#86efac] text-label-md font-label-md">
+<span class="w-2 h-2 rounded-full bg-[#16a34a] animate-ping"></span>
+            ثبت زنده رخدادها (Live Socket)
+          </span>
+</div>
+</div>
+<!-- Audit Log Table & Side Diff Viewer Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Live Audit Table (2 cols) -->
+<div class="lg:col-span-2 bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl border border-[#e2e8f0] dark:border-[#334155] shadow-sm overflow-hidden flex flex-col justify-between">
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-[#f8fafc] dark:bg-[#0f172a]/70 border-b border-[#e2e8f0] dark:border-[#334155] text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8]">
+<th class="p-3.5">کاربر و نقش</th>
+<th class="p-3.5">تاریخ و ساعت دقیق</th>
+<th class="p-3.5">نوع رویداد</th>
+<th class="p-3.5">بخش / ماژول</th>
+<th class="p-3.5 text-center">وضعیت</th>
+<th class="p-3.5 text-left pl-4">بررسی Diff</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e2e8f0] dark:divide-[#334155] text-body-sm font-body-sm text-[#1e293b] dark:text-[#e2e8f0]">
+<!-- Log 1 (Selected with active Diff preview) -->
+<tr class="bg-primary/5 dark:bg-primary/[0.08] hover:bg-primary/10 transition-colors">
+<td class="p-3.5">
+<div class="font-semibold text-[#0f172a] dark:text-white">سارا ملک‌پور</div>
+<span class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">مدیر فروش</span>
+</td>
+<td class="p-3.5 text-body-sm font-body-sm">
+<div>۱۴۰۳/۰۸/۲۴ - ۱۱:۱۴:۲۲</div>
+<span class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">IP: 185.120.44.12</span>
+</td>
+<td class="p-3.5">
+<span class="font-medium text-amber-700 dark:text-amber-300">افزایش سقف تخفیف فاکتور</span>
+<div class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">سند: #INV-88341</div>
+</td>
+<td class="p-3.5">فروش و فاکتورها</td>
+<td class="p-3.5 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#dcfce7] dark:bg-[#064e3b] text-[#15803d] dark:text-[#86efac]">
+                      موفق
+                    </span>
+</td>
+<td class="p-3.5 text-left pl-4">
+<button class="px-2.5 py-1 rounded bg-primary-container text-white text-label-md font-label-md shadow-sm">
+                      مشاهده تفاوت
+                    </button>
+</td>
+</tr>
+<!-- Log 2 -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="font-semibold text-[#0f172a] dark:text-white">محمدحسن رضایی</div>
+<span class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">مدیر ارشد</span>
+</td>
+<td class="p-3.5 text-body-sm font-body-sm">
+<div>۱۴۰۳/۰۸/۲۴ - ۱۰:۵۲:۰۱</div>
+<span class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">IP: 5.218.140.21</span>
+</td>
+<td class="p-3.5">
+<span class="font-medium text-purple-700 dark:text-purple-300">تغییر مجوز نقش انباردار</span>
+<div class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">افزودن دسترسی کاردکس</div>
+</td>
+<td class="p-3.5">کاربران و امنیت</td>
+<td class="p-3.5 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#dcfce7] dark:bg-[#064e3b] text-[#15803d] dark:text-[#86efac]">
+                      موفق
+                    </span>
+</td>
+<td class="p-3.5 text-left pl-4">
+<button class="px-2.5 py-1 rounded border border-[#e2e8f0] dark:border-[#334155] text-label-md font-label-md hover:bg-[#f1f5f9] dark:hover:bg-[#334155]">
+                      مشاهده تفاوت
+                    </button>
+</td>
+</tr>
+<!-- Log 3 (Suspicious Warning) -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="font-semibold text-[#dc2626]">ناشناس / سیستم</div>
+<span class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">تلاش ورود ناموفق</span>
+</td>
+<td class="p-3.5 text-body-sm font-body-sm">
+<div>۱۴۰۳/۰۸/۲۴ - ۰۹:۴۰:۱۸</div>
+<span class="text-label-sm font-label-sm text-[#dc2626]">IP: 91.99.112.5 (خارجی)</span>
+</td>
+<td class="p-3.5">
+<span class="font-medium text-[#dc2626]">۵ بار ورود با کلمه عبور نادرست</span>
+<div class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">حساب: admin@company.ir</div>
+</td>
+<td class="p-3.5">احراز هویت</td>
+<td class="p-3.5 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#fee2e2] dark:bg-[#7f1d1d] text-[#b91c1c] dark:text-[#fca5a5]">
+                      مسدود شده
+                    </span>
+</td>
+<td class="p-3.5 text-left pl-4">
+<button class="px-2.5 py-1 rounded border border-[#e2e8f0] dark:border-[#334155] text-label-md font-label-md hover:bg-[#f1f5f9] dark:hover:bg-[#334155]">
+                      لاگ خام
+                    </button>
+</td>
+</tr>
+<!-- Log 4 -->
+<tr class="hover:bg-[#f8fafc] dark:hover:bg-[#334155]/40 transition-colors">
+<td class="p-3.5">
+<div class="font-semibold text-[#0f172a] dark:text-white">کریم انصاری‌فرد</div>
+<span class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">سرپرست انبار</span>
+</td>
+<td class="p-3.5 text-body-sm font-body-sm">
+<div>۱۴۰۳/۰۸/۲۴ - ۰۸:۱۵:۰۰</div>
+<span class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">IP: 192.168.1.104</span>
+</td>
+<td class="p-3.5">
+<span class="font-medium text-[#0f172a] dark:text-white">صدور حواله خروج انبار</span>
+<div class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">حواله: #TR-9941</div>
+</td>
+<td class="p-3.5">انبارداری</td>
+<td class="p-3.5 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-[#dcfce7] dark:bg-[#064e3b] text-[#15803d] dark:text-[#86efac]">
+                      موفق
+                    </span>
+</td>
+<td class="p-3.5 text-left pl-4">
+<button class="px-2.5 py-1 rounded border border-[#e2e8f0] dark:border-[#334155] text-label-md font-label-md hover:bg-[#f1f5f9] dark:hover:bg-[#334155]">
+                      مشاهده تفاوت
+                    </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-3 border-t border-[#e2e8f0] dark:border-[#334155] bg-[#f8fafc]/50 dark:bg-[#0f172a]/30 flex items-center justify-between text-body-sm text-[#64748b] dark:text-[#94a3b8]">
+<span>نمایش ۴ رویداد اخیر از ۱۲,۴۹۰ رکورد ممیزی</span>
+<button class="text-primary-container dark:text-inverse-primary hover:underline font-medium">مشاهده آرشیو کامل اسناد</button>
+</div>
+</div>
+<!-- Diff Viewer Card (1 col) -->
+<div class="bg-surface-container-lowest dark:bg-[#1e293b] rounded-xl border border-[#e2e8f0] dark:border-[#334155] p-5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-[#e2e8f0] dark:border-[#334155] pb-3 mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="difference">difference</span>
+<h4 class="font-title-md text-title-md font-bold text-[#0f172a] dark:text-white">تفاوت مقادیر قبل و بعد (Diff Inspector)</h4>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">سند INV-88341</span>
+</div>
+<p class="text-body-sm font-body-sm text-[#64748b] dark:text-[#94a3b8] mb-3">
+              تغییرات اعمال‌شده توسط <strong>سارا ملک‌پور</strong> در بخش صدور فاکتور:
+            </p>
+<!-- Side by Side Diff Visualizer -->
+<div class="space-y-3 font-mono text-body-sm">
+<!-- Field 1: Discount Rate -->
+<div class="p-3 rounded-lg bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155]">
+<div class="text-label-md font-sans text-[#475569] dark:text-[#94a3b8] font-bold mb-1">درصد تخفیف ردیف (Discount Rate):</div>
+<div class="flex items-center justify-between text-body-sm">
+<div class="text-[#dc2626] bg-[#fee2e2] dark:bg-[#7f1d1d]/40 px-2 py-0.5 rounded">
+                    - قبلی: ۵.۰٪
+                  </div>
+<span class="material-symbols-outlined text-[#94a3b8] text-[18px]" data-icon="arrow_left_alt">arrow_left_alt</span>
+<div class="text-[#16a34a] bg-[#dcfce7] dark:bg-[#064e3b]/40 px-2 py-0.5 rounded">
+                    + جدید: ۱۲.۵٪
+                  </div>
+</div>
+</div>
+<!-- Field 2: Total Price -->
+<div class="p-3 rounded-lg bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155]">
+<div class="text-label-md font-sans text-[#475569] dark:text-[#94a3b8] font-bold mb-1">مبلغ نهایی قابل پرداخت:</div>
+<div class="flex items-center justify-between text-body-sm">
+<div class="text-[#dc2626] bg-[#fee2e2] dark:bg-[#7f1d1d]/40 px-2 py-0.5 rounded">
+                    - ۱۴,۲۵۰,۰۰۰ تومان
+                  </div>
+<span class="material-symbols-outlined text-[#94a3b8] text-[18px]" data-icon="arrow_left_alt">arrow_left_alt</span>
+<div class="text-[#16a34a] bg-[#dcfce7] dark:bg-[#064e3b]/40 px-2 py-0.5 rounded">
+                    + ۱۲,۴۶۸,۷۵۰ تومان
+                  </div>
+</div>
+</div>
+<!-- Field 3: Approval Reason -->
+<div class="p-3 rounded-lg bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155]">
+<div class="text-label-md font-sans text-[#475569] dark:text-[#94a3b8] font-bold mb-1">توضیحات و مجوز اعمال:</div>
+<p class="text-body-sm font-sans text-[#334155] dark:text-[#cbd5e1] leading-relaxed mt-1">
+                  «اعمال تخفیف مضاعف طبق تایید تلفنی مدیرعامل برای خریدار حقوقی شرکت پتروشیمی پارس»
+                </p>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-[#e2e8f0] dark:border-[#334155] flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-[#64748b] dark:text-[#94a3b8]">امضای رمزنگاری شده SHA-256</span>
+<button class="text-label-md font-label-md text-primary-container dark:text-inverse-primary hover:underline">مشاهده Payload خام JSON</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ==========================================
+       SECTION 6: DRAWER / MODAL FOR USER INVITATION
+       ========================================== -->
+<div class="fixed inset-0 bg-[#0f172a]/50 dark:bg-black/70 backdrop-blur-sm z-50 hidden transition-opacity" id="drawerOverlay" onclick="closeDrawer()"></div>
+<aside class="fixed top-0 left-0 h-full w-full sm:w-[480px] bg-surface-container-lowest dark:bg-[#1e293b] border-r border-[#e2e8f0] dark:border-[#334155] shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between overflow-y-auto" id="inviteDrawer">
+<!-- Drawer Header -->
+<div class="p-5 border-b border-[#e2e8f0] dark:border-[#334155] flex items-center justify-between bg-[#f8fafc] dark:bg-[#0f172a]/50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary/10 text-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]" data-icon="person_add">person_add</span>
+</div>
+<div>
+<h3 class="font-title-lg text-title-lg font-bold text-[#0f172a] dark:text-white">دعوت و تعریف کاربر جدید</h3>
+<p class="text-label-md font-label-md text-[#64748b] dark:text-[#94a3b8]">ارسال لینک احراز هویت و تعیین نقش سازمانی</p>
+</div>
+</div>
+<button class="p-2 rounded-lg text-[#64748b] hover:bg-[#e2e8f0] dark:hover:bg-[#334155]" onclick="closeDrawer()">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Drawer Form Body -->
+<form class="p-5 space-y-4 flex-1">
+<!-- Full Name -->
+<div>
+<label class="block text-label-md font-label-md font-semibold text-[#334155] dark:text-[#cbd5e1] mb-1.5">نام و نام خانوادگی کامل *</label>
+<input class="w-full px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" placeholder="مثلاً: علیرضا حسینی" type="text"/>
+</div>
+<!-- Mobile & Email in 2 columns -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div>
+<label class="block text-label-md font-label-md font-semibold text-[#334155] dark:text-[#cbd5e1] mb-1.5">شماره تلفن همراه *</label>
+<input class="w-full px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 text-right" dir="ltr" placeholder="0912..." type="tel"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md font-semibold text-[#334155] dark:text-[#cbd5e1] mb-1.5">پست الکترونیکی سازمانی</label>
+<input class="w-full px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 text-right" dir="ltr" placeholder="user@company.ir" type="email"/>
+</div>
+</div>
+<!-- Organizational Role -->
+<div>
+<label class="block text-label-md font-label-md font-semibold text-[#334155] dark:text-[#cbd5e1] mb-1.5">نقش و الگوی دسترسی *</label>
+<select class="w-full px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option>مدیر فروش و بازرگانی (Sales Manager)</option>
+<option>سرپرست انبار مرکزی (Warehouse Head)</option>
+<option>حسابدار ارشد مالی (Chief Accountant)</option>
+<option>صندوق‌دار فروشگاه (POS Cashier)</option>
+<option>مدیر کل سیستم (Super Admin)</option>
+</select>
+</div>
+<!-- Branch Selection -->
+<div>
+<label class="block text-label-md font-label-md font-semibold text-[#334155] dark:text-[#cbd5e1] mb-1.5">شعبه و محل خدمت</label>
+<select class="w-full px-3 py-2 bg-[#f8fafc] dark:bg-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-lg text-body-md font-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option>دفتر مرکزی (تهران - میرداماد)</option>
+<option>انبار مرکزی شادآباد</option>
+<option>شعبه فروشگاهی مگامال</option>
+<option>نمایندگی استان اصفهان</option>
+</select>
+</div>
+<!-- Security Policies for New User -->
+<div class="pt-3 border-t border-[#e2e8f0] dark:border-[#334155] space-y-2.5">
+<label class="block text-label-md font-label-md font-bold text-[#0f172a] dark:text-white">سیاست‌های امنیتی ورود:</label>
+<label class="flex items-center gap-2 text-body-sm font-body-sm cursor-pointer">
+<input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span>الزام به فعال‌سازی رمز دومرحله‌ای (2FA) در اولین ورود</span>
+</label>
+<label class="flex items-center gap-2 text-body-sm font-body-sm cursor-pointer">
+<input checked="" class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span>ارسال آنی پیامک حاوی لینک فعال‌سازی حساب کاربری</span>
+</label>
+<label class="flex items-center gap-2 text-body-sm font-body-sm cursor-pointer">
+<input class="rounded border-[#cbd5e1] text-primary-container focus:ring-primary-container" type="checkbox"/>
+<span>محدودسازی ورود فقط به IPهای استاتیک دفتر مرکزی</span>
+</label>
+</div>
+</form>
+<!-- Drawer Footer Actions -->
+<div class="p-5 border-t border-[#e2e8f0] dark:border-[#334155] bg-[#f8fafc] dark:bg-[#0f172a]/50 flex items-center justify-end gap-3">
+<button class="px-4 py-2 rounded-xl border border-[#e2e8f0] dark:border-[#334155] text-body-md font-body-md text-[#475569] dark:text-[#cbd5e1] hover:bg-[#f1f5f9] dark:hover:bg-[#334155]" onclick="closeDrawer()" type="button">
+        انصراف
+      </button>
+<button class="px-5 py-2 rounded-xl bg-primary-container hover:bg-primary text-white text-body-md font-body-md font-semibold shadow-sm" onclick="handleInviteUser()" type="button">
+        ارسال دعوت‌نامه
+      </button>
+</div>
+</aside>
+<!-- ==========================================
+       INLINE INTERACTION LOGIC
+       ========================================== -->
+<script>
+    // Tab switching logic
+    function switchTab(tabId) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      // Show targeted tab
+      const target = document.getElementById(tabId);
+      if (target) target.classList.remove('hidden');
+
+      // Update Tab button visuals
+      const btnMap = {
+        'users-tab': 'tabBtn-users',
+        'roles-tab': 'tabBtn-roles',
+        'audit-tab': 'tabBtn-audit'
+      };
+
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('border-primary-container', 'text-primary-container', 'dark:text-inverse-primary', 'bg-primary/5', 'dark:bg-primary/10', 'font-bold');
+        btn.classList.add('text-[#64748b]', 'dark:text-[#94a3b8]', 'border-transparent');
+      });
+
+      const activeBtn = document.getElementById(btnMap[tabId]);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-[#64748b]', 'dark:text-[#94a3b8]', 'border-transparent');
+        activeBtn.classList.add('border-primary-container', 'text-primary-container', 'dark:text-inverse-primary', 'bg-primary/5', 'dark:bg-primary/10', 'font-bold');
+      }
+    }
+
+    // Drawer management
+    function openDrawer() {
+      const overlay = document.getElementById('drawerOverlay');
+      const drawer = document.getElementById('inviteDrawer');
+      overlay.classList.remove('hidden');
+      setTimeout(() => {
+        drawer.classList.remove('-translate-x-full');
+      }, 10);
+    }
+
+    function closeDrawer() {
+      const overlay = document.getElementById('drawerOverlay');
+      const drawer = document.getElementById('inviteDrawer');
+      drawer.classList.add('-translate-x-full');
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+      }, 300);
+    }
+
+    function handleInviteUser() {
+      alert('دعوت‌نامه با موفقیت ارسال شد و در فهرست در انتظار تایید قرار گرفت.');
+      closeDrawer();
+    }
+
+    // Live Dark Mode Switching
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (themeToggleBtn) themeToggleBtn.addEventListener('click', () => {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.remove('light');
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+
+    // Check system or saved preference
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
+  </script>
+
+{% endblock %}

@@ -1,0 +1,947 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Main Content Wrapper (Modular layout without external shell) -->
+<main class="w-full ] p-4 sm:p-6 lg:p-8 space-y-6">
+<!-- Top Action Toolbar -->
+<header class="bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/40 dark:border-dark-border rounded-xl p-4 sm:p-5 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary/10 dark:bg-primary/20 text-primary dark:text-inverse-primary flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-2xl" data-icon="warehouse">warehouse</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-headline-xl font-headline-xl text-on-surface dark:text-dark-text tracking-tight">۱۴. تأمین‌کنندگان و پرونده تأمین‌کننده</h1>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary/10 text-primary dark:bg-primary/20 dark:text-inverse-primary border border-primary/20">نسخه سازمانی ۴.۲</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted mt-0.5">مدیریت چرخه خرید، اعتبارسنجی تأمین‌کنندگان تجاری، مغایرت‌گیری و رصد تراز مالی</p>
+</div>
+</div>
+<!-- Action Cluster: Quick Theme Toggle, Export PDF/Excel, New Supplier -->
+<div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
+<!-- Quick Theme Toggle Switch Button -->
+
+<!-- Export Dropdown / Trigger -->
+<div class="relative inline-block text-right">
+<button class="px-3.5 py-2 rounded-lg border border-outline-variant/60 dark:border-dark-border bg-surface-container-lowest dark:bg-dark-surface text-on-surface dark:text-dark-text text-body-sm font-body-sm flex items-center gap-2 hover:bg-surface-container-low dark:hover:bg-dark-surface-elevated transition-colors shadow-sm" onclick="toggleExportMenu()">
+<span class="material-symbols-outlined text-lg text-secondary" data-icon="file_download">file_download</span>
+<span>خروجی اسناد</span>
+<span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+</button>
+<div class="hidden absolute left-0 mt-2 w-48 rounded-xl bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/40 dark:border-dark-border shadow-lg py-1.5 z-50" id="exportMenu">
+<button class="w-full text-right px-4 py-2 text-body-sm font-body-sm hover:bg-surface-container-low dark:hover:bg-dark-surface-elevated flex items-center gap-2.5 text-on-surface dark:text-dark-text" onclick="alert('گزارش اکسل تأمین‌کنندگان تولید شد.')">
+<span class="material-symbols-outlined text-emerald-600 text-base" data-icon="table_view">table_view</span>
+<span>خروجی جامع اکسل (XLSX)</span>
+</button>
+<button class="w-full text-right px-4 py-2 text-body-sm font-body-sm hover:bg-surface-container-low dark:hover:bg-dark-surface-elevated flex items-center gap-2.5 text-on-surface dark:text-dark-text" onclick="alert('نسخه چاپی رسمی آماده شد.')">
+<span class="material-symbols-outlined text-rose-600 text-base" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span>پرونده تجاری چاپی (PDF)</span>
+</button>
+</div>
+</div>
+<!-- + New Supplier Primary Button -->
+<button class="px-4 py-2 rounded-lg bg-primary-container hover:bg-blue-700 text-on-primary font-title-md text-title-md flex items-center gap-2 shadow-sm transition-all active:scale-95" onclick="openNewSupplierModal()">
+<span class="material-symbols-outlined text-xl" data-icon="person_add">person_add</span>
+<span>+ ثبت تأمین‌کننده جدید</span>
+</button>
+</div>
+</header>
+<!-- KPI Metric Cards Grid (Guaranteed No Overflow, 4 Columns) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1: تأمین‌کنندگان فعال -->
+<div class="bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/40 dark:border-dark-border rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted block">تأمین‌کنندگان فعال</span>
+<div class="mt-2 flex items-baseline gap-2 flex-wrap">
+<span class="text-display-lg font-display-lg text-on-surface dark:text-dark-text tracking-tight font-extrabold font-tabular-num">{{ sm_supplier_count }}</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted">شرکت رسمی</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-primary dark:text-inverse-primary flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-dark-border/60 flex items-center justify-between text-label-md font-label-md">
+<div class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined text-base" data-icon="trending_up">trending_up</span>
+<span class="font-tabular-num">۸.۴٪+</span>
+<span class="text-on-surface-variant dark:text-dark-muted font-normal">رشد ماهانه</span>
+</div>
+<span class="text-on-surface-variant dark:text-dark-muted">۳ شرکت در ارزیابی</span>
+</div>
+</div>
+<!-- KPI 2: بدهکاران تجاری / مطالبات در گردش -->
+<div class="bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/40 dark:border-dark-border rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="max-w-[80%]">
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted block truncate">بدهکاران تجاری / مطالبات در گردش</span>
+<div class="mt-2 flex items-baseline gap-1.5 flex-wrap">
+<span class="text-headline-xl font-headline-xl text-on-surface dark:text-dark-text font-bold font-tabular-num">{{ sm_total_debt|floatformat:"-0" }}</span>
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-dark-muted">تومان</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-dark-border/60 flex items-center justify-between text-label-md font-label-md">
+<span class="px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 font-medium">سررسید این ماه: ۶ فقره چک</span>
+<span class="text-on-surface-variant dark:text-dark-muted">۹۵٪ وثیقه‌دار</span>
+</div>
+</div>
+<!-- KPI 3: حجم خرید این ماه -->
+<div class="bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/40 dark:border-dark-border rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="max-w-[80%]">
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted block">حجم خرید این ماه</span>
+<div class="mt-2 flex items-baseline gap-1.5 flex-wrap">
+<span class="text-headline-xl font-headline-xl text-on-surface dark:text-dark-text font-bold font-tabular-num">{{ sm_monthly_purchases|floatformat:"-0" }}</span>
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-dark-muted">تومان</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-dark-border/60 flex items-center justify-between text-label-md font-label-md">
+<div class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined text-base" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span>۱۲ پرونده خرید قطعی</span>
+</div>
+<span class="text-on-surface-variant dark:text-dark-muted">۳ انبار فعال</span>
+</div>
+</div>
+<!-- KPI 4: سفارش‌های باز و در راه -->
+<div class="bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/40 dark:border-dark-border rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted block">سفارش‌های باز و در راه</span>
+<div class="mt-2 flex items-baseline gap-2 flex-wrap">
+<span class="text-display-lg font-display-lg text-on-surface dark:text-dark-text tracking-tight font-extrabold font-tabular-num">{{ sm_open_orders }}</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted">سفارش ارسالی فعال</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-dark-border/60 flex items-center justify-between text-label-md font-label-md">
+<div class="flex items-center gap-1 text-indigo-600 dark:text-indigo-400">
+<span class="material-symbols-outlined text-base" data-icon="payments">payments</span>
+<span class="font-tabular-num">ارزش: {{ sm_open_value|floatformat:"-0" }} تومان</span>
+</div>
+<span class="text-on-surface-variant dark:text-dark-muted">تحویل حداکثر ۴۸ ساعت</span>
+</div>
+</div>
+</section>
+<!-- Search & Multi-Filter Quick Bar -->
+<div class="bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/40 dark:border-dark-border rounded-xl p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+<div class="flex flex-1 items-center gap-3">
+<!-- Live Search Field -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant dark:text-dark-muted text-xl" data-icon="search">search</span>
+<input class="w-full pr-10 pl-4 py-2 text-body-sm font-body-sm bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/50 dark:border-dark-border rounded-lg focus:outline-none focus:border-primary dark:focus:border-inverse-primary text-on-surface dark:text-dark-text transition-all" id="tableQuickSearch" onkeyup="filterTableBySearch()" placeholder="جستجوی سریع نام شرکت، کد ملی، مدیرعامل یا رسته کالا..." type="text"/>
+</div>
+<!-- Quick Category Select -->
+<div class="hidden sm:flex items-center gap-2">
+<select class="text-body-sm font-body-sm bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/50 dark:border-dark-border rounded-lg px-3 py-2 text-on-surface dark:text-dark-text focus:outline-none" id="categoryQuickFilter" onchange="filterByCategory(this.value)">
+<option value="all">همه رسته‌های تخصصی</option>
+<option value="steel">فولاد و مقاطع فلزی</option>
+<option value="petro">صنایع پتروشیمی</option>
+<option value="hydraulic">قطعات هیدرولیک و پنوماتیک</option>
+<option value="cable">کابل، سیم و اتصالات الکتریک</option>
+</select>
+</div>
+</div>
+<!-- Action status counters -->
+<div class="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant dark:text-dark-muted">
+<span>نمایش <strong class="text-on-surface dark:text-dark-text font-bold" id="rowCountDisplay">۵</strong> از ۴۸ تأمین‌کننده</span>
+<button class="text-primary dark:text-inverse-primary hover:underline mr-2 text-body-sm" onclick="resetAllFilters()">بازنشانی فیلترها</button>
+</div>
+</div>
+<!-- Enterprise Data Table Section with Excel-Style Column Header Filters -->
+<div class="bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/40 dark:border-dark-border rounded-xl shadow-sm overflow-visible">
+<!-- Table Wrapper with horizontal scroll and safe overflow for popup filters -->
+<div class="overflow-x-auto custom-scrollbar overflow-y-visible min-h-[440px]">
+<table class="w-full text-right border-collapse text-body-sm font-body-sm">
+<!-- Sticky Header with Excel dropdowns -->
+<thead>
+<tr class="bg-slate-50 dark:bg-dark-surface-elevated border-b border-outline-variant/50 dark:border-dark-border text-on-surface-variant dark:text-dark-muted font-title-md text-title-md select-none">
+<!-- Checkbox -->
+<th class="p-3.5 w-12 text-center">
+<input class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-0 cursor-pointer" id="selectAllCheckbox" onclick="toggleSelectAll(this)" type="checkbox"/>
+</th>
+<!-- Column 1: نام شرکت / برند تأمین‌کننده (Excel Filter) -->
+<th class="p-3.5 relative whitespace-nowrap min-w-[220px]">
+<div class="flex items-center justify-between gap-1">
+<span>نام شرکت / برند</span>
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" onclick="toggleExcelFilter('filterCompany', event)" type="button">
+<span class="material-symbols-outlined text-base" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+<!-- Excel Dropdown Popup -->
+<div class="excel-dropdown hidden absolute top-full right-2 mt-1 w-64 bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant dark:border-dark-border rounded-xl shadow-2xl p-3 z-50 text-right" id="filterCompany">
+<div class="text-label-sm font-bold text-on-surface dark:text-dark-text mb-2 flex items-center justify-between">
+<span>فیلتر ستون نام شرکت</span>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" onclick="closeExcelFilter('filterCompany')"><span class="material-symbols-outlined text-sm" data-icon="close">close</span></button>
+</div>
+<div class="flex flex-col gap-1 border-b border-slate-200 dark:border-slate-700 pb-2 mb-2">
+<button class="text-right px-2 py-1 text-body-sm hover:bg-slate-100 dark:hover:bg-slate-700 rounded flex items-center gap-2" onclick="sortTable(1, 'asc'); closeExcelFilter('filterCompany');">
+<span class="material-symbols-outlined text-sm" data-icon="arrow_upward">arrow_upward</span> مرتب‌سازی الفبایی (الف تا ی)
+                    </button>
+<button class="text-right px-2 py-1 text-body-sm hover:bg-slate-100 dark:hover:bg-slate-700 rounded flex items-center gap-2" onclick="sortTable(1, 'desc'); closeExcelFilter('filterCompany');">
+<span class="material-symbols-outlined text-sm" data-icon="arrow_downward">arrow_downward</span> مرتب‌سازی معکوس (ی تا الف)
+                    </button>
+</div>
+<input class="w-full text-xs p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-on-surface dark:text-dark-text mb-2" placeholder="جستجو در مقادیر..." type="text"/>
+<div class="max-h-28 overflow-y-auto space-y-1 text-xs text-on-surface dark:text-dark-text">
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary" type="checkbox"/> فولاد گستر آذرین</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary" type="checkbox"/> پترو شیمیایی رازی</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary" type="checkbox"/> هیدرولیک صنعت سپهر</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary" type="checkbox"/> سیم و کابل نوین البرز</label>
+</div>
+</div>
+</th>
+<!-- Column 2: حوزه تخصصی و رسته -->
+<th class="p-3.5 relative whitespace-nowrap min-w-[170px]">
+<div class="flex items-center justify-between gap-1">
+<span>حوزه و رسته</span>
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" onclick="toggleExcelFilter('filterField', event)" type="button">
+<span class="material-symbols-outlined text-base" data-icon="tune">tune</span>
+</button>
+</div>
+<!-- Excel Dropdown -->
+<div class="excel-dropdown hidden absolute top-full right-2 mt-1 w-60 bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant dark:border-dark-border rounded-xl shadow-2xl p-3 z-50 text-right" id="filterField">
+<div class="text-label-sm font-bold text-on-surface dark:text-dark-text mb-2">انتخاب رسته تأمین</div>
+<div class="space-y-1.5 text-xs text-on-surface dark:text-dark-text">
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> فولاد و مقاطع فلزی</label>
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> صنایع پتروشیمی</label>
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> قطعات هیدرولیک</label>
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> کابل و تجهیزات شبکه</label>
+</div>
+</div>
+</th>
+<!-- Column 3: رتبه‌بندی اعتباری -->
+<th class="p-3.5 relative whitespace-nowrap min-w-[130px]">
+<div class="flex items-center justify-between gap-1">
+<span>رتبه اعتباری</span>
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" onclick="toggleExcelFilter('filterGrade', event)" type="button">
+<span class="material-symbols-outlined text-base" data-icon="star">star</span>
+</button>
+</div>
+<!-- Dropdown -->
+<div class="excel-dropdown hidden absolute top-full right-2 mt-1 w-52 bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant dark:border-dark-border rounded-xl shadow-2xl p-3 z-50 text-right" id="filterGrade">
+<div class="text-label-sm font-bold text-on-surface dark:text-dark-text mb-2">گرید اعتباری مالی</div>
+<div class="space-y-1 text-xs text-on-surface dark:text-dark-text">
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> گرید +A (عالی)</label>
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> گرید A (معتبر)</label>
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> گرید B (متوسط)</label>
+</div>
+</div>
+</th>
+<!-- Column 4: شماره تماس و شهر -->
+<th class="p-3.5 whitespace-nowrap min-w-[150px]">
+<span>تماس و مرکزیت</span>
+</th>
+<!-- Column 5: تعداد سفارشات -->
+<th class="p-3.5 whitespace-nowrap min-w-[100px] text-center">
+<span>تعداد سفارش</span>
+</th>
+<!-- Column 6: ارزش کل مبادلات (تومان) -->
+<th class="p-3.5 whitespace-nowrap min-w-[170px] text-left">
+<span>ارزش کل مبادلات (تومان)</span>
+</th>
+<!-- Column 7: مانده حساب / وضعیت تسویه (Excel Filter) -->
+<th class="p-3.5 relative whitespace-nowrap min-w-[150px]">
+<div class="flex items-center justify-between gap-1">
+<span>وضعیت حساب</span>
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" onclick="toggleExcelFilter('filterStatus', event)" type="button">
+<span class="material-symbols-outlined text-base" data-icon="filter_alt">filter_alt</span>
+</button>
+</div>
+<!-- Status Dropdown -->
+<div class="excel-dropdown hidden absolute top-full left-0 sm:right-2 mt-1 w-56 bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant dark:border-dark-border rounded-xl shadow-2xl p-3 z-50 text-right" id="filterStatus">
+<div class="text-label-sm font-bold text-on-surface dark:text-dark-text mb-2">وضعیت تسویه مالی</div>
+<div class="space-y-1 text-xs text-on-surface dark:text-dark-text">
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> تسویه کامل</label>
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> چک در جریان</label>
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> بستانکار</label>
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary" type="checkbox"/> بدهی معوق</label>
+</div>
+</div>
+</th>
+<!-- Column 8: آخرین تاریخ سفارش -->
+<th class="p-3.5 whitespace-nowrap min-w-[120px]">
+<span>آخرین سفارش</span>
+</th>
+<!-- Column 9: دکمه‌های عملیات -->
+<th class="p-3.5 whitespace-nowrap min-w-[140px] text-center">
+<span>عملیات</span>
+</th>
+</tr>
+</thead>
+<!-- Table Body with Sample Suppliers -->
+<tbody class="divide-y divide-outline-variant/30 dark:divide-dark-border/60" id="supplierTableBody">
+<!-- Row 1: فولاد گستر آذرین -->
+<tr class="hover:bg-slate-50 dark:hover:bg-dark-surface-elevated/70 transition-colors group cursor-pointer" onclick="selectSupplierProfile('سیمان و فولاد گستر آذرین', '۱۰۱۰۳۸۴۷۲۹۱', 'مهندس کامران خسروی', 'فولاد و مقاطع فلزی', 'گرید +A', '۰۲۱-۸۸۹۳۴۲۱۰', 'تهران - شهرک صنعتی شمس‌آباد', '۳۴', '۷,۸۴۰,۰۰۰,۰۰۰', 'چک در جریان', '۱۴۰۳/۰۸/۲۴', '۴۵ روزه اعتباری', '۱۰,۰۰۰,۰۰۰,۰۰۰', 'IR82 0120 0000 0000 1234 5678 90')">
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<input class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-0 row-checkbox cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-950 text-primary dark:text-inverse-primary font-bold flex items-center justify-center shrink-0 text-title-md">
+                    ف
+                  </div>
+<div>
+<span class="font-bold text-on-surface dark:text-dark-text block">فولاد گستر آذرین</span>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted mt-0.5">
+<span>شناسه: ۱۰۱۰۳۸۴۷۲۹۱</span>
+<span>•</span>
+<span>مدیر: م. خسروی</span>
+</div>
+</div>
+</div>
+</td>
+<td class="p-3.5">
+<span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-on-surface dark:text-dark-text text-label-md">فولاد و مقاطع فلزی</span>
+</td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+<span class="material-symbols-outlined text-xs" data-icon="verified">verified</span>
+                  گرید +A
+                </span>
+</td>
+<td class="p-3.5">
+<div class="text-body-sm font-body-sm font-tabular-num">۰۲۱-۸۸۹۳۴۲۱۰</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted">تهران، شمس‌آباد</div>
+</td>
+<td class="p-3.5 text-center font-bold font-tabular-num">۳۴</td>
+<td class="p-3.5 text-left font-bold font-tabular-num text-on-surface dark:text-dark-text">
+                ۷,۸۴۰,۰۰۰,۰۰۰
+              </td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  چک در جریان
+                </span>
+</td>
+<td class="p-3.5 font-tabular-num text-on-surface-variant dark:text-dark-muted">۱۴۰۳/۰۸/۲۴</td>
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<div class="flex items-center justify-center gap-1.5">
+<button class="p-1.5 rounded-lg text-primary dark:text-inverse-primary hover:bg-primary/10 transition-colors" onclick="viewDetailedDossier('فولاد گستر آذرین')" title="مشاهده پرونده ۳۶۰ درجه">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors" onclick="quickPurchaseOrder('فولاد گستر آذرین')" title="ثبت سفارش خرید سریع">
+<span class="material-symbols-outlined text-lg" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant dark:text-dark-muted hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="ویرایش اطلاعات">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: صنایع پتروشیمی رازی -->
+<tr class="hover:bg-slate-50 dark:hover:bg-dark-surface-elevated/70 transition-colors group cursor-pointer" onclick="selectSupplierProfile('صنایع پتروشیمی رازی', '۱۰۲۶۰۴۹۱۸۲۳', 'دکتر علیرضا رستگار', 'صنایع پتروشیمی', 'گرید A', '۰۳۱-۳۶۲۸۹۴۱۱', 'اصفهان - شهرک صنعتی جی', '۱۹', '۴,۱۲۰,۰۰۰,۰۰۰', 'تسویه کامل', '۱۴۰۳/۰۸/۲۲', 'نقدی با تخفیف ۳٪', '۶,۰۰۰,۰۰۰,۰۰۰', 'IR44 0170 0000 0000 9876 5432 10')">
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<input class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-0 row-checkbox cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-teal-100 dark:bg-teal-950 text-teal-700 dark:text-teal-300 font-bold flex items-center justify-center shrink-0 text-title-md">
+                    پ
+                  </div>
+<div>
+<span class="font-bold text-on-surface dark:text-dark-text block">صنایع پتروشیمی رازی</span>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted mt-0.5">
+<span>شناسه: ۱۰۲۶۰۴۹۱۸۲۳</span>
+<span>•</span>
+<span>مدیر: د. رستگار</span>
+</div>
+</div>
+</div>
+</td>
+<td class="p-3.5">
+<span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-on-surface dark:text-dark-text text-label-md">صنایع پتروشیمی</span>
+</td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  گرید A
+                </span>
+</td>
+<td class="p-3.5">
+<div class="text-body-sm font-body-sm font-tabular-num">۰۳۱-۳۶۲۸۹۴۱۱</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted">اصفهان، شهرک جی</div>
+</td>
+<td class="p-3.5 text-center font-bold font-tabular-num">۱۹</td>
+<td class="p-3.5 text-left font-bold font-tabular-num text-on-surface dark:text-dark-text">
+                ۴,۱۲۰,۰۰۰,۰۰۰
+              </td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  تسویه کامل
+                </span>
+</td>
+<td class="p-3.5 font-tabular-num text-on-surface-variant dark:text-dark-muted">۱۴۰۳/۰۸/۲۲</td>
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<div class="flex items-center justify-center gap-1.5">
+<button class="p-1.5 rounded-lg text-primary dark:text-inverse-primary hover:bg-primary/10 transition-colors" onclick="viewDetailedDossier('صنایع پتروشیمی رازی')" title="مشاهده پرونده ۳۶۰ درجه">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors" onclick="quickPurchaseOrder('صنایع پتروشیمی رازی')" title="ثبت سفارش خرید سریع">
+<span class="material-symbols-outlined text-lg" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant dark:text-dark-muted hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="ویرایش اطلاعات">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: هیدرولیک صنعت سپهر -->
+<tr class="hover:bg-slate-50 dark:hover:bg-dark-surface-elevated/70 transition-colors group cursor-pointer" onclick="selectSupplierProfile('هیدرولیک صنعت سپهر', '۱۰۸۶۱۵۲۴۳۷۰', 'مهندس بهزاد نوری', 'قطعات هیدرولیک و پنوماتیک', 'گرید B', '۰۲۱-۶۶۲۴۵۵۰۱', 'تهران - بازار آهن شادآباد', '۲۷', '۲,۹۶۰,۰۰۰,۰۰۰', 'بدهی معوق', '۱۴۰۳/۰۸/۱۹', 'اعتباری ۳۰ روزه', '۳,۵۰۰,۰۰۰,۰۰۰', 'IR12 0540 0000 0000 5544 3322 11')">
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<input class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-0 row-checkbox cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 font-bold flex items-center justify-center shrink-0 text-title-md">
+                    هـ
+                  </div>
+<div>
+<span class="font-bold text-on-surface dark:text-dark-text block">هیدرولیک صنعت سپهر</span>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted mt-0.5">
+<span>شناسه: ۱۰۸۶۱۵۲۴۳۷۰</span>
+<span>•</span>
+<span>مدیر: ب. نوری</span>
+</div>
+</div>
+</div>
+</td>
+<td class="p-3.5">
+<span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-on-surface dark:text-dark-text text-label-md">قطعات هیدرولیک</span>
+</td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                  گرید B
+                </span>
+</td>
+<td class="p-3.5">
+<div class="text-body-sm font-body-sm font-tabular-num">۰۲۱-۶۶۲۴۵۵۰۱</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted">تهران، شادآباد</div>
+</td>
+<td class="p-3.5 text-center font-bold font-tabular-num">۲۷</td>
+<td class="p-3.5 text-left font-bold font-tabular-num text-on-surface dark:text-dark-text">
+                ۲,۹۶۰,۰۰۰,۰۰۰
+              </td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-medium bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300">
+<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                  بدهی معوق
+                </span>
+</td>
+<td class="p-3.5 font-tabular-num text-on-surface-variant dark:text-dark-muted">۱۴۰۳/۰۸/۱۹</td>
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<div class="flex items-center justify-center gap-1.5">
+<button class="p-1.5 rounded-lg text-primary dark:text-inverse-primary hover:bg-primary/10 transition-colors" onclick="viewDetailedDossier('هیدرولیک صنعت سپهر')" title="مشاهده پرونده ۳۶۰ درجه">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors" onclick="quickPurchaseOrder('هیدرولیک صنعت سپهر')" title="ثبت سفارش خرید سریع">
+<span class="material-symbols-outlined text-lg" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant dark:text-dark-muted hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="ویرایش اطلاعات">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: صنایع کابل و اتصالات نوین البرز -->
+<tr class="hover:bg-slate-50 dark:hover:bg-dark-surface-elevated/70 transition-colors group cursor-pointer" onclick="selectSupplierProfile('صنایع کابل نوین البرز', '۱۰۳۲۰۹۸۴۱۱۲', 'خانم مهندس فهیمه صابری', 'کابل، سیم و اتصالات', 'گرید +A', '۰۲۶-۳۴۷۰۹۰۸۱', 'کرج - شهرک صنعتی بهارستان', '۴۱', '۵,۳۳۰,۰۰۰,۰۰۰', 'بستانکار', '۱۴۰۳/۰۸/۱۵', 'اعتباری ۶۰ روزه ضمانتی', '۸,۰۰۰,۰۰۰,۰۰۰', 'IR90 0190 0000 0000 6789 0123 45')">
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<input class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-0 row-checkbox cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold flex items-center justify-center shrink-0 text-title-md">
+                    ک
+                  </div>
+<div>
+<span class="font-bold text-on-surface dark:text-dark-text block">سیم و کابل نوین البرز</span>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted mt-0.5">
+<span>شناسه: ۱۰۳۲۰۹۸۴۱۱۲</span>
+<span>•</span>
+<span>مدیر: ف. صابری</span>
+</div>
+</div>
+</div>
+</td>
+<td class="p-3.5">
+<span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-on-surface dark:text-dark-text text-label-md">کابل و اتصالات</span>
+</td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+<span class="material-symbols-outlined text-xs" data-icon="verified">verified</span>
+                  گرید +A
+                </span>
+</td>
+<td class="p-3.5">
+<div class="text-body-sm font-body-sm font-tabular-num">۰۲۶-۳۴۷۰۹۰۸۱</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted">البرز، بهارستان</div>
+</td>
+<td class="p-3.5 text-center font-bold font-tabular-num">۴۱</td>
+<td class="p-3.5 text-left font-bold font-tabular-num text-on-surface dark:text-dark-text">
+                ۵,۳۳۰,۰۰۰,۰۰۰
+              </td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  بستانکار (پیش‌پرداخت)
+                </span>
+</td>
+<td class="p-3.5 font-tabular-num text-on-surface-variant dark:text-dark-muted">۱۴۰۳/۰۸/۱۵</td>
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<div class="flex items-center justify-center gap-1.5">
+<button class="p-1.5 rounded-lg text-primary dark:text-inverse-primary hover:bg-primary/10 transition-colors" onclick="viewDetailedDossier('سیم و کابل نوین البرز')" title="مشاهده پرونده ۳۶۰ درجه">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors" onclick="quickPurchaseOrder('سیم و کابل نوین البرز')" title="ثبت سفارش خرید سریع">
+<span class="material-symbols-outlined text-lg" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant dark:text-dark-muted hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="ویرایش اطلاعات">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: شیرآلات و اتصالات گاز سوزان -->
+<tr class="hover:bg-slate-50 dark:hover:bg-dark-surface-elevated/70 transition-colors group cursor-pointer" onclick="selectSupplierProfile('صنایع شیرآلات گاز سوزان', '۱۰۷۲۰۰۳۴۵۱۱', 'مهندس رسول مرادی', 'اتصالات صنعتی و گازسوز', 'گرید A', '۰۳۱-۴۲۲۵۳۴۰۰', 'نجف‌آباد - منطقه صنعتی', '۱۵', '۱,۴۵۰,۰۰۰,۰۰۰', 'تسویه کامل', '۱۴۰۳/۰۸/۰۸', 'اعتباری ۳۰ روزه', '۲,۵۰۰,۰۰۰,۰۰۰', 'IR33 0150 0000 0000 1122 3344 55')">
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<input class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-0 row-checkbox cursor-pointer" type="checkbox"/>
+</td>
+<td class="p-3.5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold flex items-center justify-center shrink-0 text-title-md">
+                    گ
+                  </div>
+<div>
+<span class="font-bold text-on-surface dark:text-dark-text block">شیرآلات گاز سوزان</span>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted mt-0.5">
+<span>شناسه: ۱۰۷۲۰۰۳۴۵۱۱</span>
+<span>•</span>
+<span>مدیر: ر. مرادی</span>
+</div>
+</div>
+</div>
+</td>
+<td class="p-3.5">
+<span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-on-surface dark:text-dark-text text-label-md">تجهیزات صنعتی</span>
+</td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  گرید A
+                </span>
+</td>
+<td class="p-3.5">
+<div class="text-body-sm font-body-sm font-tabular-num">۰۳۱-۴۲۲۵۳۴۰۰</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant dark:text-dark-muted">اصفهان، نجف‌آباد</div>
+</td>
+<td class="p-3.5 text-center font-bold font-tabular-num">۱۵</td>
+<td class="p-3.5 text-left font-bold font-tabular-num text-on-surface dark:text-dark-text">
+                ۱,۴۵۰,۰۰۰,۰۰۰
+              </td>
+<td class="p-3.5">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  تسویه کامل
+                </span>
+</td>
+<td class="p-3.5 font-tabular-num text-on-surface-variant dark:text-dark-muted">۱۴۰۳/۰۸/۰۸</td>
+<td class="p-3.5 text-center" onclick="event.stopPropagation()">
+<div class="flex items-center justify-center gap-1.5">
+<button class="p-1.5 rounded-lg text-primary dark:text-inverse-primary hover:bg-primary/10 transition-colors" onclick="viewDetailedDossier('شیرآلات گاز سوزان')" title="مشاهده پرونده ۳۶۰ درجه">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors" onclick="quickPurchaseOrder('شیرآلات گاز سوزان')" title="ثبت سفارش خرید سریع">
+<span class="material-symbols-outlined text-lg" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant dark:text-dark-muted hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="ویرایش اطلاعات">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination & Status Bar Footer -->
+<div class="p-4 border-t border-outline-variant/40 dark:border-dark-border flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted">
+<div class="flex items-center gap-2">
+<span>تعداد سطر در هر صفحه:</span>
+<select class="bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/50 dark:border-dark-border rounded px-2 py-1 text-on-surface dark:text-dark-text text-xs">
+<option>۵</option>
+<option>۱۰</option>
+<option>۲۵</option>
+<option>۵۰</option>
+</select>
+<span class="text-xs mr-2">صفحه ۱ از ۱۰</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded border border-outline-variant/40 dark:border-dark-border hover:bg-slate-100 dark:hover:bg-dark-surface-elevated disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-base" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded bg-primary text-white text-xs font-bold">۱</button>
+<button class="w-8 h-8 rounded hover:bg-slate-100 dark:hover:bg-dark-surface-elevated text-xs">۲</button>
+<button class="w-8 h-8 rounded hover:bg-slate-100 dark:hover:bg-dark-surface-elevated text-xs">۳</button>
+<span class="px-1">...</span>
+<button class="w-8 h-8 rounded hover:bg-slate-100 dark:hover:bg-dark-surface-elevated text-xs">۱۰</button>
+<button class="p-1.5 rounded border border-outline-variant/40 dark:border-dark-border hover:bg-slate-100 dark:hover:bg-dark-surface-elevated">
+<span class="material-symbols-outlined text-base" data-icon="chevron_left">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 360-Degree Supplier Dossier (پرونده تعاملی ۳۶۰ درجه تأمین‌کننده) -->
+<section class="bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/40 dark:border-dark-border rounded-xl p-6 shadow-sm" id="supplierDossierPanel">
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-outline-variant/30 dark:border-dark-border pb-4 mb-5">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary/10 dark:bg-primary/20 text-primary dark:text-inverse-primary flex items-center justify-center font-extrabold text-headline-md">
+            ۳۶۰°
+          </div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-headline-lg font-headline-lg text-on-surface dark:text-dark-text font-bold" id="dossierName">پرونده ۳۶۰ درجه: فولاد گستر آذرین</h2>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300" id="dossierGrade">گرید +A</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted mt-0.5">شناسه ملی: <span class="font-tabular-num" id="dossierNationalId">۱۰۱۰۳۸۴۷۲۹۱</span> | مدیر عامل: <span id="dossierManager">مهندس کامران خسروی</span></p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-body-sm font-body-sm flex items-center gap-2 shadow-sm transition-all" onclick="quickPurchaseOrder(document.getElementById('dossierName').innerText)">
+<span class="material-symbols-outlined text-lg" data-icon="receipt_long">receipt_long</span>
+<span>صدور پیش‌فاکتور خرید جدید</span>
+</button>
+<button class="px-3.5 py-2 rounded-lg border border-outline-variant/60 dark:border-dark-border hover:bg-slate-100 dark:hover:bg-dark-surface-elevated text-on-surface dark:text-dark-text text-body-sm font-body-sm flex items-center gap-2" onclick="alert('تاریخچه تراکنش‌های بانکی بارگذاری شد.')">
+<span class="material-symbols-outlined text-lg" data-icon="account_balance">account_balance</span>
+<span>گردش حساب مالی</span>
+</button>
+</div>
+</div>
+<!-- Dossier Details Grid (Bento Grid Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+<!-- Credit terms card -->
+<div class="bg-surface-container-low dark:bg-dark-surface-elevated/70 border border-outline-variant/30 dark:border-dark-border rounded-xl p-4 flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-dark-muted text-body-sm mb-2">
+<span>شرایط تسویه و پرداخت</span>
+<span class="material-symbols-outlined text-primary text-xl" data-icon="schedule">schedule</span>
+</div>
+<div>
+<div class="text-title-lg font-bold text-on-surface dark:text-dark-text" id="dossierTerms">۴۵ روزه اعتباری</div>
+<div class="text-label-md font-label-md text-on-surface-variant dark:text-dark-muted mt-1">سقف اعتبار مجاز: <span class="font-bold font-tabular-num text-emerald-600 dark:text-emerald-400" id="dossierCreditLimit">۱۰ میلیارد تومان</span></div>
+</div>
+</div>
+<!-- Banking Information -->
+<div class="bg-surface-container-low dark:bg-dark-surface-elevated/70 border border-outline-variant/30 dark:border-dark-border rounded-xl p-4 flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-dark-muted text-body-sm mb-2">
+<span>حساب بانکی و شماره شبا</span>
+<span class="material-symbols-outlined text-secondary text-xl" data-icon="credit_card">credit_card</span>
+</div>
+<div>
+<div class="text-xs text-on-surface-variant dark:text-dark-muted">بانک ملت - شعبه مرکزی</div>
+<div class="text-body-sm font-bold font-tabular-num text-on-surface dark:text-dark-text tracking-wider dir-ltr text-right mt-1" id="dossierIban">IR82 0120 0000 0000 1234 5678 90</div>
+</div>
+</div>
+<!-- Primary Goods Supplied -->
+<div class="bg-surface-container-low dark:bg-dark-surface-elevated/70 border border-outline-variant/30 dark:border-dark-border rounded-xl p-4 flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-dark-muted text-body-sm mb-2">
+<span>کالاهای اصلی تأمین‌شده</span>
+<span class="material-symbols-outlined text-amber-600 text-xl" data-icon="inventory">inventory</span>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 text-xs rounded bg-surface-container-lowest dark:bg-dark-surface text-on-surface dark:text-dark-text border border-outline-variant/30">میلگرد A3 آجدار</span>
+<span class="px-2 py-0.5 text-xs rounded bg-surface-container-lowest dark:bg-dark-surface text-on-surface dark:text-dark-text border border-outline-variant/30">تیرآهن ۱۸ اصفهان</span>
+<span class="px-2 py-0.5 text-xs rounded bg-surface-container-lowest dark:bg-dark-surface text-on-surface dark:text-dark-text border border-outline-variant/30">ورق سیاه ۲ میل</span>
+</div>
+</div>
+<!-- Contact & Operations Lead -->
+<div class="bg-surface-container-low dark:bg-dark-surface-elevated/70 border border-outline-variant/30 dark:border-dark-border rounded-xl p-4 flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-dark-muted text-body-sm mb-2">
+<span>کارشناس خرید داخلی</span>
+<span class="material-symbols-outlined text-indigo-600 text-xl" data-icon="badge">badge</span>
+</div>
+<div>
+<div class="text-title-md font-bold text-on-surface dark:text-dark-text">مهندس نیما رضوانی</div>
+<div class="text-label-md font-label-md text-on-surface-variant dark:text-dark-muted mt-1">واحد تدارکات و تأمین فلزات (داخلی ۱۰۴)</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Modal: ثبت تأمین‌کننده جدید (New Supplier Modal) -->
+<div class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" id="newSupplierModal">
+<div class="bg-surface-container-lowest dark:bg-dark-surface border border-outline-variant/60 dark:border-dark-border rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative text-right animate-in fade-in zoom-in duration-150">
+<!-- Modal Header -->
+<div class="flex items-center justify-between border-b border-outline-variant/30 dark:border-dark-border pb-4 mb-4">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary dark:text-inverse-primary flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface dark:text-dark-text font-bold">ثبت پرونده تأمین‌کننده جدید</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-dark-muted">ورود اطلاعات شناسنامه‌ای، بانکی و توافقات تجاری</p>
+</div>
+</div>
+<button class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" onclick="closeNewSupplierModal()">
+<span class="material-symbols-outlined text-xl" data-icon="close">close</span>
+</button>
+</div>
+<!-- Form Grid -->
+<form class="space-y-4" onsubmit="handleSupplierSubmit(event)">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-body-sm font-body-sm text-on-surface dark:text-dark-text mb-1">نام رسمی شرکت / برند <span class="text-rose-500">*</span></label>
+<input class="w-full px-3 py-2 text-body-sm bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/60 dark:border-dark-border rounded-lg text-on-surface dark:text-dark-text focus:outline-none focus:border-primary" placeholder="مثال: فولاد البرز خاورمیانه" required="" type="text"/>
+</div>
+<div>
+<label class="block text-body-sm font-body-sm text-on-surface dark:text-dark-text mb-1">شناسه ملی / کد اقتصادی <span class="text-rose-500">*</span></label>
+<input class="w-full px-3 py-2 text-body-sm bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/60 dark:border-dark-border rounded-lg text-on-surface dark:text-dark-text focus:outline-none focus:border-primary font-tabular-num" placeholder="۱۱ رقمی" required="" type="text"/>
+</div>
+<div>
+<label class="block text-body-sm font-body-sm text-on-surface dark:text-dark-text mb-1">نام مدیرعامل یا مسئول ارتباط</label>
+<input class="w-full px-3 py-2 text-body-sm bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/60 dark:border-dark-border rounded-lg text-on-surface dark:text-dark-text focus:outline-none focus:border-primary" placeholder="نام و نام خانوادگی" type="text"/>
+</div>
+<div>
+<label class="block text-body-sm font-body-sm text-on-surface dark:text-dark-text mb-1">رسته و حوزه تخصصی تأمین</label>
+<select class="w-full px-3 py-2 text-body-sm bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/60 dark:border-dark-border rounded-lg text-on-surface dark:text-dark-text focus:outline-none focus:border-primary">
+<option>فولاد و مقاطع فلزی</option>
+<option>صنایع پتروشیمی و پلیمری</option>
+<option>قطعات هیدرولیک و پنوماتیک</option>
+<option>کابل، سیم و ابزار دقیق</option>
+<option>شیرآلات صنعتی و اتصالات</option>
+</select>
+</div>
+<div>
+<label class="block text-body-sm font-body-sm text-on-surface dark:text-dark-text mb-1">شماره تماس ثابت / همراه</label>
+<input class="w-full px-3 py-2 text-body-sm bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/60 dark:border-dark-border rounded-lg text-on-surface dark:text-dark-text focus:outline-none focus:border-primary font-tabular-num" placeholder="۰۲۱-xxxxxxxx" type="text"/>
+</div>
+<div>
+<label class="block text-body-sm font-body-sm text-on-surface dark:text-dark-text mb-1">شرایط پرداخت توافقی</label>
+<select class="w-full px-3 py-2 text-body-sm bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/60 dark:border-dark-border rounded-lg text-on-surface dark:text-dark-text focus:outline-none focus:border-primary">
+<option>نقدی در زمان تحویل</option>
+<option>اعتباری ۳۰ روزه</option>
+<option>اعتباری ۴۵ روزه</option>
+<option>اعتباری ۶۰ روزه با چک صیادی</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-body-sm font-body-sm text-on-surface dark:text-dark-text mb-1">شماره شبا حساب بانکی (IBAN)</label>
+<input class="w-full px-3 py-2 text-body-sm bg-surface-container-low dark:bg-dark-surface-elevated border border-outline-variant/60 dark:border-dark-border rounded-lg text-on-surface dark:text-dark-text focus:outline-none focus:border-primary font-tabular-num dir-ltr text-right" placeholder="IR________________________" type="text"/>
+</div>
+<div class="flex items-center justify-end gap-3 pt-4 border-t border-outline-variant/30 dark:border-dark-border">
+<button class="px-4 py-2 rounded-lg border border-outline-variant/60 dark:border-dark-border text-on-surface dark:text-dark-text hover:bg-slate-100 dark:hover:bg-dark-surface-elevated text-body-sm" onclick="closeNewSupplierModal()" type="button">
+            انصراف
+          </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container hover:bg-blue-700 text-white font-bold text-body-sm shadow-sm" type="submit">
+            ذخیره و ایجاد پرونده
+          </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Inline Script for Guaranteed Features: Dark Mode, Excel Dropdowns, Search, & Dynamic Profile Selection -->
+<script>
+    // 1. Guaranteed Dark Mode Logic
+    function toggleTheme() {
+      const htmlEl = document.documentElement;
+      const bodyEl = document.body;
+      const isDark = htmlEl.classList.contains('dark');
+      const themeText = document.getElementById('themeText');
+      const themeIcon = document.getElementById('themeIcon');
+
+      if (isDark) {
+        htmlEl.classList.remove('dark');
+        bodyEl.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        themeText.innerText = 'حالت شب';
+        themeIcon.innerText = 'dark_mode';
+        themeIcon.className = 'material-symbols-outlined text-amber-500 text-lg';
+      } else {
+        htmlEl.classList.add('dark');
+        bodyEl.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        themeText.innerText = 'حالت روز';
+        themeIcon.innerText = 'light_mode';
+        themeIcon.className = 'material-symbols-outlined text-amber-300 text-lg';
+      }
+    }
+
+    // Initialize Theme on Load
+    (function initTheme() {
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+        const themeText = document.getElementById('themeText');
+        const themeIcon = document.getElementById('themeIcon');
+        if (themeText && themeIcon) {
+          themeText.innerText = 'حالت روز';
+          themeIcon.innerText = 'light_mode';
+          themeIcon.className = 'material-symbols-outlined text-amber-300 text-lg';
+        }
+      }
+    })();
+
+    // 2. Excel-Style Filter Toggle
+    function toggleExcelFilter(menuId, event) {
+      if (event) event.stopPropagation();
+      const targetMenu = document.getElementById(menuId);
+      const isHidden = targetMenu.classList.contains('hidden');
+      
+      // Close all other filter dropdowns first
+      document.querySelectorAll('.excel-dropdown').forEach(dropdown => {
+        dropdown.classList.add('hidden');
+      });
+
+      if (isHidden) {
+        targetMenu.classList.remove('hidden');
+      }
+    }
+
+    function closeExcelFilter(menuId) {
+      const menu = document.getElementById(menuId);
+      if (menu) menu.classList.add('hidden');
+    }
+
+    // Close popups on click outside
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('.excel-dropdown') && !e.target.closest('th button')) {
+        document.querySelectorAll('.excel-dropdown').forEach(dropdown => {
+          dropdown.classList.add('hidden');
+        });
+      }
+      const exportMenu = document.getElementById('exportMenu');
+      if (exportMenu && !e.target.closest('#exportMenu') && !e.target.closest('button[onclick*="toggleExportMenu"]')) {
+        exportMenu.classList.add('hidden');
+      }
+    });
+
+    // 3. Export Dropdown Menu Toggle
+    function toggleExportMenu() {
+      const exportMenu = document.getElementById('exportMenu');
+      exportMenu.classList.toggle('hidden');
+    }
+
+    // 4. Modal Handlers
+    function openNewSupplierModal() {
+      document.getElementById('newSupplierModal').classList.remove('hidden');
+    }
+
+    function closeNewSupplierModal() {
+      document.getElementById('newSupplierModal').classList.add('hidden');
+    }
+
+    function handleSupplierSubmit(event) {
+      event.preventDefault();
+      alert('تأمین‌کننده با موفقیت در سامانه ثبت شد و پرونده اعتباری فعال گردید.');
+      closeNewSupplierModal();
+    }
+
+    // 5. Select All Checkbox
+    function toggleSelectAll(masterCheckbox) {
+      const checkboxes = document.querySelectorAll('.row-checkbox');
+      checkboxes.forEach(cb => {
+        cb.checked = masterCheckbox.checked;
+      });
+    }
+
+    // 6. Real-time Search in Table
+    function filterTableBySearch() {
+      const query = document.getElementById('tableQuickSearch').value.toLowerCase();
+      const rows = document.querySelectorAll('#supplierTableBody tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        if (text.includes(query)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      document.getElementById('rowCountDisplay').innerText = visibleCount;
+    }
+
+    // 7. Filter by Category Dropdown
+    function filterByCategory(category) {
+      const rows = document.querySelectorAll('#supplierTableBody tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        if (category === 'all') {
+          row.style.display = '';
+          visibleCount++;
+        } else if (category === 'steel' && row.innerText.includes('فولاد')) {
+          row.style.display = '';
+          visibleCount++;
+        } else if (category === 'petro' && row.innerText.includes('پتروشیمی')) {
+          row.style.display = '';
+          visibleCount++;
+        } else if (category === 'hydraulic' && row.innerText.includes('هیدرولیک')) {
+          row.style.display = '';
+          visibleCount++;
+        } else if (category === 'cable' && row.innerText.includes('کابل')) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      document.getElementById('rowCountDisplay').innerText = visibleCount;
+    }
+
+    function resetAllFilters() {
+      document.getElementById('tableQuickSearch').value = '';
+      document.getElementById('categoryQuickFilter').value = 'all';
+      filterByCategory('all');
+    }
+
+    // 8. Sorting Table Columns
+    function sortTable(colIndex, order) {
+      const tbody = document.getElementById('supplierTableBody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+
+      rows.sort((a, b) => {
+        const textA = a.children[colIndex].innerText.trim();
+        const textB = b.children[colIndex].innerText.trim();
+        return order === 'asc' 
+          ? textA.localeCompare(textB, 'fa')
+          : textB.localeCompare(textA, 'fa');
+      });
+
+      rows.forEach(row => tbody.appendChild(row));
+    }
+
+    // 9. Interactive 360-degree Dossier selection
+    function selectSupplierProfile(name, nationalId, manager, field, grade, phone, address, orders, value, status, date, terms, limit, iban) {
+      document.getElementById('dossierName').innerText = 'پرونده ۳۶۰ درجه: ' + name;
+      document.getElementById('dossierGrade').innerText = grade;
+      document.getElementById('dossierNationalId').innerText = nationalId;
+      document.getElementById('dossierManager').innerText = manager;
+      document.getElementById('dossierTerms').innerText = terms;
+      document.getElementById('dossierCreditLimit').innerText = limit + ' تومان';
+      document.getElementById('dossierIban').innerText = iban;
+      
+      const panel = document.getElementById('supplierDossierPanel');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function viewDetailedDossier(name) {
+      alert('در حال باز کردن پرونده حسابرسی کامل شرکت «' + name + '»');
+    }
+
+    function quickPurchaseOrder(name) {
+      alert('فرم ثبت سفارش خرید مستقیم برای «' + name + '» باز شد.');
+    }
+  </script>
+
+{% endblock %}

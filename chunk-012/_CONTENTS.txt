@@ -1,0 +1,5 @@
+Contains:
+ui-design/settings
+ui-design/stock-movement
+ui-design/supplier-management
+ui-design/user-management
