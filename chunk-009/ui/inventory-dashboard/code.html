@@ -1,0 +1,878 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main class="w-full ] p-4 sm:p-6 lg:p-8 space-y-6">
+<!-- ========================================== -->
+<!-- ۱. هدر صفحه و جعبه ابزار عملیاتی فوقانی -->
+<!-- ========================================== -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface/30 rounded-xl p-5 border border-outline-variant/40 shadow-sm flex flex-col gap-5">
+<!-- ردیف بالای هدر: مسیر، کنترل تم و وضعیت سیستم -->
+<div class="flex flex-wrap items-center justify-between gap-4 border-b border-outline-variant/30 pb-4">
+<!-- Breadcrumb & Badge -->
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant dark:text-inverse-primary/80">
+<span class="flex items-center gap-1.5 hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">domain</span>
+            داشبورد سازمانی
+          </span>
+<span class="material-symbols-outlined text-[14px]">chevron_left</span>
+<span class="hover:text-primary transition-colors cursor-pointer">انبارداری و کالاها</span>
+<span class="material-symbols-outlined text-[14px]">chevron_left</span>
+<span class="text-primary dark:text-inverse-primary font-bold">کنترل موجودی و وضعیت انبارها</span>
+<span class="bg-surface-container text-primary dark:bg-primary-container/20 dark:text-inverse-primary text-[11px] px-2 py-0.5 rounded-full font-medium mr-2">بند ۱۰ مستندات</span>
+</nav>
+<!-- بخش سوئیچر شب/روز و وضعیت سینک شبکه -->
+<div class="flex items-center gap-3">
+<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low dark:bg-inverse-surface text-label-sm font-label-sm border border-outline-variant/30">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="text-on-surface-variant dark:text-inverse-on-surface">آخرین به‌روزرسانی لحظه‌ای: ۳ دقیقه پیش</span>
+</div>
+<!-- دکمه جابجایی حالت شب/روز (Dark/Light Switcher) -->
+
+</div>
+</div>
+<!-- ردیف اصلی: عنوان، فیلترهای سریع انبار و دکمه‌های اکشن سازمانی -->
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+<!-- عنوان و زیرعنوان -->
+<div>
+<h1 class="text-headline-xl font-headline-xl text-on-surface dark:text-inverse-on-surface tracking-tight flex items-center gap-3">
+<span class="p-2.5 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[26px]">inventory_2</span>
+</span>
+            مرکز کنترل موجودی و مدیریت انبارها
+          </h1>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-inverse-primary/70 mt-1 mr-12">
+            پایش جامع اقلام زنجیره تأمین، مدیریت مغایرت‌های فیزیکی، کنترل کسری‌ها و تخصیص هوشمند انبارهای سراسری
+          </p>
+</div>
+<!-- کنترل‌ها و اکشن‌های سریع بالایی -->
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- فیلتر انتخاب انبار -->
+<div class="relative min-w-[190px]">
+<span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">warehouse</span>
+</span>
+<select aria-label="انتخاب انبار" class="w-full pr-9 pl-8 py-2 text-body-sm font-body-sm rounded-lg border border-outline-variant/50 bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all outline-none">
+<option value="all">همه انبارها (سراسری)</option>
+{% for w in inv_warehouses %}
+<option value="{{ w.id }}"{% if forloop.first and not inv_warehouses|length > 1 %} selected{% endif %}>{{ w.name }}</option>
+{% endfor %}
+</select>
+</div>
+<!-- بازه زمانی پایش -->
+<div class="relative min-w-[150px]">
+<span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+</span>
+<select aria-label="بازه زمانی" class="w-full pr-9 pl-8 py-2 text-body-sm font-body-sm rounded-lg border border-outline-variant/50 bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all outline-none">
+<option value="today">امروز</option>
+<option selected="" value="30d">۳۰ روز گذشته</option>
+<option value="90d">سه ماهه منتهی به امروز</option>
+<option value="ytd">سال مالی جاری</option>
+</select>
+</div>
+<!-- خروجی اکسل / PDF -->
+<button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-outline-variant/50 bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface/80 text-title-md font-title-md transition-all shadow-sm" type="button" data-action="export">
+<span class="material-symbols-outlined text-[18px] text-secondary">file_download</span>
+<span class="">خروجی اکسل/PDF</span>
+</button>
+<!-- دکمه انتقال بین انبارها -->
+<button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-outline-variant/50 bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface/80 text-title-md font-title-md transition-all shadow-sm" type="button" data-action="transfer">
+<span class="material-symbols-outlined text-[18px] text-primary">move_down</span>
+<span class="">انتقال بین انبارها</span>
+</button>
+<!-- دکمه تعدیل موجودی (باز کردن دراور) -->
+<button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container dark:bg-inverse-surface border border-primary/20 text-primary dark:text-inverse-primary hover:bg-surface-container-high transition-all text-title-md font-title-md font-bold shadow-sm" id="openAdjustmentBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">balance</span>
+<span class="">تعدیل موجودی</span>
+</button>
+<!-- ثبت رسید ورود جدید -->
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary-container transition-all text-title-md font-title-md font-bold shadow-sm" type="button" data-action="new-receipt">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span class="">ثبت رسید ورود جدید</span>
+</button>
+</div>
+</div>
+</header>
+<!-- ========================================== -->
+<!-- ۲. کارت‌های شاخص‌های کلیدی عملکرد (KPIs) -->
+<!-- ========================================== -->
+<section class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 grid-cols-2">
+<!-- KPI 1: ارزش ریالی کل موجودی -->
+<article class="bg-surface-container-lowest dark:bg-inverse-surface/40 p-4 rounded-xl border border-outline-variant/40 shadow-sm relative overflow-hidden flex flex-col justify-between group hover:border-primary-container/40 transition-all">
+<div class="flex items-start justify-between">
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-inverse-primary/80">ارزش کل موجودی</span>
+<span class="p-2 rounded-lg bg-surface-container text-primary dark:bg-primary-container/20 dark:text-inverse-primary">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</span>
+</div>
+<div class="my-3">
+<div class="text-headline-md font-headline-md text-on-surface dark:text-inverse-on-surface tracking-tight font-tabular-num">
+            {{ inv_available_stock|floatformat:"-3" }}
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant mr-0.5">واحد</span>
+</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-emerald-600 dark:text-secondary-fixed mt-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="font-tabular-num">+۸.۴٪</span>
+<span class="text-on-surface-variant text-[11px]">نسبت به ماه قبل</span>
+</div>
+</div>
+<!-- Sparkline مونوکروم ملایم -->
+<div class="h-1.5 w-full bg-surface-container-high dark:bg-inverse-surface rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 78%;"></div>
+</div>
+</article>
+<!-- KPI 2: تعداد کل اقلام فعال (SKU) -->
+<article class="bg-surface-container-lowest dark:bg-inverse-surface/40 p-4 rounded-xl border border-outline-variant/40 shadow-sm flex flex-col justify-between group hover:border-primary-container/40 transition-all">
+<div class="flex items-start justify-between">
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-inverse-primary/80">تعداد کل اقلام (SKU)</span>
+<span class="p-2 rounded-lg bg-surface-container text-primary dark:bg-primary-container/20 dark:text-inverse-primary">
+<span class="material-symbols-outlined text-[18px]">qr_code_2</span>
+</span>
+</div>
+<div class="my-3">
+<div class="text-headline-md font-headline-md text-on-surface dark:text-inverse-on-surface font-tabular-num">
+            {{ inv_total_stock_qty|floatformat:"-0" }}
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant mr-0.5">قلم فعال</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">در {{ inv_total_warehouses }} انبار فعال</p>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high dark:bg-inverse-surface rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 92%;"></div>
+</div>
+</article>
+<!-- KPI 3: کالاهای دارای کسری و کم‌موجودی -->
+<article class="bg-amber-50/60 dark:bg-amber-950/20 p-4 rounded-xl border border-amber-200 dark:border-amber-800/40 shadow-sm flex flex-col justify-between group hover:border-amber-400 transition-all">
+<div class="flex items-start justify-between">
+<span class="text-body-sm font-body-sm text-amber-900 dark:text-amber-200 font-semibold">کم‌موجودی و بحرانی</span>
+<span class="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+</span>
+</div>
+<div class="my-3">
+<div class="text-headline-md font-headline-md text-amber-900 dark:text-amber-100 font-tabular-num flex items-baseline gap-2">
+            {{ inv_low_stock_count|floatformat:"-0" }}
+            <span class="text-label-sm font-label-sm font-normal text-amber-700 dark:text-amber-300">قلم زیر نقطه سفارش</span>
+</div>
+<button class="text-label-sm font-label-sm text-amber-800 dark:text-amber-300 font-bold hover:underline flex items-center gap-0.5 mt-1" onclick="filterByTab('low-stock')" type="button">
+<span class="">اقدام فوری و فیلتر</span>
+<span class="material-symbols-outlined text-[14px]">arrow_back</span>
+</button>
+</div>
+<div class="h-1.5 w-full bg-amber-200/50 dark:bg-amber-900/60 rounded-full overflow-hidden">
+<div class="h-full bg-amber-500 rounded-full" style="width: 44%;"></div>
+</div>
+</article>
+<!-- KPI 4: کالاهای ناموجود / صفر -->
+<article class="bg-rose-50/60 dark:bg-rose-950/20 p-4 rounded-xl border border-rose-200 dark:border-rose-800/40 shadow-sm flex flex-col justify-between group hover:border-rose-400 transition-all">
+<div class="flex items-start justify-between">
+<span class="text-body-sm font-body-sm text-rose-900 dark:text-rose-200 font-semibold">ناموجود و متوقف</span>
+<span class="p-2 rounded-lg bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300">
+<span class="material-symbols-outlined text-[18px]">error</span>
+</span>
+</div>
+<div class="my-3">
+<div class="text-headline-md font-headline-md text-rose-900 dark:text-rose-100 font-tabular-num flex items-baseline gap-2">
+            {{ inv_out_stock_count|floatformat:"-0" }}
+            <span class="text-label-sm font-label-sm font-normal text-rose-700 dark:text-rose-300">قلم صفر شده</span>
+</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-rose-700 dark:text-rose-300 mt-1">
+<span class="w-1.5 h-1.5 rounded-full bg-rose-600 animate-ping"></span>
+<span class="">توقف فوری فروش فعال</span>
+</div>
+</div>
+<div class="h-1.5 w-full bg-rose-200/50 dark:bg-rose-900/60 rounded-full overflow-hidden">
+<div class="h-full bg-rose-600 rounded-full" style="width: 28%;"></div>
+</div>
+</article>
+<!-- KPI 5: موجودی رزروشده در پیش‌فاکتورها -->
+<article class="bg-surface-container-lowest dark:bg-inverse-surface/40 p-4 rounded-xl border border-outline-variant/40 shadow-sm flex flex-col justify-between group hover:border-primary-container/40 transition-all">
+<div class="flex items-start justify-between">
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-inverse-primary/80">رزرو پیش‌فاکتورها</span>
+<span class="p-2 rounded-lg bg-surface-container text-primary dark:bg-primary-container/20 dark:text-inverse-primary">
+<span class="material-symbols-outlined text-[18px]">lock_clock</span>
+</span>
+</div>
+<div class="my-3">
+<div class="text-headline-md font-headline-md text-on-surface dark:text-inverse-on-surface font-tabular-num">
+            {{ inv_total_reserved|floatformat:"-3" }}
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant mr-0.5">واحد مسدودشده</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">تعهد در انبارها</p>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high dark:bg-inverse-surface rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 rounded-full" style="width: 61%;"></div>
+</div>
+</article>
+<!-- KPI 6: کالاهای راکد و کم‌گردش -->
+<article class="bg-surface-container-lowest dark:bg-inverse-surface/40 p-4 rounded-xl border border-outline-variant/40 shadow-sm flex flex-col justify-between group hover:border-primary-container/40 transition-all">
+<div class="flex items-start justify-between">
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-inverse-primary/80">اقلام راکد (+۹۰ روز)</span>
+<span class="p-2 rounded-lg bg-surface-container text-on-surface-variant dark:bg-inverse-surface dark:text-inverse-on-surface">
+<span class="material-symbols-outlined text-[18px]">hourglass_disabled</span>
+</span>
+</div>
+<div class="my-3">
+<div class="text-headline-md font-headline-md text-on-surface dark:text-inverse-on-surface font-tabular-num">
+            ۴۵
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant mr-0.5">قلم کم‌گردش</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">ارزش حبس: ۳.۲ میلیارد ت</p>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high dark:bg-inverse-surface rounded-full overflow-hidden">
+<div class="h-full bg-amber-400 rounded-full" style="width: 35%;"></div>
+</div>
+</article>
+</section>
+<!-- ========================================== -->
+<!-- ۳. تب‌های فیلتر سریع و نوار جستجوی پیشرفته -->
+<!-- ========================================== -->
+<section class="bg-surface-container-lowest dark:bg-inverse-surface/30 rounded-xl p-4 border border-outline-variant/40 shadow-sm space-y-4">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-outline-variant/20 pb-3">
+<!-- تب‌های وضعیت موجودی -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0" id="tabFilters">
+<button class="tab-btn px-4 py-2 rounded-lg text-title-md font-title-md font-bold bg-primary-container text-on-primary-container whitespace-nowrap shadow-sm transition-all" data-filter="all">
+            همه اقلام کاتالوگ (۱,۸۴۰)
+          </button>
+<button class="tab-btn px-4 py-2 rounded-lg text-body-md font-body-md text-on-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface whitespace-nowrap transition-all flex items-center gap-1.5" data-filter="low-stock">
+<span class="">کم‌موجودی و بحرانی</span>
+<span class="bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 text-label-sm font-label-sm px-2 py-0.5 rounded-full font-bold">۳۸</span>
+</button>
+<button class="tab-btn px-4 py-2 rounded-lg text-body-md font-body-md text-on-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface whitespace-nowrap transition-all flex items-center gap-1.5" data-filter="out-of-stock">
+<span class="">ناموجود و صفر</span>
+<span class="bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200 text-label-sm font-label-sm px-2 py-0.5 rounded-full font-bold">۱۲</span>
+</button>
+<button class="tab-btn px-4 py-2 rounded-lg text-body-md font-body-md text-on-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface whitespace-nowrap transition-all flex items-center gap-1.5" data-filter="stagnant">
+<span class="">کالاهای راکد</span>
+<span class="bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 text-label-sm font-label-sm px-2 py-0.5 rounded-full font-bold">۴۵</span>
+</button>
+<button class="tab-btn px-4 py-2 rounded-lg text-body-md font-body-md text-on-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface whitespace-nowrap transition-all flex items-center gap-1.5" data-filter="inbound">
+<span class="">در انتظار دریافت و ترانزیت</span>
+<span class="bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 text-label-sm font-label-sm px-2 py-0.5 rounded-full font-bold">۱۹</span>
+</button>
+</div>
+<!-- ابزار سفارشی‌سازی نمایش جدول -->
+<div class="flex items-center gap-2 self-end lg:self-auto">
+<button class="p-2 rounded-lg border border-outline-variant/40 hover:bg-surface-container text-on-surface-variant" title="مدیریت ستون‌ها" type="button">
+<span class="material-symbols-outlined text-[20px]">view_column</span>
+</button>
+<button class="p-2 rounded-lg border border-outline-variant/40 hover:bg-surface-container text-on-surface-variant" title="چاپ بارکد اقلام انتخابی" type="button">
+<span class="material-symbols-outlined text-[20px]">print</span>
+</button>
+<button class="p-2 rounded-lg border border-outline-variant/40 hover:bg-surface-container text-on-surface-variant" title="تازه‌سازی داده‌ها" type="button">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+</button>
+</div>
+</div>
+<!-- نوار فیلتر و جستجوی چندگانه -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<!-- جستجوی زنده بر اساس نام، بارکد و شناسه کالا -->
+<div class="md:col-span-5 relative">
+<span class="absolute inset-y-0 right-3.5 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="w-full pr-10 pl-10 py-2.5 text-body-sm font-body-sm rounded-lg border border-outline-variant/40 bg-surface-container-low/50 dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all outline-none" id="inventorySearchInput" placeholder="جستجو بر اساس نام کالا، کد SKU، بارکد فنی یا تامین‌کننده..." type="text">
+<button class="absolute inset-y-0 left-2.5 flex items-center text-on-surface-variant hover:text-primary" title="اسکن بارکد با وب‌کم" type="button">
+<span class="material-symbols-outlined text-[20px]">barcode_scanner</span>
+</button>
+</div>
+<!-- فیلتر رسته/گروه کالا -->
+<div class="md:col-span-3">
+<select aria-label="گروه کالا" class="w-full py-2.5 px-3 text-body-sm font-body-sm rounded-lg border border-outline-variant/40 bg-surface-container-low/50 dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface outline-none focus:border-primary-container">
+<option value="">همه رسته‌ها (صنعتی، غذایی، ساختمانی)</option>
+<option value="industrial">قطعات صنعتی و مکانیکی</option>
+<option value="building">آهن‌آلات و مصالح ساختمانی</option>
+<option value="food">مواد اولیه غذایی و سردخانه‌ای</option>
+<option value="chemical">مواد شیمیایی و رزین</option>
+</select>
+</div>
+<!-- فیلتر وضعیت کیفی و سلامت -->
+<div class="md:col-span-2">
+<select aria-label="وضعیت کیفی" class="w-full py-2.5 px-3 text-body-sm font-body-sm rounded-lg border border-outline-variant/40 bg-surface-container-low/50 dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface outline-none focus:border-primary-container">
+<option value="">همه وضعیت‌های کیفی</option>
+<option value="grade-a">سالم و درجه یک (A)</option>
+<option value="quarantine">قرنطینه و بازرسی فنی</option>
+<option value="damaged">مرجوعی / آسیب‌دیده</option>
+</select>
+</div>
+<!-- دکمه پاکسازی فیلترها -->
+<div class="md:col-span-2 flex items-center justify-end gap-2">
+<button class="w-full py-2.5 px-3 rounded-lg border border-outline-variant/40 hover:bg-surface-container-low text-on-surface-variant text-label-md font-label-md transition-all text-center" type="button">
+            پاک کردن فیلترها
+          </button>
+</div>
+</div>
+</section>
+<!-- ========================================== -->
+<!-- ۴. جدول اصلی کنترل موجودی (Data Table) -->
+<!-- ========================================== -->
+<section class="bg-surface-container-lowest dark:bg-inverse-surface/30 rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden">
+<!-- جدول با قابلیت اسکرول افقی نرم -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-right border-collapse select-text">
+<!-- سرستون‌ها -->
+<thead>
+<tr class="bg-slate-100 dark:bg-inverse-surface text-on-surface-variant dark:text-inverse-primary/90 text-label-md font-label-md border-b border-outline-variant/40">
+<th class="py-3 px-3 w-10 text-center" scope="col">
+<input aria-label="انتخاب همه اقلام" class="rounded border-outline-variant text-primary-container focus:ring-primary-container/30" id="selectAllCheckbox" type="checkbox">
+</th>
+<th class="py-3 px-4 min-w-[240px]" scope="col">مشخصات کالا و تصویر</th>
+<th class="py-3 px-3 min-w-[120px]" scope="col">کد SKU / بارکد</th>
+<th class="py-3 px-3 min-w-[130px]" scope="col">انبار مستقر</th>
+<th class="py-3 px-3 text-center min-w-[100px]" scope="col">موجودی کل</th>
+<th class="py-3 px-3 text-center min-w-[100px]" scope="col">رزرو قراردادها</th>
+<th class="py-3 px-3 text-center min-w-[120px] bg-blue-50/50 dark:bg-blue-950/20" scope="col">آزاد و قابل فروش</th>
+<th class="py-3 px-3 text-center min-w-[110px]" scope="col">نقطه سفارش</th>
+<th class="py-3 px-3 min-w-[110px]" scope="col">آخرین گردش</th>
+<th class="py-3 px-3 text-center min-w-[100px]" scope="col">وضعیت کیفی</th>
+<th class="py-3 px-4 text-center sticky left-0 bg-slate-100 dark:bg-inverse-surface min-w-[130px] border-r border-outline-variant/20 shadow-sm" scope="col">عملیات</th>
+</tr>
+</thead>
+<!-- سطرهای جدول با اقلام متنوع صنعتی، غذایی و ساختمانی -->
+<tbody class="divide-y divide-outline-variant/20 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface">
+{% for p in inv_products %}
+<tr class="hover:bg-slate-50 dark:hover:bg-inverse-surface/60 transition-colors group {# p.is_low_stock or p.is_out_stock #}">
+<td class="py-3.5 px-3 text-center">
+<input aria-label="انتخاب کالا {{ p.name }}" class="row-checkbox rounded border-outline-variant text-primary-container focus:ring-primary-container/30" type="checkbox">
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-lg flex items-center justify-center border border-outline-variant/40 shrink-0 text-primary">
+<span class="material-symbols-outlined text-[22px]">inventory_2</span>
+</div>
+<div>
+<div class="font-bold text-title-md font-title-md text-on-surface dark:text-inverse-on-surface group-hover:text-primary transition-colors">
+{{ p.name }}
+</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-2 mt-0.5">
+<span class="">{{ p.category_name }}</span>
+<span class="bullet">•</span>
+<span class="">{{ p.unit_name }}</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3">
+<span class="font-mono text-label-md font-label-md px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-bold">{{ p.sku }}</span>
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="">{{ p.warehouse_name }}</span>
+</div>
+</td>
+<td class="py-3.5 px-3 text-center font-tabular-num font-bold text-on-surface dark:text-inverse-on-surface">{{ p.total_qty|floatformat:"-0" }} <span class="text-label-sm font-normal text-on-surface-variant">{{ p.unit_name }}</span></td>
+<td class="py-3.5 px-3 text-center font-tabular-num text-on-surface-variant">{{ p.reserved_qty|floatformat:"-0" }} {{ p.unit_name }}</td>
+<td class="py-3.5 px-3 text-center font-tabular-num font-bold text-on-surface dark:text-inverse-on-surface">{{ p.available_qty|floatformat:"-0" }} {{ p.unit_name }}</td>
+<td class="py-3.5 px-3 text-center font-tabular-num text-on-surface-variant">{{ p.min_stock|floatformat:"-0" }} {{ p.unit_name }}</td>
+<td class="py-3.5 px-3 text-label-sm font-label-sm">
+<div class="">ورود: {% if inv_recent_moves|length > 0 %}{{ inv_recent_moves.0.created_at|date:"Y/m/d" }}{% else %}ثبت نشده{% endif %}</div>
+<div class="text-on-surface-variant">خروج: مقدار در انبار</div>
+</td>
+<td class="py-3.5 px-3 text-center">
+{% if p.is_out_stock %}
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-rose-100 text-rose-900 dark:bg-rose-900/50 dark:text-rose-200">
+ناموجود در انبار
+</span>
+{% elif p.is_low_stock %}
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-amber-100 text-amber-900 dark:bg-amber-900/50 dark:text-amber-200">
+کم‌موجودی
+</span>
+{% else %}
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">
+سالم و در마진 مجاز
+</span>
+{% endif %}
+</td>
+<td class="py-3.5 px-4 text-center sticky left-0 bg-surface-container-lowest dark:bg-inverse-surface group-hover:bg-slate-50 dark:group-hover:bg-inverse-surface/60 border-r border-outline-variant/20 shadow-sm">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-primary" type="button" title="تعدیل موجودی" data-action="adjust" data-sku="{{ p.sku }}" data-name="{{ p.name }}" data-qty="{{ p.available_qty }}">
+<span class="material-symbols-outlined text-[18px]">balance</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary" type="button" title="کاردکس گردش کالا" data-action="movements">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary" type="button" title="جابجایی" data-action="transfer">
+<span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+</button>
+</div>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="11" class="text-center py-8 text-[#64748b] dark:text-[#94a3b8]">هیچ کالا ثبت نشده است.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- پاورقی جدول: صفحه‌بندی سازمانی و خلاصه رکوردها -->
+<div class="p-4 bg-slate-50/60 dark:bg-inverse-surface/80 border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3 text-body-sm font-body-sm text-on-surface-variant">
+<span class="">نمایش ۶ از ۱,۸۴۰ قلم موجودی</span>
+<span class="h-4 w-px bg-outline-variant/50"></span>
+<div class="flex items-center gap-1.5">
+<span class="">تعداد در صفحه:</span>
+<select aria-label="تعداد در هر صفحه" class="py-1 px-2 rounded border border-outline-variant/40 bg-surface-container-lowest dark:bg-inverse-surface text-body-sm outline-none">
+<option value="10">۱۰</option>
+<option selected="" value="25">۲۵</option>
+<option value="50">۵۰</option>
+<option value="100">۱۰۰</option>
+</select>
+</div>
+</div>
+<!-- کنترل‌های شماره صفحه -->
+<div class="flex items-center gap-1.5 select-none">
+<button class="p-1.5 rounded-lg border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container disabled:opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">first_page</span>
+</button>
+<button class="p-1.5 rounded-lg border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container disabled:opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+<span class="px-3 py-1 rounded-lg bg-primary-container text-on-primary-container text-label-md font-label-md font-bold">۱</span>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container text-on-surface-variant text-label-md font-label-md" type="button">۲</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container text-on-surface-variant text-label-md font-label-md" type="button">۳</button>
+<span class="text-on-surface-variant px-1">...</span>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container text-on-surface-variant text-label-md font-label-md" type="button">۷۴</button>
+<button class="p-1.5 rounded-lg border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="p-1.5 rounded-lg border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="material-symbols-outlined text-[18px]">last_page</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- ============================================================== -->
+<!-- ۵. دراور / مودال تعاملی تعدیل موجودی (Stock Adjustment Drawer) -->
+<!-- ============================================================== -->
+<div class="fixed inset-0 bg-slate-950/50 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300" id="adjustmentBackdrop"></div>
+<aside class="fixed inset-y-0 left-0 w-full max-w-lg bg-surface-container-lowest dark:bg-inverse-surface shadow-2xl z-50 translate-x-[-100%] transition-transform duration-300 ease-out border-r border-outline-variant/40 flex flex-col justify-between overflow-hidden" id="adjustmentDrawer">
+<!-- هدر دراور -->
+<div class="p-5 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container-low/40 dark:bg-inverse-surface">
+<div class="flex items-center gap-3">
+<span class="p-2 rounded-xl bg-primary-container text-on-primary-container">
+<span class="material-symbols-outlined text-[22px]">balance</span>
+</span>
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface dark:text-inverse-on-surface font-bold">ثبت سند تعدیل موجودی انبار</h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant">انبارگردانی مقطعی و تطبیق مغایرت‌های فیزیکی</p>
+</div>
+</div>
+<button aria-label="بستن فرم" class="p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-error transition-colors" id="closeDrawerBtn" type="button">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<!-- بدنه فرم تعدیل -->
+<div class="p-6 overflow-y-auto space-y-5 flex-1 text-on-surface dark:text-inverse-on-surface">
+<!-- باکس کارت مشخصات کالا -->
+<div class="p-4 rounded-xl bg-surface-container-low dark:bg-inverse-surface/80 border border-outline-variant/40 space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-on-surface-variant">شناسه فنی و نام کالا</span>
+<span class="font-mono text-label-sm font-label-sm px-2 py-0.5 rounded bg-primary-container/10 text-primary dark:text-inverse-primary font-bold" id="drawerSku">STL-16-IR</span>
+</div>
+<div class="text-title-lg font-title-lg font-bold text-on-surface dark:text-inverse-on-surface" id="drawerItemName">
+          میلگرد آجدار سایز ۱۶ (A3 اصفهان)
+        </div>
+<div class="flex items-center gap-4 pt-1 text-body-sm font-body-sm text-on-surface-variant">
+<span class="">انبار انتخابی:</span>
+<select class="px-2 py-1 rounded border border-outline-variant/40 bg-surface-container-low dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface text-xs font-mono" id="adjustmentWarehouse">
+<option value="">انتخاب انبار...</option>
+{% for w in inv_warehouses %}
+<option value="{{ w.id }}">{{ w.name }}</option>
+{% endfor %}
+</select>
+<select class="px-2 py-1 rounded border border-outline-variant/40 bg-surface-container-low dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface text-xs font-mono" id="adjustmentProduct">
+<option value="">انتخاب کالا...</option>
+{% for p in inv_products %}
+<option value="{{ p.id }}">{{ p.name }} ({{ p.sku }})</option>
+{% endfor %}
+</select>
+<span class="">•</span>
+<span class="">مسئول انبارگردان: کاربر ارشد</span>
+</div>
+</div>
+<!-- شبکه محاسباتی سیستم و شمارش واقعی -->
+<div class="grid grid-cols-2 gap-4">
+<!-- موجودی دفتری / سیستم -->
+<div class="p-3.5 rounded-xl border border-outline-variant/40 bg-surface-container-lowest dark:bg-inverse-surface space-y-1">
+<label class="text-label-md font-label-md text-on-surface-variant">موجودی فعلی در سیستم</label>
+<div class="text-headline-md font-headline-md font-tabular-num font-bold text-on-surface dark:text-inverse-on-surface flex items-baseline gap-1">
+<span id="systemQtyText" class="">۱۴۵</span>
+<span class="text-label-sm font-normal text-on-surface-variant">واحد</span>
+</div>
+<span class="text-[11px] text-on-surface-variant">تراز ثبت شده کاردکس</span>
+</div>
+<!-- ورودی شمارش فیزیکی واقعی -->
+<div class="p-3.5 rounded-xl border-2 border-primary-container/50 bg-primary-container/5 space-y-1">
+<label class="text-label-md font-label-md font-bold text-primary dark:text-inverse-primary" for="physicalCountInput">شمارش واقعی فیزیکی</label>
+<input class="w-full text-headline-md font-headline-md font-tabular-num font-bold bg-transparent border-0 border-b border-primary text-on-surface dark:text-inverse-on-surface focus:ring-0 p-0 outline-none" id="physicalCountInput" type="number" value="142">
+<span class="text-[11px] text-primary/80">تعداد شمرده‌شده در قفسه</span>
+</div>
+</div>
+<!-- محاسبه خودکار کسر یا اضافه -->
+<div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/60 flex items-center justify-between" id="diffBanner">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[24px] text-amber-700 dark:text-amber-300" id="diffIcon">trending_down</span>
+<div>
+<div class="text-title-md font-title-md font-bold text-amber-900 dark:text-amber-200" id="diffTitle">کسری انبار (شمارش کمتر از سیستم)</div>
+<div class="text-label-sm font-label-sm text-amber-800 dark:text-amber-300/80">نیازمند صدور سند حواله کسری انبارگردانی</div>
+</div>
+</div>
+<div class="text-right">
+<span class="text-headline-md font-headline-md font-bold font-tabular-num text-amber-900 dark:text-amber-100" id="diffValue">-۳</span>
+<span class="text-label-sm font-normal text-amber-800 mr-1">واحد</span>
+</div>
+</div>
+<!-- انتخاب علت تعدیل موجودی -->
+<div class="space-y-1.5">
+<label class="text-title-md font-title-md font-semibold" for="adjustmentReason">علت تعدیل موجودی *</label>
+<select class="w-full py-2.5 px-3 rounded-lg border border-outline-variant/50 bg-surface-container-lowest dark:bg-inverse-surface text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface outline-none focus:border-primary-container" id="adjustmentReason">
+<option value="waste">ضایعات ناشی از جابجایی / شکستگی و فرسایش</option>
+<option selected="" value="counting_error">خطای شمارش در دوره‌های قبلی انبارگردانی</option>
+<option value="supplier_diff">مغایرت اولیه در محموله دریافتی از تأمین‌کننده</option>
+<option value="theft_loss">مفقودی نامشخص / کسر احتمالی</option>
+<option value="sample_test">خروج اقلام جهت تست نمونه آزمایشگاه کنترل کیفیت</option>
+<option value="other">سایر دلایل (نیاز به پیوست صورت‌جلسه)</option>
+</select>
+</div>
+<!-- توضیحات و یادداشت تفصیلی حسابداری -->
+<div class="space-y-1.5">
+<label class="text-title-md font-title-md font-semibold" for="adjustmentNotes">یادداشت تکمیلی سند و ارجاع حسابداری</label>
+<textarea class="w-full py-2 px-3 rounded-lg border border-outline-variant/50 bg-surface-container-lowest dark:bg-inverse-surface text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface outline-none focus:border-primary-container resize-none" id="adjustmentNotes" placeholder="جزئیات شماره صورت‌جلسه انبارگردانی، ناظران شمارش و تأییدیه‌های مدیر کارخانه را درج فرمایید..." rows="3"></textarea>
+</div>
+<!-- بارگذاری پیوست و صورت‌جلسه امضا شده -->
+<div class="space-y-1.5">
+<label class="text-title-md font-title-md font-semibold">بارگذاری صورت‌جلسه یا عکس کالا</label>
+<div class="border-2 border-dashed border-outline-variant/60 rounded-xl p-4 text-center hover:border-primary-container cursor-pointer transition-colors bg-surface-container-low/30">
+<span class="material-symbols-outlined text-[32px] text-on-surface-variant">upload_file</span>
+<p class="text-label-md font-label-md font-semibold mt-1">کلیک برای انتخاب فایل صورت‌جلسه امضاشده (PDF یا تصویر)</p>
+<p class="text-[11px] text-on-surface-variant mt-0.5">حداکثر حجم مجاز: ۵ مگابایت</p>
+</div>
+</div>
+</div>
+<!-- دکمه‌های اقدام انتهای دراور -->
+<div class="p-5 border-t border-outline-variant/30 bg-surface-container-low/40 dark:bg-inverse-surface flex items-center justify-between gap-3">
+<button class="w-1/3 py-2.5 px-4 rounded-xl border border-outline-variant/50 hover:bg-surface-container text-on-surface-variant text-title-md font-title-md font-semibold transition-all" id="cancelDrawerBtn" type="button">
+        انصراف
+      </button>
+<button class="w-2/3 py-2.5 px-4 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container text-title-md font-title-md font-bold transition-all shadow-md flex items-center justify-center gap-2" id="submitAdjustmentBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">task_alt</span>
+<span class="">ثبت نهایی و صدور سند انبار</span>
+</button>
+</div>
+</aside>
+<!-- ========================================== -->
+<!-- اسکریپت جاوااسکریپت تعاملات کامل صفحه -->
+<!-- ========================================== -->
+<script>
+    // ---------------------------------------------
+    // ۱. مدیریت سوییچ حالت دارک و لایت (Theme Switcher)
+    // ---------------------------------------------
+    const htmlEl = document.documentElement;
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+
+    function applyTheme(isDark) {
+      if (isDark) {
+        htmlEl.classList.add('dark');
+        htmlEl.classList.remove('light');
+        if (themeIcon) themeIcon.textContent = 'dark_mode';
+        if (themeIcon) themeIcon.className = 'material-symbols-outlined text-[20px] text-sky-400';
+        if (themeText) themeText.textContent = 'حالت شب';
+      } else {
+        htmlEl.classList.remove('dark');
+        htmlEl.classList.add('light');
+        if (themeIcon) themeIcon.textContent = 'light_mode';
+        if (themeIcon) themeIcon.className = 'material-symbols-outlined text-[20px] text-amber-500';
+        if (themeText) themeText.textContent = 'حالت روز';
+      }
+    }
+
+    // بررسی تم ترجیحی کاربر
+    const savedTheme = localStorage.getItem('erp_theme');
+    if (savedTheme) {
+      applyTheme(savedTheme === 'dark');
+    } else {
+      applyTheme(false); // پیش‌فرض حالت روشن مطابق با تم راهنما
+    }
+
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const isCurrentlyDark = htmlEl.classList.contains('dark');
+        const newThemeIsDark = !isCurrentlyDark;
+        applyTheme(newThemeIsDark);
+        localStorage.setItem('erp_theme', newThemeIsDark ? 'dark' : 'light');
+      });
+    }
+
+    // ---------------------------------------------
+    // ۲. مدیریت کنترل دراور تعدیل موجودی (Stock Adjustment Drawer)
+    // ---------------------------------------------
+    const backdrop = document.getElementById('adjustmentBackdrop');
+    const drawer = document.getElementById('adjustmentDrawer');
+    const openBtn = document.getElementById('openAdjustmentBtn');
+    const closeBtn = document.getElementById('closeDrawerBtn');
+    const cancelBtn = document.getElementById('cancelDrawerBtn');
+    const submitBtn = document.getElementById('submitAdjustmentBtn');
+
+    const drawerSku = document.getElementById('drawerSku');
+    const drawerItemName = document.getElementById('drawerItemName');
+    const systemQtyText = document.getElementById('systemQtyText');
+    const physicalCountInput = document.getElementById('physicalCountInput');
+    const diffValue = document.getElementById('diffValue');
+    const diffTitle = document.getElementById('diffTitle');
+    const diffIcon = document.getElementById('diffIcon');
+    const diffBanner = document.getElementById('diffBanner');
+
+    let currentSystemQty = 145;
+
+    function openDrawer(sku = 'STL-16-IR', name = 'میلگرد آجدار سایز ۱۶ (A3 اصفهان)', sysQty = 145) {
+      if (!drawerSku || !drawerItemName || !systemQtyText || !physicalCountInput) return;
+      drawerSku.textContent = sku;
+      drawerItemName.textContent = name;
+      currentSystemQty = sysQty;
+      systemQtyText.textContent = sysQty.toLocaleString('fa-IR');
+      physicalCountInput.value = sysQty; // پیش‌فرض مقدار برابر
+      calculateDifference();
+
+      if (backdrop && drawer) {
+        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        backdrop.classList.add('opacity-100');
+        drawer.style.transform = 'translateX(0)';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeDrawer() {
+      if (backdrop && drawer) {
+        backdrop.classList.add('opacity-0', 'pointer-events-none');
+        backdrop.classList.remove('opacity-100');
+        drawer.style.transform = 'translateX(-100%)';
+        document.body.style.overflow = '';
+      }
+    }
+
+    function calculateDifference() {
+      if (!physicalCountInput || !diffValue || !diffTitle || !diffIcon || !diffBanner) return;
+      const physicalVal = parseFloat(physicalCountInput.value) || 0;
+      const diff = physicalVal - currentSystemQty;
+      
+      diffValue.textContent = (diff > 0 ? '+' : '') + diff.toLocaleString('fa-IR');
+
+      if (diff < 0) {
+        // کسری
+        diffBanner.className = 'p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/60 flex items-center justify-between';
+        diffTitle.className = 'text-title-md font-title-md font-bold text-amber-900 dark:text-amber-200';
+        diffTitle.textContent = 'کسری انبار (شمارش کمتر از موجودی سیستم)';
+        diffIcon.textContent = 'trending_down';
+        diffIcon.className = 'material-symbols-outlined text-[24px] text-amber-700 dark:text-amber-300';
+      } else if (diff > 0) {
+        // اضافی
+        diffBanner.className = 'p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700/60 flex items-center justify-between';
+        diffTitle.className = 'text-title-md font-title-md font-bold text-emerald-900 dark:text-emerald-200';
+        diffTitle.textContent = 'اضافی انبار (شمارش فراتر از موجودی دفتری)';
+        diffIcon.textContent = 'trending_up';
+        diffIcon.className = 'material-symbols-outlined text-[24px] text-emerald-700 dark:text-emerald-300';
+      } else {
+        // تطابق کامل
+        diffBanner.className = 'p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-700/60 flex items-center justify-between';
+        diffTitle.className = 'text-title-md font-title-md font-bold text-blue-900 dark:text-blue-200';
+        diffTitle.textContent = 'تطابق کامل موجودی (بدون مغایرت انبارداری)';
+        diffIcon.textContent = 'verified';
+        diffIcon.className = 'material-symbols-outlined text-[24px] text-blue-700 dark:text-blue-300';
+      }
+    }
+
+    if (physicalCountInput) physicalCountInput.addEventListener('input', calculateDifference);
+
+    if (openBtn) openBtn.addEventListener('click', () => openDrawer());
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeDrawer);
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+    if (submitBtn) {
+      submitBtn.addEventListener('click', async () => {
+        const diffVal = parseFloat(physicalCountInput.value) - currentSystemQty;
+        if (diffVal === 0) { closeDrawer(); return; }
+        const pid = document.getElementById('adjustmentProduct').value;
+        const wid = document.getElementById('adjustmentWarehouse').value;
+        if (!pid || !wid) { alert('انتخاب کالا و انبار الزامی است'); return; }
+        const btn = submitBtn;
+        btn.disabled = true; btn.textContent = 'در حال ثبت سند...';
+        const csrf = (document.cookie.match(/(^| )csrftoken=([^;]+)/) || [, ''])[2];
+        try {
+          const res = await fetch('/api/inventory/stock-movements/', {
+            method: 'POST', credentials: 'same-origin',
+            headers: {'Content-Type':'application/json', 'X-CSRFToken': csrf},
+            body: JSON.stringify({
+              product: parseInt(pid),
+              warehouse: parseInt(wid),
+              movement_type: 'adjustment',
+              quantity: diffVal,
+              reference: 'ADJ-' + (drawerSku ? drawerSku.textContent : ''),
+              note: document.getElementById('adjustmentReason').value + ' | ' + (document.getElementById('adjustmentNotes').value || '')
+            })
+          });
+          btn.disabled = false; btn.textContent = 'ثبت نهایی و صدور سند انبار';
+          if (res.ok) {
+            closeDrawer();
+            if (typeof showToast === 'function') showToast('سند تعدیل موجودی ثبت شد', 'check_circle');
+            setTimeout(() => location.reload(), 700);
+          } else {
+            alert('خطا در ثبت سند: ' + res.status);
+          }
+        } catch (e) {
+          btn.disabled = false; btn.textContent = 'ثبت نهایی و صدور سند انبار';
+          alert('ارتباط با سرور برقرار نشد.');
+        }
+      });
+    }
+
+    // ---------------------------------------------
+    // ۳. مدیریت تب‌های فیلتر سریع
+    // ---------------------------------------------
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    function filterByTab(tabName) {
+      tabButtons.forEach(btn => {
+        if (btn.getAttribute('data-filter') === tabName) {
+          btn.className = 'tab-btn px-4 py-2 rounded-lg text-title-md font-title-md font-bold bg-primary-container text-on-primary-container whitespace-nowrap shadow-sm transition-all';
+        } else {
+          btn.className = 'tab-btn px-4 py-2 rounded-lg text-body-md font-body-md text-on-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface whitespace-nowrap transition-all flex items-center gap-1.5';
+        }
+      });
+    }
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterByTab(btn.getAttribute('data-filter'));
+      });
+    });
+
+    // ---------------------------------------------
+    // ۴. چک‌باکس گروهی انتخاب اقلام (Select All)
+    // ---------------------------------------------
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+
+    if (selectAllCheckbox && rowCheckboxes.length) {
+      selectAllCheckbox.addEventListener('change', (e) => {
+        rowCheckboxes.forEach(cb => {
+          cb.checked = e.target.checked;
+        });
+      });
+    }
+
+    // جستجوی لحظه‌ای در جدول
+    const searchInput = document.getElementById('inventorySearchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          row.style.display = text.includes(query) ? '' : 'none';
+        });
+      });
+    }
+
+    // ---------------------------------------------
+    // ۵. مدیریت دکمه‌های عملیات جدول (جدول اصلی)
+    // ---------------------------------------------
+    const tableBody = document.querySelector('tbody');
+    if (tableBody) {
+      tableBody.addEventListener('click', (e) => {
+        // دکمه تعدیل موجودی
+        const adjustBtn = e.target.closest('button[data-action="adjust"]');
+        if (adjustBtn) {
+          const sku = adjustBtn.getAttribute('data-sku');
+          const name = adjustBtn.getAttribute('data-name');
+          const qty = parseFloat(adjustBtn.getAttribute('data-qty')) || 0;
+          if (sku && name) openDrawer(sku, name, qty);
+          return;
+        }
+
+        // دکمه کاردکس گردش کالا
+        const movementBtn = e.target.closest('button[data-action="movements"]');
+        if (movementBtn) {
+          const row = movementBtn.closest('tr');
+          const skuCell = row.querySelector('td:nth-child(3)');
+          if (skuCell) {
+            const skuText = skuCell.textContent.trim();
+            alert('کاردکس گرا برای کالا: ' + skuText + '\n(در نسخه کامل به صفحه کاردکس منتقل می‌گردد)');
+          }
+          return;
+        }
+
+        // دکمه جابجایی بین انبارها
+        const moveBtn = e.target.closest('button[data-action="transfer"]');
+        if (moveBtn) {
+          const row = moveBtn.closest('tr');
+          const skuCell = row.querySelector('td:nth-child(3)');
+          if (skuCell) {
+            const skuText = skuCell.textContent.trim();
+            alert('جابجایی بین انبارها برای کالا: ' + skuText + '\n(در نسخه کامل به صفحه جابجایی منتقل می‌گردد)');
+          }
+          return;
+        }
+
+        // دکمه ثبت سفارش خرید اضطراری
+        const orderBtn = e.target.closest('button[data-action="purchase-order"]');
+        if (orderBtn) {
+          const row = orderBtn.closest('tr');
+          const skuCell = row.querySelector('td:nth-child(3)');
+          if (skuCell) {
+            const skuText = skuCell.textContent.trim();
+            alert('ثبت سفارش خرید اضطراری برای کالا: ' + skuText + '\n(در نسخه کامل به صفحه سفارش خرید منتقل می‌گردد)');
+          }
+          return;
+        }
+      });
+    }
+
+    // ---------------------------------------------
+    // ۶. مدیریت دکمه‌های هدر صفحه inventory-dashboard
+    // ---------------------------------------------
+    // دکمه خروجی اکسل/PDF
+    const exportBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('خروجی اکسل/PDF'));
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        alert('خروجی اکسل/PDF در نسخه کامل پیاده می‌شود');
+      });
+    }
+
+    // دکمه انتقال بین انبارها
+    const transferBtn = document.querySelector('button[data-action="transfer"]');
+    if (transferBtn) {
+      transferBtn.addEventListener('click', () => {
+        alert('قابلیت انتقال بین انبارها در نسخه کامل پیاده می‌شود');
+      });
+    }
+
+    // دکمه ثبت رسید ورود جدید
+    const newReceiptBtn = document.querySelector('button[data-action="new-receipt"]');
+    if (newReceiptBtn) {
+      newReceiptBtn.addEventListener('click', () => {
+        alert('ثبت رسید ورود جدید در نسخه کامل پیاده می‌شود');
+      });
+    }
+
+    // فیلتر انبار
+    const whSelect = document.querySelector('select[aria-label="انتخاب انبار"]');
+    if (whSelect) {
+      whSelect.addEventListener('change', (e) => {
+        const selectedWh = whSelect.value;
+        alert('انتخاب انبار: ' + whSelect.options[whSelect.selectedIndex].text + ' (کد: ' + selectedWh + ')');
+      });
+    }
+
+    // فیلتر بازه زمانی
+    const timeRangeSelect = document.querySelector('select[aria-label="بازه زمانی"]');
+    if (timeRangeSelect) {
+      timeRangeSelect.addEventListener('change', (e) => {
+        alert('بازه زمانی انتخاب شده: ' + timeRangeSelect.options[timeRangeSelect.selectedIndex].text);
+      });
+    }
+  </script>
+{% csrf_token %}
+
+{% endblock %}

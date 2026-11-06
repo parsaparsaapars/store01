@@ -1,0 +1,7 @@
+Contains:
+deployment/compose
+deployment/nginx
+ui-design/cashbox-payments
+ui-design/customer-management
+ui-design/finance-center
+ui-design/global-search

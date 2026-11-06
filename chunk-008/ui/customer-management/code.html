@@ -1,0 +1,515 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Main Canvas Wrapper (No Sidebar, No TopBar Shell - Dedicated Viewport) -->
+<main class="w-full min-h-screen px-4 py-5 md:px-8 md:py-7 ] space-y-6">
+<!-- Top Action Breadcrumb & Mode Switcher -->
+<header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant/40 dark:border-slate-800">
+<div class="space-y-1">
+<div class="flex items-center gap-2 text-on-surface-variant dark:text-slate-400 font-label-md text-label-md">
+<span class="">سامانه جامع سازمانی</span>
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+<span class="text-primary dark:text-inverse-primary font-bold">مدیریت مشتریان و حساب‌ها</span>
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+<span class="text-on-surface dark:text-slate-200 font-medium">پرونده ۳۶۰ درجه تجاری</span>
+</div>
+<h1 class="text-headline-xl font-headline-xl text-on-surface dark:text-slate-100 font-bold tracking-tight">
+          مدیریت ارتباط با مشتریان و پرونده ۳۶۰ درجه
+        </h1>
+</div>
+<!-- Quick Context Actions & Dark Mode Toggle -->
+<div class="flex items-center gap-2.5 self-end sm:self-center">
+<!-- Dark/Light Theme Button -->
+
+<!-- Help Documentation -->
+<button class="p-2 rounded-lg bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors shadow-sm" title="راهنمای سیستم">
+<span class="material-symbols-outlined">help</span>
+</button>
+<!-- Quick Invoice Trigger -->
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-title-md text-title-md transition-all shadow-sm active:scale-95" onclick="toggleDrawer(true)">
+<span class="material-symbols-outlined text-xl">person_add</span>
+<span class="">مشتری جدید (+)</span>
+</button>
+</div>
+</header>
+<!-- SECTION 1: Key Performance Indicators (KPI Bento Grid) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1: کل مشتریان -->
+<div class="bg-surface-container-lowest dark:bg-slate-900/95 border border-outline-variant/40 dark:border-slate-800/80 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant dark:text-slate-400">کل مشتریان ثبت‌شده</p>
+<h3 class="font-display-lg text-display-lg text-on-surface dark:text-slate-100 mt-1 font-tabular-num">{{ cm_total_customers|floatformat:"-0" }}</h3>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high dark:bg-slate-800 flex items-center justify-center text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined text-2xl">group</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-slate-800/60 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-secondary dark:text-secondary-fixed-dim font-label-md text-label-md">
+<span class="material-symbols-outlined text-base">trending_up</span>
+<span class="font-tabular-num">+۱۲.۴٪</span>
+<span class="text-on-surface-variant dark:text-slate-400">نسبت به ماه پیش</span>
+</div>
+<!-- Mini SVG Sparkline -->
+<svg class="w-16 h-6 stroke-secondary dark:stroke-secondary-fixed-dim fill-none" viewBox="0 0 60 20">
+<path d="M2 16 Q 15 12, 28 14 T 45 6 T 58 4" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- KPI 2: مشتریان بدهکار -->
+<div class="bg-surface-container-lowest dark:bg-slate-900/95 border border-outline-variant/40 dark:border-slate-800/80 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant dark:text-slate-400">مشتریان بدهکار سررسید‌گذشته</p>
+<h3 class="font-display-lg text-display-lg text-error dark:text-red-400 mt-1 font-tabular-num">{{ cm_debtor_customers|floatformat:"-0" }} <span class="text-title-md font-normal text-on-surface-variant dark:text-slate-400">طرف حساب</span></h3>
+</div>
+<div class="w-10 h-10 rounded-lg bg-error-container/40 dark:bg-red-950/60 flex items-center justify-center text-error dark:text-red-400">
+<span class="material-symbols-outlined text-2xl">warning</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-slate-800/60 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-error dark:text-red-400 font-label-md text-label-md">
+<span class="material-symbols-outlined text-base">arrow_drop_up</span>
+<span class="font-tabular-num">+۴ پرونده جدید</span>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300">نیاز به پیگیری</span>
+</div>
+</div>
+<!-- KPI 3: حجم خرید ماهانه -->
+<div class="bg-surface-container-lowest dark:bg-slate-900/95 border border-outline-variant/40 dark:border-slate-800/80 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant dark:text-slate-400">حجم معاملات این ماه</p>
+<div class="flex items-baseline gap-1 mt-1">
+<h3 class="font-display-lg text-display-lg text-on-surface dark:text-slate-100 font-tabular-num">{{ cm_total_volume|floatformat:"-0" }}</h3>
+<span class="font-title-md text-title-md text-on-surface-variant dark:text-slate-400">میلیارد تومان</span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high dark:bg-slate-800 flex items-center justify-center text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined text-2xl">payments</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-slate-800/60 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-secondary dark:text-secondary-fixed-dim font-label-md text-label-md">
+<span class="material-symbols-outlined text-base">trending_up</span>
+<span class="font-tabular-num">+۱۸.۲٪</span>
+<span class="text-on-surface-variant dark:text-slate-400">تارگت فصلی</span>
+</div>
+<svg class="w-16 h-6 stroke-primary dark:stroke-sky-400 fill-none" viewBox="0 0 60 20">
+<path d="M2 18 Q 18 15, 26 8 T 42 10 T 58 2" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- KPI 4: مشتریان جدید -->
+<div class="bg-surface-container-lowest dark:bg-slate-900/95 border border-outline-variant/40 dark:border-slate-800/80 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant dark:text-slate-400">مشتریان جذب‌شده جدید</p>
+<h3 class="font-display-lg text-display-lg text-on-surface dark:text-slate-100 mt-1 font-tabular-num">{{ cm_new_month_customers|floatformat:"-0" }} <span class="text-title-md font-normal text-on-surface-variant dark:text-slate-400">عضو جدید</span></h3>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high dark:bg-slate-800 flex items-center justify-center text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined text-2xl">person_add_alt</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-slate-800/60 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-on-surface-variant dark:text-slate-400 font-label-md text-label-md">
+<span class="material-symbols-outlined text-base text-primary dark:text-inverse-primary">check_circle</span>
+<span class="">۲۴ حساب احراز هویت شده</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">نرخ رشد ۶٪</span>
+</div>
+</div>
+</section>
+<!-- MAIN TWO-PANEL WORKSPACE: 360 Profile Hero (Left/Top) & Filterable Customer Ledger (Right/Main) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- ======================================================== -->
+<!-- SECTION 2: 360-Degree Customer Profile Dossier (4 Cols on XL) -->
+<!-- ======================================================== -->
+<div class="xl:col-span-5 space-y-4">
+<!-- Customer 360 Primary Card -->
+<article class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden transition-colors"><div class="bg-gradient-to-l from-primary-container via-primary to-slate-900 dark:from-blue-950 dark:via-slate-900 dark:to-slate-950 px-5 pt-4 pb-6 text-white"><div class="flex items-center justify-between gap-2 mb-4"><span class="px-3 py-1 rounded-full bg-amber-400 text-amber-950 font-label-sm text-label-sm font-bold flex items-center gap-1 shadow-sm"><span class="material-symbols-outlined text-sm">stars</span><span class="">مشتری درجه ۱ (VIP)</span></span><div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white font-label-sm text-label-sm border border-white/20"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="">پرونده فعال بازرگانی</span></div></div><div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 pt-1"><div class="flex items-center gap-3.5"><div class="w-16 h-16 rounded-2xl bg-surface-container-lowest dark:bg-slate-800 text-primary dark:text-inverse-primary flex items-center justify-center font-bold text-2xl shadow-md border-2 border-white/80 dark:border-slate-700 shrink-0">ک‌‌پ</div><div class="space-y-1 text-right"><div class="flex items-center gap-2"><h2 class="text-headline-md font-headline-md font-bold text-white tracking-tight">مهندس کیوان پارسا</h2><span class="text-label-sm font-label-sm font-medium text-blue-100 bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded border border-white/10">حقوقی</span></div><p class="text-body-sm font-body-sm text-blue-100/90 leading-tight">شرکت صنایع مفتول و فولاد البرز (سهامی خاص)</p></div></div><div class="self-start sm:self-center shrink-0"><span class="font-tabular-num text-label-sm font-label-sm text-white/95 bg-white/15 dark:bg-slate-800/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/25 dark:border-slate-700 font-mono inline-block shadow-sm">شناسه: CUS-8492</span></div></div></div><div class="p-5"><div class="grid grid-cols-3 gap-2 p-3 rounded-xl bg-surface-container-low dark:bg-slate-950/70 border border-outline-variant/30 dark:border-slate-800/80 mb-5"><div class="text-center p-2 rounded-lg bg-surface-container-lowest dark:bg-slate-900/60"><span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 block mb-1">سقف اعتبار مصوب</span><span class="font-tabular-num text-title-md font-title-md text-on-surface dark:text-slate-200">۵۰۰ م.ت</span></div><div class="text-center p-2 rounded-lg bg-surface-container-lowest dark:bg-slate-900/60"><span class="text-label-sm font-label-sm text-error dark:text-red-400 block mb-1">مانده بدهی سررسید</span><span class="font-tabular-num text-title-md font-title-md text-error dark:text-red-400 font-bold">۴۸۵ م.ت</span></div><div class="text-center p-2 rounded-lg bg-surface-container-lowest dark:bg-slate-900/60"><span class="text-label-sm font-label-sm text-amber-600 dark:text-amber-400 block mb-1">باشگاه مشتریان</span><span class="font-tabular-num text-title-md font-title-md text-amber-600 dark:text-amber-400 font-bold">۱,۲۴۰ pt</span></div></div><div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5"><button class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-primary-container text-on-primary hover:bg-primary transition shadow-sm text-center"><span class="material-symbols-outlined text-xl mb-1">receipt_long</span><span class="text-label-sm font-label-sm">صدور فاکتور</span></button><button class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-container-high dark:bg-slate-800 text-on-surface dark:text-slate-200 hover:bg-surface-variant dark:hover:bg-slate-700 transition border border-outline-variant/30 dark:border-slate-700 text-center"><span class="material-symbols-outlined text-xl mb-1 text-emerald-600 dark:text-emerald-400">price_check</span><span class="text-label-sm font-label-sm">دریافت وجه</span></button><button class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-container-high dark:bg-slate-800 text-on-surface dark:text-slate-200 hover:bg-surface-variant dark:hover:bg-slate-700 transition border border-outline-variant/30 dark:border-slate-700 text-center"><span class="material-symbols-outlined text-xl mb-1 text-sky-600 dark:text-sky-400">sms</span><span class="text-label-sm font-label-sm">ارسال پیامک</span></button><button class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-container-high dark:bg-slate-800 text-on-surface dark:text-slate-200 hover:bg-surface-variant dark:hover:bg-slate-700 transition border border-outline-variant/30 dark:border-slate-700 text-center"><span class="material-symbols-outlined text-xl mb-1 text-on-surface-variant dark:text-slate-400">edit_note</span><span class="text-label-sm font-label-sm">ویرایش پرونده</span></button></div><div class="border-b border-outline-variant/40 dark:border-slate-800 flex gap-4 text-body-sm font-body-sm"><button class="dossier-tab-btn pb-2 border-b-2 border-primary dark:border-inverse-primary text-primary dark:text-inverse-primary font-bold" onclick="switchDossierTab('tab-invoices', this)">فاکتورهای اخیر</button><button class="dossier-tab-btn pb-2 border-b-2 border-transparent text-on-surface-variant dark:text-slate-400 hover:text-on-surface dark:hover:text-slate-200" onclick="switchDossierTab('tab-checks', this)">چک‌ها و واریزها</button><button class="dossier-tab-btn pb-2 border-b-2 border-transparent text-on-surface-variant dark:text-slate-400 hover:text-on-surface dark:hover:text-slate-200" onclick="switchDossierTab('tab-timeline', this)">تاریخچه و یادداشت</button></div><div class="dossier-pane pt-4 space-y-2.5" id="tab-invoices"><div class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/30 dark:border-slate-800 bg-surface-bright dark:bg-slate-950/40 hover:bg-surface-container-low dark:hover:bg-slate-800/40 transition"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-tabular-num text-label-sm">#۹۴۲</div><div><p class="text-body-sm font-body-sm font-medium text-on-surface dark:text-slate-200">فاکتور رسمی ورق سیاه st37</p><span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400">۱۴۰۳/۰۸/۱۲ • ۱۲ تن تحویل انبار شورآباد</span></div></div><div class="text-left"><span class="block font-tabular-num text-title-md font-title-md text-on-surface dark:text-slate-100">۳۱۰,۰۰۰,۰۰۰ <span class="text-xs">تومان</span></span><span class="inline-block text-label-sm px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">تسویه کامل</span></div></div><div class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/30 dark:border-slate-800 bg-surface-bright dark:bg-slate-950/40 hover:bg-surface-container-low dark:hover:bg-slate-800/40 transition"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 flex items-center justify-center font-tabular-num text-label-sm">#۸۱۱</div><div><p class="text-body-sm font-body-sm font-medium text-on-surface dark:text-slate-200">پیش‌فاکتور میلگرد ۱۶ آجدار</p><span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400">۱۴۰۳/۰۸/۲۴ • سررسید ۴۵ روزه</span></div></div><div class="text-left"><span class="block font-tabular-num text-title-md font-title-md text-error dark:text-red-400">۱۷۵,۰۰۰,۰۰۰ <span class="text-xs">تومان</span></span><span class="inline-block text-label-sm px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">در انتظار چک صیادی</span></div></div></div><div class="dossier-pane pt-4 space-y-2.5 hidden" id="tab-checks"><div class="p-3 rounded-lg border border-outline-variant/30 dark:border-slate-800 bg-surface-bright dark:bg-slate-950/40 space-y-1.5"><div class="flex items-center justify-between"><span class="font-tabular-num text-body-sm font-medium text-on-surface dark:text-slate-200">چک صیادی شماره ۹۰۴۲-۰۸</span><span class="font-tabular-num text-body-md font-bold text-on-surface dark:text-slate-100">۲۰۰,۰۰۰,۰۰۰ تومان</span></div><div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400"><span class="">بانک ملت - شعبه میدان ونک</span><span class="text-amber-600 dark:text-amber-400">سررسید: ۱۰ روز دیگر (۱۴۰۳/۰۹/۰۵)</span></div></div></div><div class="dossier-pane pt-4 space-y-3 hidden" id="tab-timeline"><div class="flex gap-3 text-body-sm font-body-sm"><div class="w-2.5 h-2.5 mt-1.5 rounded-full bg-primary-container shrink-0"></div><div><p class="text-on-surface dark:text-slate-200 font-medium">تماس تلفنی مدیر فروش جهت تمدید اعتبار اعتباری</p><p class="text-label-sm text-on-surface-variant dark:text-slate-400 mt-0.5">ثبت توسط: وحید اسماعیلی • دیروز ساعت ۱۶:۲۰</p></div></div><div class="flex gap-3 text-body-sm font-body-sm"><div class="w-2.5 h-2.5 mt-1.5 rounded-full bg-emerald-500 shrink-0"></div><div><p class="text-on-surface dark:text-slate-200 font-medium">استعلام رتبه اعتباری صیادی بانک مرکزی: وضعیت سفید (A)</p><p class="text-label-sm text-on-surface-variant dark:text-slate-400 mt-0.5">سامانه رتبه‌بندی ایرانیان • ۴ روز قبل</p></div></div></div><div class="mt-5 pt-4 border-t border-outline-variant/30 dark:border-slate-800 text-body-sm font-body-sm grid grid-cols-2 gap-3 text-on-surface-variant dark:text-slate-400"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">call</span><span class="font-tabular-num font-mono">۰۲۱-۸۸۹۴۷۲۳۱</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">smartphone</span><span class="font-tabular-num font-mono">۰۹۱۲۳۴۵۶۷۸۹</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">badge</span><span class="">شناسه ملی: ۱۰۱۰۲۸۳۹۴۸</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">location_on</span><span class="truncate">تهران، شهرک صنعتی شمس‌آباد</span></div></div></div></article>
+<!-- Mini Quick Financial Risk Alert Box -->
+<div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 flex items-start gap-3">
+<span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-2xl shrink-0 mt-0.5">report_problem</span>
+<div class="space-y-1">
+<h4 class="text-title-md font-title-md text-amber-900 dark:text-amber-200 font-bold">هشدار محدودیت سقف اعتبار تجاری</h4>
+<p class="text-body-sm font-body-sm text-amber-800 dark:text-amber-300/90 leading-relaxed">
+              این مشتری ۹۷٪ از کل سقف اعتبار مجاز خود را اشغال کرده است. صدور پیش‌فاکتور جدید با شرایط مدت‌دار نیازمند تأیید معاونت مالی خواهد بود.
+            </p>
+</div>
+</div>
+</div>
+<!-- ======================================================== -->
+<!-- SECTION 3: Customer Master Ledger & Data Table (7 Cols) -->
+<!-- ======================================================== -->
+<div class="xl:col-span-7 space-y-4">
+<!-- Search & Dynamic Filter Control Bar -->
+<div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-xl p-4 shadow-sm space-y-3">
+<div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+<!-- Real-time Text Search -->
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant dark:text-slate-400 text-xl pointer-events-none">search</span>
+<input class="w-full pr-10 pl-3 py-2 text-body-md font-body-md rounded-lg bg-surface-bright dark:bg-slate-950 border border-outline-variant/50 dark:border-slate-700 text-on-surface dark:text-slate-100 placeholder:text-on-surface-variant/60 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition" id="customerSearchInput" placeholder="جستجو بر اساس نام، شناسه اقتصادی، شماره همراه یا شهر..." type="text">
+</div>
+<!-- Action Export & Buttons -->
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-outline-variant/50 dark:border-slate-700 bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 hover:bg-surface-container-low dark:hover:bg-slate-800 text-body-sm font-body-sm shadow-sm transition">
+<span class="material-symbols-outlined text-lg">file_download</span>
+<span class="">خروجی اکسل</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-outline-variant/50 dark:border-slate-700 bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 hover:bg-surface-container-low dark:hover:bg-slate-800 text-body-sm font-body-sm shadow-sm transition">
+<span class="material-symbols-outlined text-lg">print</span>
+<span class="">چاپ کاردکس</span>
+</button>
+</div>
+</div>
+<!-- Multi-tier Filter Tags Row -->
+<div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-outline-variant/20 dark:border-slate-800">
+<div class="flex flex-wrap items-center gap-2">
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400">فیلتر سریع:</span>
+<button class="px-2.5 py-1 rounded-md text-label-sm font-label-sm bg-primary-container text-on-primary font-bold">
+                همه ({{ cm_total_customers }})
+              </button>
+              <button class="px-2.5 py-1 rounded-md text-label-sm font-label-sm bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-300 hover:bg-surface-container dark:hover:bg-slate-700 transition">
+                بدهکاران ({{ cm_debtor_customers }})
+              </button>
+              <button class="px-2.5 py-1 rounded-md text-label-sm font-label-sm bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-300 hover:bg-surface-container dark:hover:bg-slate-700 transition">
+                مشتریان VIP ({{ cm_vip_customers }})
+              </button>
+<button class="px-2.5 py-1 rounded-md text-label-sm font-label-sm bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-300 hover:bg-surface-container dark:hover:bg-slate-700 transition">
+                حقوقی / شرکتی
+              </button>
+<button class="px-2.5 py-1 rounded-md text-label-sm font-label-sm bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-300 hover:bg-surface-container dark:hover:bg-slate-700 transition">
+                تسویه کامل
+              </button>
+</div>
+<!-- View Sort Dropdown Indicator -->
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400">
+<span class="material-symbols-outlined text-base">sort</span>
+<span class="">مرتب‌سازی: بیشترین مانده بدهی</span>
+</div>
+</div>
+</div>
+<!-- Desktop Enterprise Data Table (Responsive container with horizontal overflow guard) -->
+<div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/40 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low/70 dark:bg-slate-800/80 border-b border-outline-variant/40 dark:border-slate-800 text-label-md font-label-md text-on-surface-variant dark:text-slate-400">
+<th class="py-3 px-3.5 w-10 text-center">
+<input class="rounded border-outline-variant dark:border-slate-700 text-primary focus:ring-primary w-4 h-4 bg-transparent cursor-pointer" type="checkbox">
+</th>
+<th class="py-3 px-3">نام و مشخصات طرف‌حساب</th>
+<th class="py-3 px-3">نوع و استان</th>
+<th class="py-3 px-3 font-tabular-num">تعداد سفارش</th>
+<th class="py-3 px-3 font-tabular-num">مانده حساب / بدهی</th>
+<th class="py-3 px-3">وضعیت مالی</th>
+<th class="py-3 px-3 text-center">عملیات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 dark:divide-slate-800 text-body-sm font-body-sm">
+{% for customer in customers %}
+<tr class="hover:bg-surface-container-low/50 dark:hover:bg-slate-800/50 transition cursor-pointer">
+<td class="py-3.5 px-3.5 text-center"><input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4" type="checkbox" value="{{ customer.id }}"/></td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-label-md shadow-sm">{{ customer.name|slice:":2" }}</div>
+<div>
+<div class="flex items-center gap-1.5"><span class="font-bold text-on-surface dark:text-slate-100">{{ customer.name }}</span></div>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 font-mono">{{ customer.phone }}</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3"><span class="block text-on-surface dark:text-slate-300">{{ customer.email|default:"-" }}</span><span class="text-label-sm text-on-surface-variant dark:text-slate-400">{{ customer.address|truncatechars:20 }}</span></td>
+<td class="py-3.5 px-3 font-tabular-num text-on-surface dark:text-slate-200 font-bold">{{ customer.order_count }}</td>
+<td class="py-3.5 px-3 font-tabular-num"><span class="text-error dark:text-red-400 font-bold block">{{ customer.total_debt|floatformat:"-0" }}</span></td>
+<td class="py-3.5 px-3"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">فعال</span></td>
+</tr>
+{% empty %}
+<tr><td colspan="6" class="text-center py-6 text-slate-500">داده‌ای یافت نشد</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Footer -->
+<div class="p-3.5 border-t border-outline-variant/30 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm font-body-sm text-on-surface-variant dark:text-slate-400 bg-surface-container-lowest dark:bg-slate-900">
+<div class="flex items-center gap-2">
+<span class="">نمایش</span>
+<select class="rounded-md border-outline-variant/50 dark:border-slate-700 bg-surface-bright dark:bg-slate-950 text-on-surface dark:text-slate-200 text-xs py-1 px-2">
+<option>۱۰ ردیف</option>
+<option>۲۵ ردیف</option>
+<option>۵۰ ردیف</option>
+</select>
+<span class="">از مجموع {{ cm_total_customers }} مشتری ثبت‌شده</span>
+</div>
+<!-- Page Buttons -->
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded border border-outline-variant/40 dark:border-slate-800 hover:bg-surface-container-low dark:hover:bg-slate-800 disabled:opacity-40">
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</button>
+<button class="w-7 h-7 rounded bg-primary-container text-on-primary font-bold text-xs flex items-center justify-center font-tabular-num">۱</button>
+<button class="w-7 h-7 rounded hover:bg-surface-container-low dark:hover:bg-slate-800 text-xs flex items-center justify-center font-tabular-num">۲</button>
+<button class="w-7 h-7 rounded hover:bg-surface-container-low dark:hover:bg-slate-800 text-xs flex items-center justify-center font-tabular-num">۳</button>
+<span class="px-1 text-xs">...</span>
+<button class="w-7 h-7 rounded hover:bg-surface-container-low dark:hover:bg-slate-800 text-xs flex items-center justify-center font-tabular-num">۴۲</button>
+<button class="p-1.5 rounded border border-outline-variant/40 dark:border-slate-800 hover:bg-surface-container-low dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-base">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ======================================================== -->
+<!-- MODAL / SLIDE-OVER DRAWER: ثبت مشتری جدید (Interactive) -->
+<!-- ======================================================== -->
+<div aria-labelledby="slide-over-title" aria-modal="true" class="fixed inset-0 z-50 overflow-hidden hidden" id="newCustomerDrawer" role="dialog">
+<!-- Backdrop Scrim -->
+<div class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300 opacity-100" onclick="toggleDrawer(false)"></div>
+<div class="fixed inset-y-0 left-0 pl-0 max-w-full flex">
+<div class="w-screen max-w-xl bg-surface-container-lowest dark:bg-slate-900 border-r border-outline-variant/40 dark:border-slate-800 shadow-2xl flex flex-col h-full">
+<!-- Drawer Header -->
+<div class="px-6 py-4 border-b border-outline-variant/40 dark:border-slate-800 flex items-center justify-between bg-surface-container-low dark:bg-slate-950">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">person_add</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface dark:text-slate-100 font-bold" id="slide-over-title">ثبت پرونده مشتری جدید</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400">احراز هویت بازرگانی، سقف اعتبار و داده‌های مالی</p>
+</div>
+</div>
+<button class="p-1.5 rounded-lg text-on-surface-variant dark:text-slate-400 hover:bg-surface-container-high dark:hover:bg-slate-800 transition" onclick="toggleDrawer(false)">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+</div>
+<!-- Drawer Form Body (Scrollable) -->
+<div class="p-6 overflow-y-auto flex-1 space-y-6">
+<!-- Stepper Indicator -->
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/30 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-tabular-num text-xs flex items-center justify-center font-bold">۱</span>
+<span class="text-body-sm font-bold text-primary dark:text-inverse-primary">اطلاعات هویتی</span>
+</div>
+<div class="h-0.5 w-8 bg-outline-variant/40 dark:bg-slate-700"></div>
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-surface-container-high dark:bg-slate-800 text-on-surface-variant dark:text-slate-400 font-tabular-num text-xs flex items-center justify-center">۲</span>
+<span class="text-body-sm text-on-surface-variant dark:text-slate-400">تماس و نشانی</span>
+</div>
+<div class="h-0.5 w-8 bg-outline-variant/40 dark:bg-slate-700"></div>
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-surface-container-high dark:bg-slate-800 text-on-surface-variant dark:text-slate-400 font-tabular-num text-xs flex items-center justify-center">۳</span>
+<span class="text-body-sm text-on-surface-variant dark:text-slate-400">حدود اعتبار مالی</span>
+</div>
+</div>
+<!-- Section A: نوع شخصیت -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-2">نوع مشتری و شخصیت قانونی</label>
+<div class="grid grid-cols-2 gap-3">
+<label class="flex items-center gap-2.5 p-3 rounded-lg border-2 border-primary bg-primary-fixed/20 dark:bg-blue-950/40 cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary" name="cust_type" type="radio">
+<div>
+<span class="text-body-sm font-bold text-on-surface dark:text-slate-100 block">شخصیت حقوقی / شرکت</span>
+<span class="text-[11px] text-on-surface-variant dark:text-slate-400">دارای شناسه ملی و کد اقتصادی</span>
+</div>
+</label>
+<label class="flex items-center gap-2.5 p-3 rounded-lg border border-outline-variant/50 dark:border-slate-800 hover:bg-surface-container-low dark:hover:bg-slate-800/40 cursor-pointer">
+<input class="text-primary focus:ring-primary" name="cust_type" type="radio">
+<div>
+<span class="text-body-sm font-bold text-on-surface dark:text-slate-100 block">شخصیت حقیقی / اصناف</span>
+<span class="text-[11px] text-on-surface-variant dark:text-slate-400">فروشگاه یا مشتری نهایی</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Form Fields Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">نام و نام خانوادگی نماینده *</label>
+<input class="w-full px-3 py-2 text-body-md rounded-lg bg-surface-bright dark:bg-slate-950 border border-outline-variant/50 dark:border-slate-700 text-on-surface dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="مثال: مهندس رامین خسروی" type="text">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">عنوان کامل شرکت / برند *</label>
+<input class="w-full px-3 py-2 text-body-md rounded-lg bg-surface-bright dark:bg-slate-950 border border-outline-variant/50 dark:border-slate-700 text-on-surface dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="مثال: پارس بتن آریا" type="text">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">شناسه اقتصادی / کدملی *</label>
+<input class="w-full px-3 py-2 text-body-md font-mono rounded-lg bg-surface-bright dark:bg-slate-950 border border-outline-variant/50 dark:border-slate-700 text-on-surface dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="۱۰ یا ۱۱ رقمی" type="text">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">شماره تلفن همراه (پیامک فاکتور) *</label>
+<input class="w-full px-3 py-2 text-body-md font-mono rounded-lg bg-surface-bright dark:bg-slate-950 border border-outline-variant/50 dark:border-slate-700 text-on-surface dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="۰۹۱۲..." type="tel">
+</div>
+</div>
+<!-- Section B: اعتبارسنجی و سقف تسویه -->
+<div class="p-4 rounded-xl bg-surface-container-low dark:bg-slate-950/80 border border-outline-variant/40 dark:border-slate-800 space-y-3">
+<h4 class="text-title-md font-title-md text-on-surface dark:text-slate-200 font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-xl">account_balance_wallet</span>
+<span class="">تعیین حدود مالی و شرایط تسویه حساب</span>
+</h4>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 mb-1">سقف اعتبار مجاز اولیه (تومان)</label>
+<input class="w-full px-3 py-2 text-body-md font-tabular-num rounded-lg bg-surface-bright dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-700 text-on-surface dark:text-slate-100" placeholder="مثلاً: ۲۰۰,۰۰۰,۰۰۰" type="number">
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 mb-1">مهلت بازپرداخت و سررسید</label>
+<select class="w-full px-3 py-2 text-body-md rounded-lg bg-surface-bright dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-700 text-on-surface dark:text-slate-100">
+<option>تسویه نقدی پیش از تحویل بار</option>
+<option>اعتباری ۳۰ روزه با چک صیادی</option>
+<option>اعتباری ۴۵ روزه (ویژه مشتریان VIP)</option>
+<option>ضمانت‌نامه بانکی حسن انجام تعهدات</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<input checked="" class="rounded border-outline-variant dark:border-slate-700 text-primary focus:ring-primary w-4 h-4 bg-transparent cursor-pointer" id="sanadCheck" type="checkbox">
+<label class="text-label-md font-label-md text-on-surface dark:text-slate-300 cursor-pointer" for="sanadCheck">
+                استعلام خودکار رتبه صیادی بانک مرکزی (سامانه مکنا / سماچک)
+              </label>
+</div>
+</div>
+<!-- Section C: نشانی و انبار تحویل -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-slate-300 mb-1">نشانی دقیق دفتر مرکزی یا انبار تخلیه کالا</label>
+<textarea class="w-full px-3 py-2 text-body-md rounded-lg bg-surface-bright dark:bg-slate-950 border border-outline-variant/50 dark:border-slate-700 text-on-surface dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="استان، شهر، شهرک صنعتی، پلاک، کد پستی ده‌رقمی..." rows="2"></textarea>
+</div>
+</div>
+<!-- Drawer Footer -->
+<div class="px-6 py-4 border-t border-outline-variant/40 dark:border-slate-800 bg-surface-container-low dark:bg-slate-950 flex items-center justify-end gap-3">
+<button class="px-4 py-2 rounded-lg border border-outline-variant/50 dark:border-slate-700 text-on-surface dark:text-slate-300 hover:bg-surface-container dark:hover:bg-slate-800 text-body-sm font-body-sm transition" onclick="toggleDrawer(false)">
+            انصراف
+          </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary text-body-sm font-bold shadow-md transition active:scale-95 flex items-center gap-1.5" onclick="toggleDrawer(false)">
+<span class="material-symbols-outlined text-lg">check</span>
+<span class="">تأیید و ذخیره پرونده مشتری</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Inline Script for Theme Switching, Drawer and Tab Controls -->
+<script>
+    // 1. Theme Toggle Script
+    function toggleTheme() {
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      const themeLabel = document.getElementById('themeLabel');
+
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        if (themeIcon) themeIcon.textContent = 'dark_mode';
+        if (themeLabel) themeLabel.textContent = 'حالت دارک';
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        if (themeIcon) themeIcon.textContent = 'light_mode';
+        if (themeLabel) themeLabel.textContent = 'حالت لایت';
+      }
+    }
+
+    // Default to system preference or stored setting
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+      const themeIcon = document.getElementById('themeIcon');
+      const themeLabel = document.getElementById('themeLabel');
+      if (themeIcon) themeIcon.textContent = 'light_mode';
+      if (themeLabel) themeLabel.textContent = 'حالت لایت';
+    }
+
+    // 2. Customer Drawer (Slide-Over) Toggle
+    function toggleDrawer(isOpen) {
+      const drawer = document.getElementById('newCustomerDrawer');
+      if (!drawer) return;
+      if (isOpen) {
+        drawer.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } else {
+        drawer.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // 3. Dossier Sub-tabs Controller
+    function switchDossierTab(tabId, btn) {
+      // Hide all panes
+      document.querySelectorAll('.dossier-pane').forEach(el => el.classList.add('hidden'));
+      // Remove active classes on buttons
+      document.querySelectorAll('.dossier-tab-btn').forEach(b => {
+        b.classList.remove('border-primary', 'dark:border-inverse-primary', 'text-primary', 'dark:text-inverse-primary', 'font-bold');
+        b.classList.add('border-transparent', 'text-on-surface-variant', 'dark:text-slate-400');
+      });
+
+      // Show selected pane
+      const pane = document.getElementById(tabId);
+      if (pane) pane.classList.remove('hidden');
+
+      // Highlight clicked button
+      btn.classList.add('border-primary', 'dark:border-inverse-primary', 'text-primary', 'dark:text-inverse-primary', 'font-bold');
+      btn.classList.remove('border-transparent', 'text-on-surface-variant', 'dark:text-slate-400');
+    }
+
+    // 4. Quick Live Filter in Table for Demonstrative Interaction
+    document.getElementById('customerSearchInput')?.addEventListener('input', function(e) {
+      const q = e.target.value.toLowerCase().trim();
+      const rows = document.querySelectorAll('tbody tr');
+      rows.forEach(r => {
+        const text = r.innerText.toLowerCase();
+        if (text.includes(q)) {
+          r.style.display = '';
+        } else {
+          r.style.display = 'none';
+        }
+      });
+    });
+  </script>
+
+{% csrf_token %}
+<script>
+function _cmCsrf() {
+  var m = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'));
+  return m ? decodeURIComponent(m[2]) : '';
+}
+async function submitNewCustomer() {
+  var form = document.getElementById('newCustomerDrawer');
+  if (!form) return;
+  var name = (form.querySelector('input[placeholder*="نام و نام خانوادگی"]') || {}).value || '';
+  var title = (form.querySelector('input[placeholder*="عنوان کامل شرکت"]') || {}).value || '';
+  var national = (form.querySelector('input[placeholder*="۱۰ یا ۱۱ رقمی"]') || {}).value || '';
+  var phone = (form.querySelector('input[placeholder*="۰۹۱۲"]') || {}).value || '';
+  var credit = (form.querySelector('input[placeholder*="۲۰۰,۰۰۰,۰۰۰"]') || {}).value || '0';
+  var address = (form.querySelector('textarea[placeholder*="استان، شهر"]') || {}).value || '';
+  if (!name.trim()) { alert('نام مشتری الزامی است'); return; }
+  var btn = form.querySelector('button[onclick*="toggleDrawer(false)"]:last-of-type');
+  if (btn) { btn.disabled = true; btn.textContent = 'در حال ثبت...'; }
+  try {
+    var res = await fetch('/api/customers/customers/', {
+      method: 'POST', credentials: 'same-origin',
+      headers: {'Content-Type':'application/json', 'X-CSRFToken': _cmCsrf()},
+      body: JSON.stringify({name: name.trim(), phone: phone.trim(), email: '', address: address.trim(), credit_limit: parseFloat(credit)||0, loyalty_points: 0, is_active: true})
+    });
+    if (btn) { btn.disabled = false; btn.textContent = 'تأیید و ذخیره پرونده مشتری'; }
+    if (res.ok) {
+      toggleDrawer(false);
+      if (typeof showToast === 'function') showToast('مشتری «' + name + '» ثبت شد', 'check_circle');
+      setTimeout(function(){ location.reload(); }, 700);
+    } else {
+      var txt = await res.text().catch(()=>'');
+      alert('خطا در ثبت مشتری: ' + (txt || res.status));
+    }
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'تأیید و ذخیره پرونده مشتری'; }
+    alert('ارتباط با سرور برقرار نشد.');
+  }
+}
+// Wire the drawer save button
+document.addEventListener('DOMContentLoaded', function(){
+  var saveBtn = document.querySelector('#newCustomerDrawer button:last-of-type');
+  if (saveBtn) saveBtn.addEventListener('click', submitNewCustomer);
+});
+</script>
+
+{% endblock %}

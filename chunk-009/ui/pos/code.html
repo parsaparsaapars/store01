@@ -1,0 +1,1271 @@
+{% extends "base.html" %}
+{% block content %}
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 4px;
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #334155;
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: #475569;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+  
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    body { margin: 0 !important; padding: 0 !important; }
+    #mainContentWrapper { display: contents !important; }
+    #mainContentWrapper > *:not(#printInvoice) { display: none !important; }
+    #printInvoice { display: block !important; position: static !important; height: auto !important; overflow: visible !important; }
+    #printInvoice { position: absolute; left: 0; top: 0; width: 100%; height: 273mm; display: block !important; overflow: hidden !important; page-break-after: avoid; page-break-inside: avoid; }
+    .print-hidden { display: none !important; }
+    .no-print { display: none !important; }
+  }
+  #printInvoice { display: none; }
+</style>
+<style>
+.sidebar-active {
+  position: relative;
+  background: linear-gradient(90deg, rgba(37,99,235,0.16) 0%, rgba(37,99,235,0.05) 100%);
+  color: #1d4ed8;
+  font-weight: 700;
+  box-shadow: 0 6px 16px -6px rgba(37,99,235,0.35);
+  border: 1px solid rgba(37,99,235,0.25);
+}
+.dark .sidebar-active {
+  background: linear-gradient(90deg, rgba(59,130,246,0.22) 0%, rgba(59,130,246,0.07) 100%);
+  color: #60a5fa;
+  border-color: rgba(59,130,246,0.35);
+  box-shadow: 0 6px 16px -6px rgba(59,130,246,0.45);
+}
+.sidebar-active::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #60a5fa, #2563eb);
+  box-shadow: 0 0 10px rgba(37,99,235,0.7);
+}
+.sidebar-active .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1;
+  color: #2563eb;
+}
+.dark .sidebar-active .material-symbols-outlined { color: #60a5fa; }
+.sidebar-active .sidebar-text-item { color: inherit; }
+</style>
+<!-- ==================== POS WORKSPACE (CATALOG & CART) ==================== -->
+<main class="flex-1 flex flex-col lg:flex-row overflow-hidden pb-36 lg:pb-0">
+<!-- ==================== RIGHT PANEL: PRODUCT CATALOG ==================== -->
+<section class="flex-1 flex flex-col p-3.5 sm:p-5 overflow-y-auto lg:overflow-hidden bg-background dark:bg-[#0b0f19] transition-colors duration-200">
+<!-- Barcode Search & Fast Entry Input Strip -->
+<div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+<div class="relative flex-1">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-outline dark:text-slate-400">
+<span class="material-symbols-outlined text-xl" data-icon="barcode_scanner">barcode_scanner</span>
+</div>
+<input class="w-full h-10 sm:h-11 pr-10 sm:pr-11 pl-12 sm:pl-20 rounded-xl bg-surface-container-lowest dark:bg-slate-800/90 border border-outline-variant dark:border-slate-700 text-on-surface dark:text-slate-100 font-body-md text-body-md focus:border-primary dark:focus:border-blue-500 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 transition-all placeholder:text-outline dark:placeholder:text-slate-400 shadow-sm" id="barcodeSearchInput" placeholder="اسکن بارکد، جستجوی نام کالا یا کد محصول..." type="text">
+<div class="absolute inset-y-0 left-0 flex items-center pl-2 gap-1">
+<kbd class="hidden sm:inline-block px-2 py-0.5 rounded bg-surface-container-high dark:bg-slate-700 text-on-surface dark:text-slate-300 font-label-sm text-label-sm border border-outline-variant dark:border-slate-600 font-mono">F2</kbd>
+<button class="h-7 sm:h-8 px-2 sm:px-2.5 rounded-lg bg-surface-container dark:bg-slate-700 text-primary dark:text-blue-300 font-label-md text-label-md hover:bg-primary hover:text-on-primary dark:hover:bg-blue-600 dark:hover:text-white transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-base" data-icon="search">search</span>
+<span class="hidden sm:inline">یافتن</span>
+</button>
+</div>
+</div>
+<!-- Camera Scanner Button (Active on Mobile/Tablet) -->
+<button aria-label="اسکن سریع بارکد" class="h-10 sm:h-11 px-3 sm:px-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl flex items-center gap-1.5 font-label-md text-label-md font-bold shadow-md shadow-blue-500/25 active:scale-95 transition-transform flex-shrink-0" onclick="triggerBarcodeCamera()" type="button">
+<span class="material-symbols-outlined text-[20px]">barcode_scanner</span>
+<span class="text-xs sm:text-sm">اسکن</span>
+</button>
+<!-- Quick Filter (Desktop) -->
+<button class="hidden lg:flex h-11 px-4 rounded-xl bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant dark:border-slate-700 hover:border-primary dark:hover:border-blue-500 text-on-surface dark:text-slate-200 items-center gap-2 shadow-sm transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-xl text-primary dark:text-blue-400" data-icon="filter_list">filter_list</span>
+<span class="font-title-md text-title-md">فیلتر پیشرفته</span>
+</button>
+</div>
+<!-- Category Tabs Carousel (Horizontal Touch-Scrollable) -->
+<div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar lg:custom-scrollbar select-none mb-3" id="categoryTabsCarousel" style="cursor: grab; scroll-behavior: auto;">
+<button class="pos-cat-tab flex-shrink-0 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-blue-600 text-white font-title-md text-title-md whitespace-nowrap shadow-md shadow-blue-600/30 flex items-center gap-1.5 transition-all" data-category="" onclick="filterPosCategory(this)">
+<span class="">همه اقلام</span>
+<span class="px-1.5 py-0.2 rounded-full bg-white/20 font-label-sm text-label-sm">{{ pos_total_products }}</span>
+</button>
+{% for cat_name, cat_icon, cat_color, cat_count in pos_categories %}
+<button class="pos-cat-tab flex-shrink-0 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant dark:border-slate-700 hover:border-primary dark:hover:border-slate-600 text-on-surface dark:text-slate-300 font-body-md text-body-md whitespace-nowrap transition-colors flex items-center gap-2" data-category="{{ cat_name }}" onclick="filterPosCategory(this)">
+<span class="material-symbols-outlined text-base {{ cat_color }}" data-icon="{{ cat_icon }}">{{ cat_icon }}</span>
+<span class="">{{ cat_name }}</span>
+<span class="px-1.5 py-0.2 rounded-full bg-primary/10 dark:bg-slate-700/60 font-label-sm text-label-sm text-primary dark:text-blue-300">{{ cat_count }}</span>
+</button>
+{% endfor %}
+</div>
+<!-- Product Cards Grid (Responsive: 2-col on mobile, 3-col on lg, custom spacing) -->
+<div class="flex-1 overflow-y-auto pr-0.5 pl-0.5 custom-scrollbar">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 pb-4" id="posProductGrid">
+{% for p in pos_products %}
+<article class="pos-product-card bg-surface-container-lowest dark:bg-slate-800 rounded-xl border border-outline-variant dark:border-slate-700 p-3 sm:p-3.5 flex flex-col justify-between hover:shadow-lg dark:hover:border-blue-500/60 hover:border-primary/50 transition-all duration-200 group shadow-sm dark:shadow-slate-950/40 min-w-0 overflow-hidden" data-name="{{ p.name }}" data-barcode="{{ p.barcode }}" data-category="{{ p.category }}" data-price="{{ p.price }}" data-product-id="{{ p.id }}" data-stock="{{ p.stock_qty }}" data-search="{{ p.name }} {{ p.barcode }} {{ p.sku }}">
+<div class="min-w-0">
+<div class="relative w-full h-28 sm:h-32 rounded-lg overflow-hidden bg-surface-container-low dark:bg-slate-900 mb-2 sm:mb-3">
+{% if p.image_url %}
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" style="background-image: url('{{ p.image_url }}')"></div>
+{% else %}
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300 bg-surface-container-high dark:bg-slate-900 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-outline-variant dark:text-slate-600">inventory_2</span>
+</div>
+{% endif %}
+{% if p.stock_state == 'ok' %}
+<span class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-container dark:bg-emerald-950/80 text-on-secondary-container dark:text-emerald-400 border border-transparent dark:border-emerald-800/60 font-semibold flex items-center gap-1 shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary dark:bg-emerald-400"></span>
+<span class="">موجودی: {{ p.stock_qty|floatformat:"-3" }}</span>
+</span>
+{% elif p.stock_state == 'low' %}
+<span class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-tertiary-fixed dark:bg-amber-950/70 text-on-tertiary-fixed-variant dark:text-amber-400 border border-transparent dark:border-amber-800/60 font-bold flex items-center gap-1 shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary dark:bg-amber-400"></span>
+<span class="">رو به اتمام: {{ p.stock_qty|floatformat:"-3" }}</span>
+</span>
+{% else %}
+<span class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container dark:bg-rose-950/80 text-on-error-container dark:text-rose-400 border border-transparent dark:border-rose-800/60 font-bold flex items-center gap-1 shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-error dark:bg-rose-400"></span>
+<span class="">ناموجود</span>
+</span>
+{% endif %}
+<span class="absolute bottom-1.5 sm:bottom-2 left-1.5 sm:left-2 px-1.5 py-0.5 rounded bg-black/75 text-slate-100 font-mono text-[10px] sm:text-xs">
+{{ p.barcode }}
+</span>
+</div>
+<h4 class="font-title-md sm:font-headline-md text-title-md sm:text-headline-md font-bold text-on-surface dark:text-slate-100 mb-0.5 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors truncate">{{ p.name }}</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-slate-400 truncate hidden sm:block">{{ p.description|default:"&nbsp;" }}</p>
+</div>
+<div class="mt-3 pt-2.5 border-t border-outline-variant/60 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<span class="font-title-lg sm:font-headline-lg font-bold text-primary dark:text-blue-400 font-tabular-num leading-tight truncate">{{ p.price|floatformat:"-3" }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400">تومان</span>
+</div>
+{% if p.stock_state == 'out' %}
+<button class="h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg bg-slate-400 dark:bg-slate-700 text-white dark:text-slate-300 font-title-md text-title-md cursor-not-allowed flex items-center justify-center gap-1 shadow-sm shrink-0 opacity-70" disabled title="موجودی صفر است">
+<span class="material-symbols-outlined text-base" data-icon="add_shopping_cart">add_shopping_cart</span>
+<span class="">ناموجود</span>
+</button>
+{% else %}
+<button class="h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-title-md text-title-md transition-all flex items-center justify-center gap-1 shadow-sm active:scale-95 shrink-0" onclick="addToCart('{{ p.name|escapejs }}', {{ p.price }}, '{{ p.barcode|escapejs }}', {{ p.id }}, {{ p.stock_qty }})">
+<span class="material-symbols-outlined text-base" data-icon="add_shopping_cart">add_shopping_cart</span>
+<span class="">افزودن</span>
+</button>
+{% endif %}
+</div>
+</article>
+{% empty %}
+<div class="col-span-full text-center py-16 text-on-surface-variant dark:text-slate-400 font-body-md">
+<span class="material-symbols-outlined text-5xl block mx-auto mb-3 text-outline-variant dark:text-slate-600">inventory_2</span>
+محصولی برای نمایش یافت نشد. از صفحهٔ «مدیریت کالاها» محصول جدید اضافه کنید.
+</div>
+{% endfor %}
+
+</section>
+<!-- ==================== DESKTOP CART PANEL (FIXED 380px ON lg+) ==================== -->
+<section id="desktopCartPanel" style="display:none" class="hidden lg:flex w-96 bg-surface-container-lowest dark:bg-[#0f172a] border-r border-outline-variant dark:border-slate-800 flex-col justify-between h-full shadow-sm z-20 transition-colors duration-200">
+<!-- Cart Header -->
+<div class="p-4 border-b border-outline-variant dark:border-slate-800 flex items-center justify-between bg-surface-bright dark:bg-slate-900/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-blue-400 text-xl" data-icon="shopping_basket">shopping_basket</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface dark:text-slate-100">سبد خرید مشتری</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-container dark:bg-blue-600 text-on-primary dark:text-white text-label-sm font-label-sm font-bold itemCountBadge shadow-xs">۰ قلم</span>
+</div>
+<button class="text-error dark:text-rose-400 hover:bg-error-container/40 dark:hover:bg-rose-950/40 p-1.5 rounded-lg transition-colors flex items-center gap-1 text-label-md font-label-md" onclick="clearCart()" title="خالی کردن سبد (Esc)">
+<span class="material-symbols-outlined text-base" data-icon="delete_sweep">delete_sweep</span>
+<span class="">پاک‌کردن (Esc)</span>
+</button>
+</div>
+<!-- Warehouse & Customer Selectors -->
+<div class="px-4 py-2.5 border-b border-outline-variant dark:border-slate-800 bg-surface-container-low/50 dark:bg-slate-900/40 grid grid-cols-2 gap-2">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-base text-primary dark:text-blue-400 shrink-0">warehouse</span>
+<select id="posWarehouseSelect" onchange="onPosWarehouseChange(this.value)" class="flex-1 min-w-0 h-8 px-2 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant dark:border-slate-700 text-on-surface dark:text-slate-200 font-body-sm text-body-sm focus:border-primary outline-none cursor-pointer">
+{% for w in pos_warehouses %}
+<option value="{{ w.id }}" {% if w.id == pos_default_warehouse %}selected{% endif %}>{{ w.name }}</option>
+{% endfor %}
+</select>
+</div>
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-base text-primary dark:text-blue-400 shrink-0">person</span>
+<select id="posCustomerSelect" onchange="onPosCustomerChange(this.value)" class="flex-1 min-w-0 h-8 px-2 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant dark:border-slate-700 text-on-surface dark:text-slate-200 font-body-sm text-body-sm focus:border-primary outline-none cursor-pointer">
+<option value="">مشتری عمومی (نقدی)</option>
+{% for c in pos_customers %}
+<option value="{{ c.id }}">{{ c.name }}{% if c.phone %} — {{ c.phone }}{% endif %}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+<!-- Cart Item Rows List -->
+<div class="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar" id="desktopCartItemsList">
+<!-- Item 1 -->
+
+<!-- Item 2 -->
+
+<!-- Item 3 -->
+
+</div>
+<!-- Bill Summary & Calculations -->
+<div class="p-4 border-t border-outline-variant dark:border-slate-800 bg-surface-container-low dark:bg-slate-900/90 space-y-2">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400 font-body-sm text-body-sm">
+<span class="" id="desktopItemsCount">جمع اقلام (۰ قلم / ۰ عدد):</span>
+<span class="font-bold text-on-surface dark:text-slate-200 font-tabular-num" id="desktopSubtotal">۰ تومان</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400 font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="">تخفیف ویژه صندوق (F8):</span>
+<button class="text-primary dark:text-blue-400 hover:underline text-xs" title="ویرایش تخفیف" onclick="openDiscountModal()"><span class="material-symbols-outlined text-base">edit</span></button>
+</span>
+<span class="font-bold text-secondary dark:text-emerald-400 font-tabular-num" id="desktopDiscount">- ۰ تومان</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400 font-body-sm text-body-sm">
+<span class="flex items-center gap-1"><span class="">مالیات بر ارزش افزوده:</span><button class="text-primary dark:text-blue-400 hover:underline p-0.5" title="ویرایش مالیات" onclick="openTaxModal()"><span class="material-symbols-outlined text-base">edit</span></button></span>
+<span class="font-bold text-on-surface dark:text-slate-200 font-tabular-num" id="desktopTax">+ ۰ تومان</span>
+</div>
+<!-- Total Payable Amount -->
+<div class="pt-2 border-t border-outline-variant dark:border-slate-800 flex items-center justify-between">
+<div>
+<span class="font-title-md text-title-md font-bold text-on-surface dark:text-slate-100 block">مبلغ نهایی قابل پرداخت:</span>
+<span class="font-label-sm text-label-sm text-outline dark:text-slate-400">با احتساب مالیات و تخفیف</span>
+</div>
+<div class="text-left">
+<span class="font-display-lg text-display-lg font-extrabold text-primary dark:text-blue-400 font-tabular-num tracking-tight finalTotalDisplay">۱,۱۲۸,۰۰۰</span>
+<span class="font-label-md text-label-md text-on-surface-variant dark:text-slate-400 mr-1">تومان</span>
+</div>
+</div>
+<!-- Quick Settlement Buttons -->
+<div class="pt-2 grid grid-cols-2 gap-2">
+<button class="col-span-2 h-12 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-headline-md text-headline-md font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition-all duration-150 active:scale-[0.99]" onclick="triggerPaymentPOS()">
+<span class="material-symbols-outlined text-2xl" data-icon="contactless">contactless</span>
+<span class="">پرداخت با دستگاه کارت‌خوان (F4)</span>
+</button>
+<button class="h-10 bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant dark:border-slate-700 hover:border-primary dark:hover:border-slate-600 text-on-surface dark:text-slate-200 rounded-xl font-title-md text-title-md flex items-center justify-center gap-1.5 transition-colors" onclick="triggerCashPayment()">
+<span class="material-symbols-outlined text-lg text-secondary dark:text-emerald-400" data-icon="payments">payments</span>
+<span class="">پرداخت نقدی</span>
+</button>
+<button class="h-10 bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant dark:border-slate-700 hover:border-primary dark:hover:border-slate-600 text-on-surface dark:text-slate-200 rounded-xl font-title-md text-title-md flex items-center justify-center gap-1.5 transition-colors" onclick="triggerCreditPayment()">
+<span class="material-symbols-outlined text-lg text-tertiary dark:text-amber-400" data-icon="pie_chart">pie_chart</span>
+<span class="">ترکیبی / نسیه</span>
+</button>
+<button onclick="printInvoice()" class="h-9 col-span-2 bg-surface-container dark:bg-slate-800/60 hover:bg-surface-container-high dark:hover:bg-slate-800 text-on-surface-variant dark:text-slate-300 border border-transparent dark:border-slate-700/60 rounded-lg font-body-sm text-body-sm flex items-center justify-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="print">print</span>
+<span class="">چاپ پیش‌فاکتور رسمی</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+
+<!-- ==================== DISCOUNT MODAL ==================== -->
+<div id="discountModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDiscountModal()"></div>
+  <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all duration-200 scale-95 opacity-0" id="discountModalCard">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary dark:text-blue-400" data-icon="local_offer">local_offer</span>
+        <h3 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-slate-100">تخفیف ویژه صندوق</h3>
+      </div>
+      <button onclick="closeDiscountModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+        <span class="material-symbols-outlined text-xl">close</span>
+      </button>
+    </div>
+    <div class="px-5 py-4 space-y-4">
+      <!-- Type toggle -->
+      <div class="flex rounded-xl bg-slate-100 dark:bg-slate-900 p-1 gap-1">
+        <button id="discountTypePercent" onclick="setDiscountType('percent')" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-white dark:bg-slate-700 text-primary dark:text-blue-400 shadow-sm">درصدی (٪)</button>
+        <button id="discountTypeAmount" onclick="setDiscountType('amount')" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all text-on-surface-variant dark:text-slate-400">مبلغی (تومان)</button>
+      </div>
+      <!-- Input -->
+      <div class="space-y-1.5">
+        <label class="font-label-md text-label-md text-on-surface-variant dark:text-slate-400" id="discountInputLabel">درصد تخفیف</label>
+        <div class="flex items-center gap-2">
+          <input id="discountInput" type="number" min="0" class="flex-1 h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-on-surface dark:text-slate-100 font-title-md text-title-md focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary" placeholder="0" oninput="updateDiscountPreview()">
+          <span class="font-title-md text-title-md text-on-surface-variant dark:text-slate-400 w-10 text-center" id="discountInputSuffix">٪</span>
+        </div>
+      </div>
+      <!-- Quick presets -->
+      <div class="space-y-1.5">
+        <span class="font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400">پیش‌تنظیم‌ها</span>
+        <div class="flex flex-wrap gap-2" id="discountPresets"></div>
+      </div>
+      <!-- Preview -->
+      <div class="rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 p-3 space-y-1.5">
+        <div class="flex justify-between text-sm">
+          <span class="text-on-surface-variant dark:text-slate-400">جمع اقلام:</span>
+          <span class="font-bold font-tabular-num dark:text-slate-200" id="discountPreviewSubtotal">۰</span>
+        </div>
+        <div class="flex justify-between text-sm text-secondary dark:text-emerald-400">
+          <span>تخفیف:</span>
+          <span class="font-bold font-tabular-num" id="discountPreviewAmount">۰</span>
+        </div>
+        <div class="flex justify-between text-base font-bold border-t border-slate-200 dark:border-slate-700 pt-1.5">
+          <span class="text-on-surface dark:text-slate-100">مبلغ نهایی:</span>
+          <span class="text-primary dark:text-blue-400 font-tabular-num" id="discountPreviewFinal">۰</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 px-5 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+      <button onclick="applyDiscountModal()" class="flex-1 h-10 rounded-xl bg-primary text-white font-bold text-sm shadow-sm hover:bg-primary/90 active:scale-95 transition-all">اعمال تخفیف</button>
+      <button onclick="clearDiscountModal()" class="h-10 px-4 rounded-xl border border-slate-300 dark:border-slate-600 text-on-surface dark:text-slate-200 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95 transition-all">حذف تخفیف</button>
+      <button onclick="closeDiscountModal()" class="h-10 px-4 rounded-xl text-on-surface-variant dark:text-slate-400 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95 transition-all">لغو</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== TAX MODAL ==================== -->
+<div id="taxModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeTaxModal()"></div>
+  <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all duration-200 scale-95 opacity-0" id="taxModalCard">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary dark:text-blue-400" data-icon="receipt_long">receipt_long</span>
+        <h3 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-slate-100">مالیات بر ارزش افزوده</h3>
+      </div>
+      <button onclick="closeTaxModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+        <span class="material-symbols-outlined text-xl">close</span>
+      </button>
+    </div>
+    <div class="px-5 py-4 space-y-4">
+      <div class="flex rounded-xl bg-slate-100 dark:bg-slate-900 p-1 gap-1">
+        <button id="taxTypePercent" onclick="setTaxType('percent')" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-white dark:bg-slate-700 text-primary dark:text-blue-400 shadow-sm">درصدی (٪)</button>
+        <button id="taxTypeAmount" onclick="setTaxType('amount')" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all text-on-surface-variant dark:text-slate-400">مبلغی (تومان)</button>
+      </div>
+      <div class="space-y-1.5">
+        <label class="font-label-md text-label-md text-on-surface-variant dark:text-slate-400" id="taxInputLabel">درصد مالیات</label>
+        <div class="flex items-center gap-2">
+          <input id="taxInput" type="number" min="0" class="flex-1 h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-on-surface dark:text-slate-100 font-title-md text-title-md focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary" placeholder="0" oninput="updateTaxPreview()">
+          <span class="font-title-md text-title-md text-on-surface-variant dark:text-slate-400 w-10 text-center" id="taxInputSuffix">٪</span>
+        </div>
+      </div>
+      <div class="space-y-1.5">
+        <span class="font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400">پیش‌تنظیم‌ها</span>
+        <div class="flex flex-wrap gap-2" id="taxPresets"></div>
+      </div>
+      <div class="rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 p-3 space-y-1.5">
+        <div class="flex justify-between text-sm">
+          <span class="text-on-surface-variant dark:text-slate-400">جمع اقلام:</span>
+          <span class="font-bold font-tabular-num dark:text-slate-200" id="taxPreviewSubtotal">۰</span>
+        </div>
+        <div class="flex justify-between text-sm text-secondary dark:text-emerald-400">
+          <span>تخفیف:</span>
+          <span class="font-bold font-tabular-num" id="taxPreviewDiscount">۰</span>
+        </div>
+        <div class="flex justify-between text-sm text-primary dark:text-blue-400">
+          <span>مالیات:</span>
+          <span class="font-bold font-tabular-num" id="taxPreviewAmount">۰</span>
+        </div>
+        <div class="flex justify-between text-base font-bold border-t border-slate-200 dark:border-slate-700 pt-1.5">
+          <span class="text-on-surface dark:text-slate-100">مبلغ نهایی:</span>
+          <span class="text-primary dark:text-blue-400 font-tabular-num" id="taxPreviewFinal">۰</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 px-5 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+      <button onclick="applyTaxModal()" class="flex-1 h-10 rounded-xl bg-primary text-white font-bold text-sm shadow-sm hover:bg-primary/90 active:scale-95 transition-all">اعمال مالیات</button>
+      <button onclick="clearTaxModal()" class="h-10 px-4 rounded-xl border border-slate-300 dark:border-slate-600 text-on-surface dark:text-slate-200 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95 transition-all">پیش‌فرض (۱۰٪)</button>
+      <button onclick="closeTaxModal()" class="h-10 px-4 rounded-xl text-on-surface-variant dark:text-slate-400 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95 transition-all">لغو</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== PRINT INVOICE (A4) ==================== -->
+<div id="printInvoice" class="bg-white text-slate-900 p-6 max-w-[210mm] h-[273mm] mx-auto font-sans flex flex-col overflow-hidden" style="font-family: Vazirmatn, Tahoma, sans-serif;">
+  <div class="flex items-start justify-between mb-6 pb-4 border-b-2 border-slate-900">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">پیش‌فاکتور رسمی</h1>
+      <p class="text-sm text-slate-500 mt-1">پیش‌فاکتور فروش کالا و خدمات</p>
+    </div>
+    <div class="text-left">
+      <div class="text-sm text-slate-600">شماره: <span class="font-bold text-slate-900" id="printInvoiceNo">---</span></div>
+      <div class="text-sm text-slate-600">تاریخ: <span class="font-bold text-slate-900" id="printInvoiceDate">---</span></div>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 gap-6 mb-6">
+    <div class="border border-slate-200 rounded-lg p-3">
+      <div class="text-xs font-bold text-slate-500 mb-1">فروشنده</div>
+      <div class="font-bold text-slate-900">{{ pos_store.store_name }}</div>
+      <div class="text-sm text-slate-600">{{ pos_cashier|default:"صندوقدار" }} — صندوقدار</div>
+      <div class="text-sm text-slate-600">تلفن: {{ pos_store.support_phone|default:"—" }}</div>
+    </div>
+    <div class="border border-slate-200 rounded-lg p-3">
+      <div class="text-xs font-bold text-slate-500 mb-1">خریدار</div>
+      <div class="font-bold text-slate-900" id="printBuyer">مشتری عمومی (نقدی)</div>
+      <div class="text-sm text-slate-600">کد مشتری: ---</div>
+    </div>
+  </div>
+  <table class="w-full border-collapse mb-6">
+    <thead>
+      <tr class="bg-slate-100">
+        <th class="border border-slate-300 px-2 py-2 text-sm font-bold text-right">#</th>
+        <th class="border border-slate-300 px-2 py-2 text-sm font-bold text-right">شرح کالا / خدمت</th>
+        <th class="border border-slate-300 px-2 py-2 text-sm font-bold text-center">تعداد</th>
+        <th class="border border-slate-300 px-2 py-2 text-sm font-bold text-left">فی واحد (تومان)</th>
+        <th class="border border-slate-300 px-2 py-2 text-sm font-bold text-left">جمع (تومان)</th>
+      </tr>
+    </thead>
+    <tbody id="printItems"></tbody>
+  </table>
+  <div class="flex justify-end mb-6">
+    <div class="w-72 space-y-1.5 text-sm">
+      <div class="flex justify-between"><span class="text-slate-600">جمع اقلام:</span><span class="font-bold font-tabular-num" id="printSubtotal">۰</span></div>
+      <div class="flex justify-between text-emerald-600"><span>تخفیف:</span><span class="font-bold font-tabular-num" id="printDiscount">۰</span></div>
+      <div class="flex justify-between"><span class="text-slate-600">مالیات:</span><span class="font-bold font-tabular-num" id="printTax">۰</span></div>
+      <div class="flex justify-between text-lg font-bold border-t-2 border-slate-900 pt-2 mt-2"><span>مبلغ نهایی قابل پرداخت:</span><span class="text-blue-700 font-tabular-num" id="printFinal">۰</span></div>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 gap-6 mb-6">
+    <div class="text-sm text-slate-600">
+      <div class="font-bold text-slate-900 mb-1">شرایط و توضیحات:</div>
+      <ul class="list-disc pr-4 space-y-0.5">
+        <li>این پیش‌فاکتور ۴۸ ساعت معتبر است.</li>
+        <li>پرداخت از طریق کارت‌خوان، نقدی یا حساب دفتری.</li>
+        <li>کالاهای فروخته‌شده پس از تأیید فاکتور قابل مرجوع‌اند.</li>
+      </ul>
+    </div>
+    <div class="flex flex-col items-center justify-center">
+      <img id="printQR" src="" alt="QR پرداخت" class="w-24 h-24 border border-slate-200 rounded" />
+      <span class="text-xs text-slate-500 mt-1">اسکن برای پرداخت</span>
+    </div>
+  </div>
+  <div class="text-center text-xs text-slate-400 pt-4 border-t border-slate-200 mt-auto">
+    با تشکر از خرید شما — صندوق فروش سریع (POS) — نسخه سامانه ۴.۸.۲
+  </div>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<!-- ==================== LOGIC & INTERACTIONS SCRIPT ==================== -->
+<script>
+  // ==================== POS CART ENGINE (page-local, hooked into base) ====================
+var cart = [];
+try {
+  var _savedCart = localStorage.getItem('posCart');
+  if (_savedCart) { var _parsedCart = JSON.parse(_savedCart); if (Array.isArray(_parsedCart)) cart = _parsedCart; }
+} catch (e) { cart = []; }
+
+// هوک‌ها: موتور پایه (base.html) این توابع را برای هماهنگی سبد صدا می‌زند
+window.posCart = cart;
+window.posCartHooks = {
+  getCart: function() { return cart; },
+  add: function(title, price, barcode, productId, stockQty) {
+    var existing = cart.find(function(i){ return i.barcode === barcode; });
+    if (typeof stockQty === 'number' && existing && existing.qty + 1 > stockQty) {
+      showToast('موجودی «' + title + '» کافی نیست', 'error');
+      return;
+    }
+    if (existing) { existing.qty += 1; }
+    else { cart.push({ title: title, price: price, barcode: barcode, product: productId || null, qty: 1 }); }
+    showToast('«' + title + '» به سبد اضافه شد');
+    updateCartUI();
+  },
+  changeQty: function(barcode, delta) { changeQty(barcode, delta); },
+  remove: function(barcode) { removeCartItem(barcode); },
+  clear: function() { clearCart(); },
+  update: function() { updateCartUI(); },
+  afterSale: function(result) {
+    // پس از ثبت موفق: شماره فاکتور واقعی را برای چاپ نگه دار و سبد را خالی کن
+    window._lastInvoice = result;
+    clearCart();
+    updatePrintInvoice(result.invoice_no);
+  }
+};
+
+function addToCart(title, price, barcode, productId, stockQty) {
+  if (productId === undefined) {
+    // فراخوانی قدیمی (بدون شناسهٔ محصول) — از attribute های کارت پیدا کن
+    var card = document.querySelector('.pos-product-card[data-barcode="' + barcode + '"]');
+    if (card) {
+      productId = parseInt(card.getAttribute('data-product-id'), 10);
+      if (card.getAttribute('data-stock') !== null && card.getAttribute('data-stock') !== '') {
+        stockQty = parseFloat(card.getAttribute('data-stock'));
+      }
+    }
+  }
+  var existing = cart.find(function(i){ return i.barcode === barcode; });
+  if (typeof stockQty === 'number' && existing && existing.qty + 1 > stockQty) {
+    showToast('موجودی «' + title + '» کافی نیست', 'error');
+    return;
+  }
+  if (existing) { existing.qty += 1; }
+  else { cart.push({ title: title, price: price, barcode: barcode, product: productId || null, qty: 1 }); }
+  showToast('«' + title + '» به سبد اضافه شد');
+  updateCartUI();
+}
+
+function changeQty(barcode, delta) {
+  const item = cart.find(function(i){ return i.barcode === barcode; });
+  if (item) {
+    item.qty += delta;
+    if (item.qty <= 0) {
+      cart = cart.filter(function(i){ return i.barcode !== barcode; });
+    }
+  }
+  updateCartUI();
+}
+
+function removeCartItem(barcode) {
+  cart = cart.filter(function(i){ return i.barcode !== barcode; });
+  updateCartUI();
+}
+
+function clearCart() {
+  cart = [];
+  window.posCart = cart;
+  const deskList = document.getElementById('desktopCartItemsList');
+  const mobList = document.getElementById('mobileCartItemsList');
+  if (deskList) { deskList.innerHTML = '<div class="text-center py-8 text-on-surface-variant dark:text-slate-400 font-body-sm">سبد خرید خالی است</div>'; }
+  if (mobList) { mobList.innerHTML = '<div class="text-center py-8 text-on-surface-variant dark:text-slate-400 font-body-sm">سبد خرید خالی است</div>'; }
+  updateCartUI();
+}
+
+// انتخابگرهای انبار/مشتری → وضعیت فروش
+function onPosWarehouseChange(val) {
+  (window.posSaleState = window.posSaleState || {}).warehouse = val ? parseInt(val, 10) : null;
+}
+function onPosCustomerChange(val) {
+  (window.posSaleState = window.posSaleState || {}).customer = val ? parseInt(val, 10) : null;
+  // نام خریدار در چاپ
+  var sel = document.getElementById('posCustomerSelect');
+  var label = (sel && val) ? sel.options[sel.selectedIndex].text.split(' — ')[0] : 'مشتری عمومی (نقدی)';
+  var buyer = document.getElementById('printBuyer');
+  if (buyer) { buyer.textContent = label; }
+}
+try {
+  var _ws = document.getElementById('posWarehouseSelect');
+  var _cs = document.getElementById('posCustomerSelect');
+  (window.posSaleState = window.posSaleState || {});
+  if (_ws && _ws.value) window.posSaleState.warehouse = parseInt(_ws.value, 10);
+  if (_cs && _cs.value) window.posSaleState.customer = parseInt(_cs.value, 10);
+} catch (e) {}
+
+function updateCartUI() {
+  const deskList = document.getElementById('desktopCartItemsList');
+  const mobList = document.getElementById('mobileCartItemsList');
+  const mobileBar = document.getElementById('mobileCartBar');
+  const mobileBadge = document.getElementById('mobileCartBadge');
+  const mobileCount = document.getElementById('mobileCartCount');
+  const mobileTotal = document.getElementById('mobileCartTotal');
+  const finalDisplays = document.querySelectorAll('.finalTotalDisplay');
+  const headerBadges = document.querySelectorAll('.itemCountBadge');
+
+  let subtotal = 0, qtyTotal = 0;
+  if (cart && cart.length) {
+    cart.forEach(function(item){ subtotal += item.price * item.qty; qtyTotal += item.qty; });
+  }
+  let discount = getCartDiscountAmount(subtotal);
+  // مالیات واقعی از مودال (نوع/مقدار) و پس از کسر تخفیف — هم‌راستا با updatePrintInvoice و بک‌اند
+  let tax = getCartTaxAmount(subtotal, discount);
+  let final = subtotal - discount + tax;
+
+  if (finalDisplays) {
+    finalDisplays.forEach(function(el){ el.innerText = formatPrice(final); });
+  }
+  var desktopItemsCount = document.getElementById('desktopItemsCount');
+  if (desktopItemsCount) {
+    desktopItemsCount.textContent = 'جمع اقلام (' + cart.length + ' قلم / ' + qtyTotal + ' عدد):';
+  }
+  var desktopSubtotal = document.getElementById('desktopSubtotal');
+  if (desktopSubtotal) { desktopSubtotal.textContent = formatPrice(subtotal) + ' تومان'; }
+  var desktopDiscount = document.getElementById('desktopDiscount');
+  if (desktopDiscount) { desktopDiscount.textContent = '- ' + formatPrice(discount) + ' تومان'; }
+  var desktopTax = document.getElementById('desktopTax');
+  if (desktopTax) { desktopTax.textContent = '+ ' + formatPrice(tax) + ' تومان'; }
+
+  var mobileSheetCount = document.getElementById('mobileSheetCount');
+  if (mobileSheetCount) {
+    mobileSheetCount.textContent = 'جمع ناخالص اقلام (' + qtyTotal + ' عدد):';
+  }
+  var mobileSheetSubtotal = document.getElementById('mobileSheetSubtotal');
+  if (mobileSheetSubtotal) { mobileSheetSubtotal.textContent = formatPrice(subtotal) + ' تومان'; }
+  var mobileSheetDiscount = document.getElementById('mobileSheetDiscount');
+  if (mobileSheetDiscount) { mobileSheetDiscount.textContent = formatPrice(discount) + '- تومان'; }
+  var mobileSheetTax = document.getElementById('mobileSheetTax');
+  if (mobileSheetTax) { mobileSheetTax.textContent = formatPrice(tax) + '+ تومان'; }
+
+  headerBadges.forEach(function(b){ b.textContent = qtyTotal + ' \u0642\u0644\u0645'; });
+  var desktopPanel = document.getElementById('desktopCartPanel');
+  if (desktopPanel) { desktopPanel.style.display = (cart && cart.length > 0) ? '' : 'none'; }
+  if (mobileBar) { mobileBar.style.display = (cart && cart.length > 0) ? '' : 'none'; }
+  if (mobileBadge) {
+    mobileBadge.textContent = (qtyTotal > 9 ? '\u06f9+' : qtyTotal.toString());
+  }
+  if (mobileCount) {
+    mobileCount.textContent = qtyTotal + ' \u0642\u0644\u0645';
+  }
+  if (mobileTotal) {
+    mobileTotal.textContent = formatPrice(final) + ' \u062a\u0648\u0645\u0627\u0646';
+  }
+
+  if (deskList) {
+    deskList.innerHTML = '';
+    if (cart && cart.length) {
+      cart.forEach(function(item) {
+        var row = document.createElement('div');
+        row.className = 'p-2.5 rounded-xl border border-blue-500/50 dark:border-blue-500 bg-surface-container-low dark:bg-slate-800 flex flex-col gap-2 transition-all shadow-xs';
+        row.innerHTML = '<div class=\"flex items-start justify-between\"><div><h5 class=\"font-title-md text-title-md font-bold text-on-surface dark:text-slate-100\">' + item.title + '</h5><span class=\"font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 font-mono\">\u06a9\u062f: ' + item.barcode + '</span></div><button onclick=\"removeCartItem(\'' + item.barcode + '\')\" class=\"text-error dark:text-rose-400 hover:text-rose-300 p-0.5 transition-colors\"><span class=\"material-symbols-outlined text-lg\">close</span></button></div><div class=\"flex items-center justify-between pt-1\"><div class=\"flex items-center gap-2 bg-surface-container-lowest dark:bg-slate-900 px-2 py-1 rounded-lg border border-outline-variant dark:border-slate-700\"><button onclick=\"changeQty(\'' + item.barcode + '\', 1)\" class=\"w-6 h-6 rounded bg-blue-600 text-white font-bold\">+</button><span class=\"font-title-md font-bold px-1 font-tabular-num dark:text-slate-100\">' + item.qty + '</span><button onclick=\"changeQty(\'' + item.barcode + '\', -1)\" class=\"w-6 h-6 rounded bg-slate-700 text-white font-bold\">-</button></div><div class=\"text-left\"><div class=\"font-headline-md font-bold text-primary dark:text-blue-400 font-tabular-num\">' + (item.price * item.qty).toLocaleString('fa-IR') + '</div><div class=\"font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400\">\u0648\u062d\u062f: ' + item.price.toLocaleString('fa-IR') + ' \u062a\u0648\u0645\u0627\u0646</div></div></div>';
+        deskList.appendChild(row);
+      });
+    } else {
+      deskList.innerHTML = '<div class=\"text-center py-8 text-on-surface-variant dark:text-slate-400 font-body-sm\">\u0633\u0628\u062f \u062e\u0631\u06cc\u062f \u062e\u0627\u0644\u06cc \u0627\u0633\u062a</div>';
+    }
+  }
+
+  if (mobList) {
+    mobList.innerHTML = '';
+    if (cart && cart.length) {
+      cart.forEach(function(item) {
+        var row = document.createElement('div');
+        row.className = 'pt-2 flex items-center justify-between gap-3';
+        row.innerHTML = '<div class=\"flex-1\"><h4 class=\"font-title-md font-bold text-on-surface dark:text-slate-100\">' + item.title + '</h4><p class=\"font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400\">\u0642\u06cc\u0645\u062a: ' + item.price.toLocaleString('fa-IR') + ' \u062a\u0648\u0645\u0627\u0646 \u00d7 ' + item.qty + '</p></div><div class=\"flex items-center gap-2\"><div class=\"flex items-center bg-surface-container-low dark:bg-slate-900 rounded-lg p-0.5 border border-outline-variant dark:border-slate-700\"><button onclick=\"changeQty(\'' + item.barcode + '\', 1)\" class=\"w-7 h-7 bg-blue-600 text-white rounded-md\">+</button><span class=\"w-7 text-center font-title-md font-bold font-tabular-num dark:text-slate-100\">' + item.qty + '</span><button onclick=\"changeQty(\'' + item.barcode + '\', -1)\" class=\"w-7 h-7 bg-slate-700 text-white rounded-md\">-</button></div><button onclick=\"removeCartItem(\'' + item.barcode + '\')\" class=\"text-error dark:text-rose-400 p-1 rounded-md\"><span class=\"material-symbols-outlined text-[18px]\">delete</span></button></div>';
+        mobList.appendChild(row);
+      });
+    } else {
+      mobList.innerHTML = '<div class=\"text-center py-8 text-on-surface-variant dark:text-slate-400 font-body-sm\">\u0633\u0628\u062f \u062e\u0631\u06cc\u062f \u062e\u0627\u0644\u06cc \u0627\u0633\u062a</div>';
+    }
+  }
+  try { localStorage.setItem('posCart', JSON.stringify(cart)); } catch (e) {}
+  updatePrintInvoice();
+}
+
+function formatPrice(n) {
+  return n.toLocaleString('fa-IR');
+}
+
+function updateSidebarActive() {
+  var path = (window.location.pathname || '').replace(/\/+$/, '');
+  document.querySelectorAll('#mainSidebar nav a').forEach(function(a){
+    var href = a.getAttribute('href');
+    if (href && href !== '#' && href.replace(/\/+$/, '') === path) {
+      a.classList.add('sidebar-active');
+    } else {
+      a.classList.remove('sidebar-active');
+    }
+  });
+}
+var discountType = 'percent';
+var discountValue = 0;
+function getCartDiscountAmount(subtotal) {
+  var d = 0;
+  if (discountType === 'percent') {
+    d = Math.round(subtotal * discountValue / 100);
+  } else {
+    d = discountValue;
+  }
+  if (d < 0) d = 0;
+  if (d > subtotal) d = subtotal;
+  return d;
+}
+function openDiscountModal() {
+  var modal = document.getElementById('discountModal');
+  var card = document.getElementById('discountModalCard');
+  if (!modal) return;
+  // populate current
+  setDiscountType(discountType);
+  var input = document.getElementById('discountInput');
+  if (input) input.value = discountValue || '';
+  renderDiscountPresets();
+  updateDiscountPreview();
+  modal.classList.remove('hidden');
+  requestAnimationFrame(function(){ card.classList.remove('scale-95','opacity-0'); card.classList.add('scale-100','opacity-100'); });
+}
+function closeDiscountModal() {
+  var modal = document.getElementById('discountModal');
+  var card = document.getElementById('discountModalCard');
+  if (!modal) return;
+  card.classList.add('scale-95','opacity-0');
+  card.classList.remove('scale-100','opacity-100');
+  setTimeout(function(){ modal.classList.add('hidden'); }, 150);
+}
+function setDiscountType(type) {
+  discountType = type;
+  var bp = document.getElementById('discountTypePercent');
+  var ba = document.getElementById('discountTypeAmount');
+  var label = document.getElementById('discountInputLabel');
+  var suffix = document.getElementById('discountInputSuffix');
+  if (type === 'percent') {
+    bp.className = 'flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-white dark:bg-slate-700 text-primary dark:text-blue-400 shadow-sm';
+    ba.className = 'flex-1 py-2 rounded-lg text-sm font-bold transition-all text-on-surface-variant dark:text-slate-400';
+    if (label) label.textContent = 'درصد تخفیف';
+    if (suffix) suffix.textContent = '٪';
+  } else {
+    ba.className = 'flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-white dark:bg-slate-700 text-primary dark:text-blue-400 shadow-sm';
+    bp.className = 'flex-1 py-2 rounded-lg text-sm font-bold transition-all text-on-surface-variant dark:text-slate-400';
+    if (label) label.textContent = 'مبلغ تخفیف (تومان)';
+    if (suffix) suffix.textContent = 'ت';
+  }
+  renderDiscountPresets();
+  updateDiscountPreview();
+}
+function renderDiscountPresets() {
+  var box = document.getElementById('discountPresets');
+  if (!box) return;
+  box.innerHTML = '';
+  var presets = discountType === 'percent' ? [5, 10, 15, 20, 30] : [10000, 25000, 50000, 100000];
+  presets.forEach(function(v){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-300 dark:border-slate-600 text-on-surface dark:text-slate-200 hover:bg-primary hover:text-white hover:border-primary transition-all active:scale-95';
+    b.textContent = discountType === 'percent' ? (v + '٪') : (v.toLocaleString('fa-IR') + ' ت');
+    b.onclick = function(){ var inp = document.getElementById('discountInput'); if (inp) inp.value = v; updateDiscountPreview(); };
+    box.appendChild(b);
+  });
+}
+function updateDiscountPreview() {
+  var input = document.getElementById('discountInput');
+  var val = input ? (parseInt(String(input.value).replace(/[^0-9]/g, ''), 10) || 0) : 0;
+  var subtotal = 0;
+  cart.forEach(function(i){ subtotal += i.price * i.qty; });
+  var d = 0;
+  if (discountType === 'percent') { d = Math.round(subtotal * val / 100); }
+  else { d = val; }
+  if (d < 0) d = 0;
+  if (d > subtotal) d = subtotal;
+  var tax = getCartTaxAmount(subtotal, d);
+  var final = subtotal - d + tax;
+  var fmt = function(n){ return n.toLocaleString('fa-IR'); };
+  var elSub = document.getElementById('discountPreviewSubtotal');
+  var elAmt = document.getElementById('discountPreviewAmount');
+  var elFin = document.getElementById('discountPreviewFinal');
+  if (elSub) elSub.textContent = fmt(subtotal) + ' تومان';
+  if (elAmt) elAmt.textContent = fmt(d) + ' تومان';
+  if (elFin) elFin.textContent = fmt(final) + ' تومان';
+}
+function applyDiscountModal() {
+  var input = document.getElementById('discountInput');
+  var val = input ? (parseInt(String(input.value).replace(/[^0-9]/g, ''), 10) || 0) : 0;
+  discountType = document.getElementById('discountTypeAmount').classList.contains('bg-white') ? 'amount' : 'percent';
+  // determine type from button state
+  var bp = document.getElementById('discountTypePercent');
+  discountType = (bp && bp.classList.contains('bg-white')) ? 'percent' : 'amount';
+  discountValue = val;
+  try { localStorage.setItem('posDiscountType', discountType); localStorage.setItem('posDiscountValue', String(discountValue)); } catch(e){}
+  (window.posSaleState = window.posSaleState || {}); window.posSaleState.discountType = discountType; window.posSaleState.discountValue = discountValue;
+  updateCartUI();
+  closeDiscountModal();
+  if (typeof showToast === 'function') showToast('تخفیف اعمال شد');
+}
+function clearDiscountModal() {
+  discountType = 'percent';
+  discountValue = 0;
+  try { localStorage.removeItem('posDiscountType'); localStorage.removeItem('posDiscountValue'); } catch(e){}
+  (window.posSaleState = window.posSaleState || {}); window.posSaleState.discountType = discountType; window.posSaleState.discountValue = discountValue;
+  var input = document.getElementById('discountInput');
+  if (input) input.value = '';
+  updateCartUI();
+  closeDiscountModal();
+  if (typeof showToast === 'function') showToast('تخفیف حذف شد');
+}
+try {
+  var _dt = localStorage.getItem('posDiscountType');
+  var _dv = localStorage.getItem('posDiscountValue');
+  if (_dt) discountType = _dt;
+  if (_dv) discountValue = parseInt(_dv, 10) || 0;
+} catch(e){}
+var taxType = 'percent';
+var taxValue = 10;
+function getCartTaxAmount(subtotal, discount) {
+  var base = subtotal - (discount || 0);
+  if (base < 0) base = 0;
+  var t = 0;
+  if (taxType === 'percent') {
+    t = Math.round(base * taxValue / 100);
+  } else {
+    t = taxValue;
+  }
+  if (t < 0) t = 0;
+  return t;
+}
+function openTaxModal() {
+  var modal = document.getElementById('taxModal');
+  var card = document.getElementById('taxModalCard');
+  if (!modal) return;
+  setTaxType(taxType);
+  var input = document.getElementById('taxInput');
+  if (input) input.value = taxValue || '';
+  renderTaxPresets();
+  updateTaxPreview();
+  modal.classList.remove('hidden');
+  requestAnimationFrame(function(){ card.classList.remove('scale-95','opacity-0'); card.classList.add('scale-100','opacity-100'); });
+}
+function closeTaxModal() {
+  var modal = document.getElementById('taxModal');
+  var card = document.getElementById('taxModalCard');
+  if (!modal) return;
+  card.classList.add('scale-95','opacity-0');
+  card.classList.remove('scale-100','opacity-100');
+  setTimeout(function(){ modal.classList.add('hidden'); }, 150);
+}
+function setTaxType(type) {
+  taxType = type;
+  var bp = document.getElementById('taxTypePercent');
+  var ba = document.getElementById('taxTypeAmount');
+  var label = document.getElementById('taxInputLabel');
+  var suffix = document.getElementById('taxInputSuffix');
+  if (type === 'percent') {
+    bp.className = 'flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-white dark:bg-slate-700 text-primary dark:text-blue-400 shadow-sm';
+    ba.className = 'flex-1 py-2 rounded-lg text-sm font-bold transition-all text-on-surface-variant dark:text-slate-400';
+    if (label) label.textContent = 'درصد مالیات';
+    if (suffix) suffix.textContent = '%';
+  } else {
+    ba.className = 'flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-white dark:bg-slate-700 text-primary dark:text-blue-400 shadow-sm';
+    bp.className = 'flex-1 py-2 rounded-lg text-sm font-bold transition-all text-on-surface-variant dark:text-slate-400';
+    if (label) label.textContent = 'مبلغ مالیات (تومان)';
+    if (suffix) suffix.textContent = 'ت';
+  }
+  renderTaxPresets();
+  updateTaxPreview();
+}
+function renderTaxPresets() {
+  var box = document.getElementById('taxPresets');
+  if (!box) return;
+  box.innerHTML = '';
+  var presets = taxType === 'percent' ? [5, 8, 9, 10, 15] : [10000, 25000, 50000, 100000];
+  presets.forEach(function(v){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-300 dark:border-slate-600 text-on-surface dark:text-slate-200 hover:bg-primary hover:text-white hover:border-primary transition-all active:scale-95';
+    b.textContent = taxType === 'percent' ? (v + '%') : (v.toLocaleString('fa-IR') + ' ت');
+    b.onclick = function(){ var inp = document.getElementById('taxInput'); if (inp) inp.value = v; updateTaxPreview(); };
+    box.appendChild(b);
+  });
+}
+function updateTaxPreview() {
+  var input = document.getElementById('taxInput');
+  var val = input ? (parseInt(String(input.value).replace(/[^0-9]/g, ''), 10) || 0) : 0;
+  var subtotal = 0;
+  cart.forEach(function(i){ subtotal += i.price * i.qty; });
+  var discount = getCartDiscountAmount(subtotal);
+  var base = subtotal - discount;
+  if (base < 0) base = 0;
+  var t = 0;
+  if (taxType === 'percent') { t = Math.round(base * val / 100); }
+  else { t = val; }
+  if (t < 0) t = 0;
+  var final = subtotal - discount + t;
+  var fmt = function(n){ return n.toLocaleString('fa-IR'); };
+  var elSub = document.getElementById('taxPreviewSubtotal');
+  var elDis = document.getElementById('taxPreviewDiscount');
+  var elAmt = document.getElementById('taxPreviewAmount');
+  var elFin = document.getElementById('taxPreviewFinal');
+  if (elSub) elSub.textContent = fmt(subtotal) + ' تومان';
+  if (elDis) elDis.textContent = fmt(discount) + ' تومان';
+  if (elAmt) elAmt.textContent = fmt(t) + ' تومان';
+  if (elFin) elFin.textContent = fmt(final) + ' تومان';
+}
+function applyTaxModal() {
+  var input = document.getElementById('taxInput');
+  var val = input ? (parseInt(String(input.value).replace(/[^0-9]/g, ''), 10) || 0) : 0;
+  var bp = document.getElementById('taxTypePercent');
+  taxType = (bp && bp.classList.contains('bg-white')) ? 'percent' : 'amount';
+  taxValue = val;
+  try { localStorage.setItem('posTaxType', taxType); localStorage.setItem('posTaxValue', String(taxValue)); } catch(e){}
+  (window.posSaleState = window.posSaleState || {}); window.posSaleState.taxType = taxType; window.posSaleState.taxValue = taxValue;
+  updateCartUI();
+  closeTaxModal();
+  if (typeof showToast === 'function') showToast('مالیات اعمال شد');
+}
+function clearTaxModal() {
+  taxType = 'percent';
+  taxValue = 10;
+  try { localStorage.removeItem('posTaxType'); localStorage.removeItem('posTaxValue'); } catch(e){}
+  (window.posSaleState = window.posSaleState || {}); window.posSaleState.taxType = taxType; window.posSaleState.taxValue = taxValue;
+  var input = document.getElementById('taxInput');
+  if (input) input.value = '10';
+  updateCartUI();
+  closeTaxModal();
+  if (typeof showToast === 'function') showToast('مالیات به پیش‌فرض (۱۰٪) بازگشت');
+}
+try {
+  var _tt = localStorage.getItem('posTaxType');
+  var _tv = localStorage.getItem('posTaxValue');
+  if (_tt) taxType = _tt;
+  if (_tv) taxValue = parseInt(_tv, 10) || 0;
+} catch(e){}
+
+function updatePrintInvoice(realInvoiceNo) {
+  var fmt = function(n){ return (n||0).toLocaleString('fa-IR'); };
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('fa-IR');
+  var noEl = document.getElementById('printInvoiceNo');
+  var dateEl = document.getElementById('printInvoiceDate');
+  // اگر شمارهٔ واقعی فاکتور (از ثبت بک‌اند) موجود است از آن استفاده کن؛ در غیر این صورت پیش‌فاکتور
+  if (noEl) noEl.textContent = realInvoiceNo || (window._lastInvoice && window._lastInvoice.invoice_no) || ('POS-' + now.getTime().toString().slice(-6));
+  if (dateEl) dateEl.textContent = dateStr;
+  var subtotal = 0;
+  cart.forEach(function(i){ subtotal += i.price * i.qty; });
+  var discount = getCartDiscountAmount(subtotal);
+  var tax = getCartTaxAmount(subtotal, discount);
+  var final = subtotal - discount + tax;
+  var tbody = document.getElementById('printItems');
+  if (tbody) {
+    tbody.innerHTML = '';
+    cart.forEach(function(item, idx){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="border border-slate-300 px-2 py-1.5 text-sm text-center">' + (idx+1) + '</td>' +
+        '<td class="border border-slate-300 px-2 py-1.5 text-sm">' + item.title + '<div class="text-xs text-slate-500">کد: ' + item.barcode + '</div></td>' +
+        '<td class="border border-slate-300 px-2 py-1.5 text-sm text-center font-tabular-num">' + item.qty + '</td>' +
+        '<td class="border border-slate-300 px-2 py-1.5 text-sm text-left font-tabular-num">' + fmt(item.price) + '</td>' +
+        '<td class="border border-slate-300 px-2 py-1.5 text-sm text-left font-tabular-num">' + fmt(item.price * item.qty) + '</td>';
+      tbody.appendChild(tr);
+    });
+    if (cart.length === 0) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td colspan="5" class="border border-slate-300 px-2 py-4 text-center text-slate-400">سبد خرید خالی است</td>';
+      tbody.appendChild(tr);
+    }
+  }
+  var elSub = document.getElementById('printSubtotal');
+  var elDis = document.getElementById('printDiscount');
+  var elTax = document.getElementById('printTax');
+  var elFin = document.getElementById('printFinal');
+  if (elSub) elSub.textContent = fmt(subtotal);
+  if (elDis) elDis.textContent = fmt(discount);
+  if (elTax) elTax.textContent = fmt(tax);
+  if (elFin) elFin.textContent = fmt(final);
+  var qr = document.getElementById('printQR');
+  if (qr) {
+    var invNo = realInvoiceNo || (window._lastInvoice && window._lastInvoice.invoice_no) || '';
+    var data = encodeURIComponent('POS Invoice ' + invNo + ' | ' + final + ' Toman');
+    qr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' + data;
+  }
+}
+
+function printInvoice() {
+  updatePrintInvoice();
+  window.print();
+}
+
+// ==================== ثبت فاکتور POS (Backend Integration) ====================
+async function submitPosSale(paymentMethod) {
+  if (!cart || cart.length === 0) {
+    showToast('سبد خرید خالی است', 'error');
+    return;
+  }
+
+  const saleState = window.posSaleState || {};
+  const warehouseId = saleState.warehouse;
+  const customerId = saleState.customer;
+  const discountType = saleState.discountType || 'percent';
+  const discountValue = saleState.discountValue || 0;
+  const taxType = saleState.taxType || 'percent';
+  const taxValue = saleState.taxValue || 10;
+  const note = saleState.note || '';
+
+  // محاسبه مقادیر برای ارسال
+  let subtotal = 0;
+  cart.forEach(item => { subtotal += item.price * item.qty; });
+
+  let discount = 0;
+  if (discountType === 'percent') {
+    discount = Math.round(subtotal * discountValue / 100);
+  } else {
+    discount = discountValue;
+  }
+  discount = Math.max(0, Math.min(discount, subtotal));
+
+  const baseAfterDiscount = subtotal - discount;
+  let tax = 0;
+  if (taxType === 'percent') {
+    tax = Math.round(baseAfterDiscount * taxValue / 100);
+  } else {
+    tax = taxValue;
+  }
+  tax = Math.max(0, tax);
+
+  const total = subtotal - discount + tax;
+
+  // آماده‌سازی اقلام
+  const items = cart.map(item => ({
+    product: item.product,
+    quantity: item.qty,
+    unit_price: item.price,
+    discount: 0,
+    tax: 0
+  }));
+
+  const payload = {
+    items: items,
+    warehouse: warehouseId,
+    customer: customerId || null,
+    discount_mode: discountType,
+    discount_input: discountValue,
+    tax_mode: taxType,
+    tax_input: taxValue,
+    shipping: 0,
+    method: paymentMethod,
+    reference: '',
+    paid: true,
+    note: note
+  };
+
+  const btnMap = {
+    'card': document.querySelector('button[onclick="triggerPaymentPOS()"]'),
+    'cash': document.querySelector('button[onclick="triggerCashPayment()"]'),
+    'credit': document.querySelector('button[onclick="triggerCreditPayment()"]')
+  };
+  const activeBtn = btnMap[paymentMethod];
+  const originalHtml = activeBtn ? activeBtn.innerHTML : '';
+
+  if (activeBtn) {
+    activeBtn.disabled = true;
+    activeBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-xl">progress_activity</span><span>در حال ثبت...</span>';
+  }
+
+  try {
+    const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value || '';
+    const response = await fetch('/api/sales/pos-checkout/', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrf
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (activeBtn) {
+      activeBtn.disabled = false;
+      activeBtn.innerHTML = originalHtml;
+    }
+
+    if (response.ok && data.ok) {
+      showToast(data.message || 'فاکتور با موفقیت ثبت شد', 'check_circle');
+      // ذخیره شماره فاکتور برای چاپ
+      window._lastInvoice = data;
+      // خالی کردن سبد
+      clearCart();
+      // باز کردن چاپ پیش‌فاکتور
+      setTimeout(() => {
+        printInvoice();
+      }, 300);
+    } else {
+      const errMsg = data.message || 'خطا در ثبت فاکتور';
+      showToast(errMsg, 'error');
+    }
+  } catch (e) {
+    if (activeBtn) {
+      activeBtn.disabled = false;
+      activeBtn.innerHTML = originalHtml;
+    }
+    showToast('ارتباط با سرور برقرار نشد', 'error');
+  }
+}
+
+function triggerPaymentPOS() {
+  submitPosSale('card');
+}
+
+function triggerCashPayment() {
+  submitPosSale('cash');
+}
+
+function triggerCreditPayment() {
+  submitPosSale('credit');
+}
+
+// ==================== جستجوی زنده و فیلتر دسته‌بندی ====================
+function filterPosCategory(btn) {
+  var cat = btn.getAttribute('data-category') || '';
+  document.querySelectorAll('.pos-cat-tab').forEach(function(b){
+    b.className = b.className.replace('bg-blue-600 text-white font-title-md text-title-md whitespace-nowrap shadow-md shadow-blue-600/30', 'bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant dark:border-slate-700 hover:border-primary dark:hover:border-slate-600 text-on-surface dark:text-slate-300 font-body-md text-body-md whitespace-nowrap');
+  });
+  btn.className = btn.className.replace('bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant dark:border-slate-700 hover:border-primary dark:hover:border-slate-600 text-on-surface dark:text-slate-300 font-body-md text-body-md whitespace-nowrap', 'bg-blue-600 text-white font-title-md text-title-md whitespace-nowrap shadow-md shadow-blue-600/30');
+  document.querySelectorAll('.pos-product-card').forEach(function(card){
+    if (!cat || card.getAttribute('data-category') === cat) { card.style.display = ''; }
+    else { card.style.display = 'none'; }
+  });
+}
+
+function filterPosProducts(query) {
+  var q = (query || '').trim().toLowerCase();
+  var visible = 0;
+  document.querySelectorAll('.pos-product-card').forEach(function(card){
+    var searchable = (card.getAttribute('data-search') || '').toLowerCase();
+    var match = !q || searchable.indexOf(q) !== -1;
+    card.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  // اگر تب دسته‌ای فعال است، فیلتر دسته را هم نگه دار
+  var activeTab = document.querySelector('.pos-cat-tab.bg-blue-600');
+  if (activeTab) {
+    var cat = activeTab.getAttribute('data-category') || '';
+    if (cat) {
+      document.querySelectorAll('.pos-product-card').forEach(function(card){
+        if (card.getAttribute('data-category') !== cat) card.style.display = 'none';
+      });
+    }
+  }
+}
+
+// اتصال input جستجو (بارکد/نام)
+(function() {
+  var input = document.getElementById('barcodeSearchInput');
+  if (!input) return;
+  input.addEventListener('input', function(){ filterPosProducts(input.value); });
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      var q = (input.value || '').trim();
+      if (!q) return;
+      // اسکن بارکد: اگر دقیقاً یک کارت با این بارکد هست، مستقیم به سبد اضافه کن
+      var exact = [];
+      document.querySelectorAll('.pos-product-card').forEach(function(card){
+        if ((card.getAttribute('data-barcode') || '') === q) exact.push(card);
+      });
+      if (exact.length === 1) {
+        var card = exact[0];
+        var btn = card.querySelector('button[onclick^="addToCart"]');
+        if (btn && !btn.disabled) { btn.click(); }
+        input.value = '';
+        filterPosProducts('');
+      } else {
+        filterPosProducts(q);
+      }
+    }
+  });
+})();
+
+// ==================== بارکد اسکنر (دوربین / F2) ====================
+function triggerBarcodeCamera() {
+  const input = document.getElementById('barcodeSearchInput');
+  if (!input) return;
+
+  // بررسی پشتیبانی از Barcode Detection API
+  if ('BarcodeDetector' in window) {
+    // استفاده از Barcode Detection API (Chrome 88+)
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        video.setAttribute('playsinline', '');
+        video.play();
+
+        const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code'] });
+
+        const scanFrame = () => {
+          if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            detector.detect(video)
+              .then(barcodes => {
+                if (barcodes.length > 0) {
+                  const barcode = barcodes[0].rawValue;
+                  stream.getTracks().forEach(track => track.stop());
+                  input.value = barcode;
+                  // تريگر کردن Enter برای جستجو و اضافه به سبد
+                  const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+                  input.dispatchEvent(event);
+                  showToast('بارکد اسکن شد: ' + barcode, 'check_circle');
+                  return;
+                }
+              })
+              .catch(err => console.warn('Barcode detection error:', err));
+          }
+          // ادامه اسکن تا زمانی که کاربر کانسِل نکند
+          if (window._barcodeScanning) {
+            requestAnimationFrame(scanFrame);
+          } else {
+            stream.getTracks().forEach(track => track.stop());
+          }
+        };
+
+        window._barcodeScanning = true;
+        video.onloadedmetadata = () => {
+          video.play();
+          requestAnimationFrame(scanFrame);
+        };
+
+        // نمایش پیش‌نمایش دوربین در مودال
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/80';
+        modal.innerHTML = `
+          <div class="relative bg-slate-900 rounded-xl p-2 max-w-sm w-full">
+            <div class="flex items-center justify-between mb-2 text-white">
+              <h3 class="font-bold">اسکن بارکد</h3>
+              <button onclick="stopBarcodeScan()" class="text-white p-1">✕</button>
+            </div>
+            <div class="aspect-video bg-black rounded-lg overflow-hidden" id="barcodeVideoContainer"></div>
+            <p class="text-center text-slate-400 text-sm mt-2">بارکد را در کادر قرار دهید</p>
+          </div>
+        `;
+        document.body.appendChild(modal);
+        const container = document.getElementById('barcodeVideoContainer');
+        container.appendChild(video);
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'cover';
+
+        window.stopBarcodeScan = () => {
+          window._barcodeScanning = false;
+          modal.remove();
+          delete window.stopBarcodeScan;
+        };
+      })
+      .catch(err => {
+        showToast('دسترسی به دوربین امکان‌پذیر نیست', 'error');
+        console.error('Camera access error:', err);
+      });
+  } else {
+    // Fallback: استفاده از input file برای انتخاب عکس بارکد
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.capture = 'environment';
+    fileInput.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      // در اینجا می‌توان از کتابخانه‌هایی مثل quagga2 یا jsQR استفاده کرد
+      // برای سادگی، فقط پیام می‌دهیم
+      showToast('اسکن از عکس نیازمند کتابخانه اضافی است. از ورودی دستی استفاده کنید.', 'warning');
+    };
+    fileInput.click();
+  }
+}
+
+// کلید F2 برای فوکوس روی جستجوی بارکد
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F2') {
+    e.preventDefault();
+    const input = document.getElementById('barcodeSearchInput');
+    if (input) {
+      input.focus();
+      input.select();
+      showToast('حالت اسکن بارکد فعال شد', 'barcode_scanner');
+    }
+  }
+});
+
+updateSidebarActive();
+updateCartUI();
+</script>
+{% endblock %}

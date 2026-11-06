@@ -1,0 +1,4 @@
+Contains:
+ui-design/inventory-dashboard
+ui-design/login
+ui-design/pos

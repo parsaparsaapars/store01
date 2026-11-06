@@ -1,0 +1,2315 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Main Container -->
+<main class="] space-y-6">
+<!-- 1. LOCAL HEADER -->
+<header class="bg-surface-container-lowest dark:bg-on-surface p-5 lg:p-6 rounded-xl border border-outline-variant/60 dark:border-outline/40 shadow-sm flex flex-col xl:flex-row xl:items-center justify-between gap-5">
+<div class="space-y-1.5">
+<div class="flex items-center gap-3">
+<span class="p-2.5 rounded-lg bg-surface-container-low dark:bg-surface-variant/30 text-primary dark:text-inverse-primary border border-outline-variant/30 dark:border-outline/20">
+<span class="material-symbols-outlined text-[26px]">account_balance_wallet</span>
+</span>
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface dark:text-inverse-on-surface tracking-tight">
+              ۱۵. صندوق، دریافت و پرداخت
+            </h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">
+              مدیریت نقدینگی روزانه، ثبت اسناد دریافت و پرداخت، انتقال بین حساب‌ها و مغایرت‌گیری
+            </p>
+</div>
+</div>
+</div>
+<!-- Action Cluster -->
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- Dark Mode Toggle Button -->
+
+<!-- Excel Export Button -->
+<button class="flex items-center gap-2 px-3.5 py-2.5 rounded-lg border border-outline-variant/70 dark:border-outline bg-surface-container-lowest dark:bg-on-surface text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface transition-all text-body-sm font-body-sm shadow-xs" type="button">
+<span class="material-symbols-outlined text-[20px] text-secondary">table_view</span>
+<span>خروجی اسناد / اکسل</span>
+</button>
+<div class="h-6 w-px bg-outline-variant/60 dark:bg-outline/40 mx-1 hidden sm:block"></div>
+<!-- Transfer Between Accounts (Secondary) -->
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container text-body-md font-body-md transition-all active:scale-95 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary dark:text-inverse-primary">swap_horiz</span>
+<span>انتقال بین حساب‌ها</span>
+</button>
+<!-- New Payment (Danger / Soft Amber-Red) -->
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-error-container/70 dark:bg-error/30 text-error dark:text-error-container border border-error/30 hover:bg-error hover:text-on-error dark:hover:bg-error dark:hover:text-on-error text-body-md font-title-md transition-all active:scale-95 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[20px]">remove_circle_outline</span>
+<span>- ثبت پرداخت جدید</span>
+</button>
+<!-- New Receipt (Primary Blue) -->
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary text-body-md font-title-md transition-all active:scale-95 shadow-xs hover:shadow-md" type="button">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span>+ ثبت دریافت جدید</span>
+</button>
+</div>
+</header>
+<!-- 2. KPI CARDS SECTION (Bento Metric Layout styled like reference image) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
+<!-- KPI 1: کل نقد و بانک -->
+<div class="bg-surface-container-lowest dark:bg-on-surface p-5 rounded-xl border border-outline-variant/60 dark:border-outline/40 shadow-xs relative overflow-hidden flex flex-col justify-between h-[154px] border-b-4 border-b-primary-container">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">موجودی کل نقد و بانک</span>
+<span class="p-2 rounded-lg bg-surface-container-low dark:bg-surface-variant/40 text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+</span>
+</div>
+<div class="my-auto flex items-baseline justify-start gap-2 pt-1">
+<span class="font-headline-xl text-headline-xl text-on-surface dark:text-inverse-on-surface font-tabular-num font-bold tracking-tight">۵,۶۴۰,۰۰۰,۰۰۰</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-low dark:bg-surface-variant/40 text-primary dark:text-inverse-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span>۳ صندوق فعال، ۵ حساب بانکی</span>
+</span>
+</div>
+</div>
+<!-- KPI 2: دریافتی‌های امروز -->
+<div class="bg-surface-container-lowest dark:bg-on-surface p-5 rounded-xl border border-outline-variant/60 dark:border-outline/40 shadow-xs relative overflow-hidden flex flex-col justify-between h-[154px] border-b-4 border-b-secondary">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">دریافتی‌های امروز</span>
+<span class="p-2 rounded-lg bg-secondary-fixed/40 dark:bg-secondary/30 text-secondary dark:text-secondary-fixed">
+<span class="material-symbols-outlined text-[20px]">arrow_downward</span>
+</span>
+</div>
+<div class="my-auto flex items-baseline justify-start gap-2 pt-1">
+<span class="font-headline-xl text-headline-xl text-secondary dark:text-secondary-fixed font-tabular-num font-bold tracking-tight">۱,۲۸۰,۰۰۰,۰۰۰</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+<div class="flex items-center justify-between gap-1">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-fixed/50 dark:bg-secondary/40 text-secondary dark:text-secondary-fixed font-bold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span dir="ltr">+۱۸٪</span>
+</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">۲۴ فقره سند تأییدشده</span>
+</div>
+</div>
+<!-- KPI 3: پرداختی‌های امروز -->
+<div class="bg-surface-container-lowest dark:bg-on-surface p-5 rounded-xl border border-outline-variant/60 dark:border-outline/40 shadow-xs relative overflow-hidden flex flex-col justify-between h-[154px] border-b-4 border-b-error">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">پرداختی‌های امروز</span>
+<span class="p-2 rounded-lg bg-error-container/70 dark:bg-error/30 text-error dark:text-error-container">
+<span class="material-symbols-outlined text-[20px]">arrow_upward</span>
+</span>
+</div>
+<div class="my-auto flex items-baseline justify-start gap-2 pt-1">
+<span class="font-headline-xl text-headline-xl text-error dark:text-error-container font-tabular-num font-bold tracking-tight">۴۳۰,۰۰۰,۰۰۰</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-error-container/40 dark:bg-error/20 text-error dark:text-error-container">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span>۸ فقره سند | ۵ چک صادره</span>
+</span>
+</div>
+</div>
+<!-- KPI 4: مانده پایان روز پیش‌بینی‌شده -->
+<div class="bg-surface-container-lowest dark:bg-on-surface p-5 rounded-xl border border-outline-variant/60 dark:border-outline/40 shadow-xs relative overflow-hidden flex flex-col justify-between h-[154px] border-b-4 border-b-tertiary-container">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">مانده پایان روز پیش‌بینی‌شده</span>
+<span class="p-2 rounded-lg bg-tertiary-fixed/60 dark:bg-tertiary/40 text-tertiary-container dark:text-tertiary-fixed">
+<span class="material-symbols-outlined text-[20px]">query_stats</span>
+</span>
+</div>
+<div class="my-auto flex items-baseline justify-start gap-2 pt-1">
+<span class="font-headline-xl text-headline-xl text-on-surface dark:text-inverse-on-surface font-tabular-num font-bold tracking-tight">۶,۴۹۰,۰۰۰,۰۰۰</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-secondary-fixed/40 dark:bg-secondary/30 text-secondary dark:text-secondary-fixed">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span>مغایرت‌گیری روزانه تأیید شده</span>
+</span>
+</div>
+</div>
+</section>
+<!-- 3. TOOLBAR & QUICK FILTERS -->
+<section class="bg-surface-container-lowest dark:bg-on-surface p-4 rounded-xl border border-outline-variant/60 dark:border-outline/40 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+<div class="flex flex-wrap items-center gap-3">
+<!-- Branch / Cash Desk Selector -->
+<div class="flex items-center gap-2">
+<label class="text-label-md font-label-md text-on-surface-variant dark:text-outline-variant whitespace-nowrap">صندوق / شعبه:</label>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low dark:bg-surface-variant/30 border border-outline-variant/70 dark:border-outline rounded-lg pr-9 pl-8 py-2 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary cursor-pointer">
+<option value="all">همه صندوق‌ها و شعبات</option>
+<option selected="" value="central">صندوق مرکزی (خزانه)</option>
+<option value="store1">صندوق فروشگاه ۱ (شعبه میرداماد)</option>
+<option value="online">صندوق درگاه آنلاین و پی‌پاد</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[20px] text-on-surface-variant pointer-events-none">storefront</span>
+<span class="material-symbols-outlined absolute left-2 top-2.5 text-[18px] text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Date Filter (Shamsi) -->
+<div class="flex items-center gap-2">
+<label class="text-label-md font-label-md text-on-surface-variant dark:text-outline-variant whitespace-nowrap">تاریخ عملیات:</label>
+<div class="relative flex items-center bg-surface-container-low dark:bg-surface-variant/30 border border-outline-variant/70 dark:border-outline rounded-lg px-3 py-2 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface">
+<span class="material-symbols-outlined text-[18px] text-primary dark:text-inverse-primary ml-2">calendar_today</span>
+<span class="font-tabular-num font-title-md">امروز: ۱۴۰۳/۰۸/۲۴</span>
+<button class="mr-2 text-on-surface-variant hover:text-primary" title="تغییر بازه" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_calendar</span>
+</button>
+</div>
+</div>
+<!-- Payment Method Quick Filter -->
+<div class="hidden sm:flex items-center gap-1 bg-surface-container-low dark:bg-surface-variant/20 p-1 rounded-lg border border-outline-variant/40 dark:border-outline/30">
+<button class="px-3 py-1.5 rounded-md text-label-md font-label-md bg-surface-container-lowest dark:bg-inverse-surface text-primary dark:text-inverse-primary shadow-xs" type="button">همه روش‌ها</button>
+<button class="px-3 py-1.5 rounded-md text-label-md font-label-md text-on-surface-variant hover:text-on-surface" type="button">پوز / کارت</button>
+<button class="px-3 py-1.5 rounded-md text-label-md font-label-md text-on-surface-variant hover:text-on-surface" type="button">حواله پایا/ساتنا</button>
+<button class="px-3 py-1.5 rounded-md text-label-md font-label-md text-on-surface-variant hover:text-on-surface" type="button">چک صیادی</button>
+<button class="px-3 py-1.5 rounded-md text-label-md font-label-md text-on-surface-variant hover:text-on-surface" type="button">نقدی</button>
+</div>
+</div>
+<!-- Reconciliation Trigger Button -->
+<div class="flex items-center gap-2">
+<button class="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-container-high dark:bg-surface-variant/60 text-primary dark:text-inverse-primary border border-primary/20 hover:bg-primary-fixed hover:border-primary text-body-sm font-title-md transition-all active:scale-95 shadow-xs" onclick="document.getElementById('reconciliation-section').scrollIntoView({behavior: 'smooth'})" type="button">
+<span class="material-symbols-outlined text-[20px]">fact_check</span>
+<span>مغایرت‌گیری و بستن صندوق پایان روز</span>
+</button>
+</div>
+</section>
+<!-- 4. ENTERPRISE DATA TABLE (Transactions with Excel Filter Headers) -->
+<section class="bg-surface-container-lowest dark:bg-on-surface rounded-xl border border-outline-variant/60 dark:border-outline/40 shadow-sm overflow-hidden">
+<!-- Table Header Bar -->
+<div class="p-4 border-b border-outline-variant/60 dark:border-outline/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-surface-bright dark:bg-inverse-surface/50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-[22px]">receipt_long</span>
+<h2 class="text-title-lg font-title-lg text-on-surface dark:text-inverse-on-surface">دفتر روزنامه تراکنش‌های صندوق و خزانه</h2>
+<span id="cashboxRowCountBadge" class="text-label-md font-label-md px-2.5 py-0.5 rounded-full bg-surface-container-low dark:bg-surface-variant/40 text-on-surface-variant dark:text-outline-variant">۳۲ ردیف ثبت‌شده</span>
+</div>
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<!-- Table Search Input -->
+<div class="relative w-full sm:w-64">
+<input id="tableSearchInput" oninput="filterTableBySearch(this.value)" class="w-full bg-surface-container-lowest dark:bg-surface-variant/20 border border-outline-variant/70 dark:border-outline rounded-lg pr-9 pl-3 py-1.5 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="جستجو در شرح، شماره سند یا طرف حساب..." type="text"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-[18px] text-outline">search</span>
+</div>
+<!-- Print Table -->
+<!-- Export Dropdown -->
+<div class="relative no-print">
+  <button onclick="toggleExportMenu(event)" class="p-2 rounded-lg border border-outline-variant/70 dark:border-outline text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-surface-variant/30 flex items-center gap-1" title="خروجی" type="button">
+    <span class="material-symbols-outlined text-[20px]">download</span>
+    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+  </button>
+  <div id="exportMenu" class="hidden absolute left-0 mt-1.5 w-40 rounded-xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-xl z-50 p-1.5 space-y-1">
+  <button onclick="exportTableToExcel()" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-body-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-200">
+    <span class="material-symbols-outlined text-[18px] text-emerald-600">table_view</span> Excel
+  </button>
+  <button onclick="printTable()" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-body-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-200">
+    <span class="material-symbols-outlined text-[18px] text-blue-600">print</span> چاپ
+  </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Responsive Table Container -->
+<div class="overflow-x-auto relative min-h-[460px]">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low/70 dark:bg-inverse-surface border-b border-outline-variant/70 dark:border-outline text-on-surface-variant dark:text-outline-variant text-label-md font-label-md uppercase tracking-wider select-none">
+<!-- Th 1: زمان / ساعت -->
+<th class="py-3 px-3.5 whitespace-nowrap" scope="col" data-col-key="time">
+<div class="flex items-center justify-between gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'time')">
+<span>زمان / ساعت</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">filter_alt</span>
+</div>
+</th>
+<!-- Th: تاریخ -->
+<th class="py-3 px-3.5 whitespace-nowrap" scope="col" data-col-key="date">
+<div class="flex items-center justify-between gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'date')">
+<span>تاریخ</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">filter_alt</span>
+</div>
+</th>
+<!-- Th 2: نوع تراکنش -->
+<th class="py-3 px-3.5 whitespace-nowrap" scope="col" data-col-key="type">
+<div class="flex items-center justify-between gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'type')">
+<span>نوع تراکنش</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">filter_alt</span>
+</div>
+</th>
+<!-- Th 3: شرح سند -->
+<th class="py-3 px-4 min-w-[220px]" scope="col" data-col-key="desc">
+<div class="flex items-center justify-between gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'desc')">
+<span>شرح سند</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">filter_alt</span>
+</div>
+</th>
+<!-- Th 4: طرف حساب -->
+<th class="py-3 px-3.5 whitespace-nowrap" scope="col" data-col-key="party">
+<div class="flex items-center justify-between gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'party')">
+<span>طرف حساب</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">filter_alt</span>
+</div>
+</th>
+<!-- Th 5: روش پرداخت -->
+<th class="py-3 px-3.5 whitespace-nowrap" scope="col" data-col-key="method">
+<div class="flex items-center justify-between gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'method')">
+<span>روش پرداخت</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">filter_alt</span>
+</div>
+</th>
+<!-- Th 6: مبلغ (تومان) -->
+<th class="py-3 px-3.5 text-left whitespace-nowrap" scope="col" data-col-key="amount">
+<div class="flex items-center justify-end gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'amount')">
+<span>مبلغ (تومان)</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">swap_vert</span>
+</div>
+</th>
+<!-- Th 7: حساب / صندوق مقصد -->
+<th class="py-3 px-3.5 whitespace-nowrap" scope="col" data-col-key="account">
+<div class="flex items-center justify-between gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'account')">
+<span>صندوق / حساب</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">filter_alt</span>
+</div>
+</th>
+<!-- Th 8: شماره پیگیری / سند -->
+<th class="py-3 px-3.5 whitespace-nowrap" scope="col" data-col-key="docno">
+<div class="flex items-center justify-between gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'docno')">
+<span>شماره سند / رهگیری</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">filter_alt</span>
+</div>
+</th>
+<!-- Th 9: ثبت‌کننده -->
+<th class="py-3 px-3 whitespace-nowrap" scope="col" data-col-key="creator">
+<div class="flex items-center justify-between gap-1 group cursor-pointer" onclick="toggleExcelFilter(event, 'creator')">
+<span>ثبت‌کننده</span>
+<span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary">filter_alt</span>
+</div>
+</th>
+<!-- Th 10: عملیات -->
+<th class="py-3 px-3 text-center whitespace-nowrap" scope="col">
+<span>عملیات</span>
+</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/40 dark:divide-outline/30 text-body-md font-body-md">
+{% for cb in cb_payments %}
+<tr class="hover:bg-surface-container-low/60 dark:hover:bg-inverse-surface/70 transition-colors">
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface-variant dark:text-outline-variant text-body-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span>{{ cb.created_at|date:"H:i" }}</span>
+</div>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface-variant dark:text-outline-variant text-body-sm">
+{{ cb.created_at|date:"Y/m/d" }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-fixed/50 dark:bg-secondary/40 text-secondary dark:text-secondary-fixed border border-secondary/20">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+<span>{{ cb.method }}</span>
+</span>
+</td>
+<td class="py-3 px-4">
+<div class="font-title-md text-on-surface dark:text-inverse-on-surface">{{ cb.reference }}</div>
+<div class="text-label-sm text-on-surface-variant dark:text-outline-variant">{{ cb.note }}</div>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-title-md text-on-surface dark:text-inverse-on-surface">{{ cb.customer__name }}</td>
+<td class="py-3 px-3.5 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 text-body-sm text-on-surface dark:text-inverse-on-surface">
+<span class="material-symbols-outlined text-[17px] text-primary">point_of_sale</span>
+<span>{{ cb.customer__name }}</span>
+</span>
+</td>
+<td class="py-3 px-3.5 text-left whitespace-nowrap">
+<span class="font-tabular-num font-bold text-headline-md text-secondary dark:text-secondary-fixed">
++ {{ cb.amount|floatformat:"-0" }}
+</span>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-body-sm text-on-surface-variant dark:text-outline-variant">
+<button class="text-primary dark:text-blue-400 hover:underline text-body-sm" title="مشاهده جزئیات">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+</button>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="8" class="text-center py-8 text-[#64748b] dark:text-[#94a3b8]">هیچ تراکنشی ثبت نشده است.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+<!-- Interactive Excel Filter Popover (Simulated Dropdown Modal) -->
+<div class="hidden absolute top-12 right-24 z-50 w-72 bg-surface-container-lowest dark:bg-on-surface border border-outline-variant dark:border-outline rounded-xl shadow-2xl p-4 space-y-3" id="excel-filter-modal">
+<div class="flex items-center justify-between border-b border-outline-variant/50 pb-2">
+<span class="text-title-md font-title-md text-on-surface dark:text-inverse-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">filter_list</span>
+              فیلتر هوشمند ستون
+            </span>
+<button class="text-outline hover:text-error" onclick="closeExcelFilter()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="space-y-1">
+<button class="w-full text-right px-2.5 py-1.5 rounded text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">arrow_upward</span>
+              مرتب‌سازی صعودی (الف تا ی)
+            </button>
+<button class="w-full text-right px-2.5 py-1.5 rounded text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">arrow_downward</span>
+              مرتب‌سازی نزولی (ی تا الف)
+            </button>
+</div>
+<div class="pt-2 border-t border-outline-variant/40">
+<input class="w-full text-body-sm px-2.5 py-1 rounded bg-surface-container-low border border-outline-variant dark:border-outline mb-2" placeholder="جستجو در مقادیر..." type="text"/>
+<div class="max-h-32 overflow-y-auto space-y-1.5 text-body-sm">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span>انتخاب همه (Select All)</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span>دریافت نقدی / پوز</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span>پرداخت و حواله</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span>انتقال داخلی بین حساب‌ها</span>
+</label>
+</div>
+</div>
+<div class="flex items-center justify-end gap-2 pt-2 border-t border-outline-variant/50">
+<button class="px-3 py-1 rounded text-body-sm text-outline hover:text-on-surface" onclick="closeExcelFilter()" type="button">انصراف</button>
+<button class="px-3 py-1 rounded text-body-sm bg-primary-container text-on-primary font-title-md" onclick="closeExcelFilter()" type="button">اعمال فیلتر</button>
+</div>
+</div>
+</div>
+<!-- Table Pagination and Summary -->
+<div class="p-4 border-t border-outline-variant/60 dark:border-outline/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm text-on-surface-variant dark:text-outline-variant">
+<div class="flex items-center gap-2">
+<span id="cashboxSummaryText">نمایش ۰ تراکنش ثبت‌شده</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-body-sm text-on-surface-variant dark:text-outline-variant">تعداد در صفحه:</span>
+<select id="pageSizeSelect" onchange="changePageSize(this.value)" dir="rtl" class="px-2 py-1 pl-6 rounded-md border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 text-right appearance-none bg-no-repeat" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22><path fill=%22%2364748b%22 d=%22M7 10l5 5 5-5z%22/></svg>'); background-position: left 6px center;">
+<option value="10">۱۰</option>
+<option value="25">۲۵</option>
+<option value="50">۵۰</option>
+</select>
+<div id="paginationControls" class="flex items-center gap-1"></div>
+</div>
+</div>
+</section>
+<!-- 5. CASH COUNT & RECONCILIATION WIDGET (بخش مغایرت‌گیری پایان روز) -->
+<section class="bg-surface-container-lowest dark:bg-on-surface rounded-xl border border-outline-variant/60 dark:border-outline/40 shadow-sm p-5 lg:p-6 space-y-6" id="reconciliation-section">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-outline-variant/50 dark:border-outline/40 pb-4">
+<div class="flex items-center gap-3">
+<span class="p-2.5 rounded-xl bg-tertiary-fixed/60 dark:bg-tertiary/40 text-tertiary-container dark:text-tertiary-fixed">
+<span class="material-symbols-outlined text-[26px]">calculate</span>
+</span>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface dark:text-inverse-on-surface">
+              شمارش فیزیکی وجه نقد و مغایرت‌گیری پایان شیفت (Cash Count &amp; Reconciliation)
+            </h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant">
+              شمارش اسکناس‌ها و موجودی پوزها، مقایسه بلادرنگ با مانده دفتری سیستم و صدور سند بستن روز
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low dark:bg-surface-variant/30 text-body-sm">
+<span class="text-on-surface-variant dark:text-outline-variant">صندوق‌دار شیفت:</span>
+<span class="font-title-md text-on-surface dark:text-inverse-on-surface">علیرضا حسینی</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low dark:bg-surface-variant/30 text-body-sm">
+<span class="text-on-surface-variant dark:text-outline-variant">ساعت بستن:</span>
+<span class="font-tabular-num font-title-md text-on-surface dark:text-inverse-on-surface">۲۱:۳۰</span>
+</div>
+</div>
+</div>
+<!-- Denomination Counter & Formula Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left 7 Cols: Denomination Grid -->
+<div class="lg:col-span-7 space-y-4">
+<h4 class="text-title-md font-title-md text-on-surface dark:text-inverse-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">local_atm</span>
+            جدول شمارش مسکوکات و اسکناس‌های موجود در صندوق
+          </h4>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<!-- ایران‌چک ۱,۰۰۰,۰۰۰ ریالی -->
+<div class="p-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-low/40 dark:bg-inverse-surface/40 flex items-center justify-between gap-3">
+<div>
+<div class="font-title-md text-on-surface dark:text-inverse-on-surface">ایران‌چک ۱۰۰,۰۰۰ تومانی</div>
+<div class="text-label-sm text-on-surface-variant">بسته ۱۰۰ عددی یا تکی</div>
+</div>
+<div class="flex items-center gap-2">
+<input class="w-20 px-2 py-1 text-center font-tabular-num font-bold rounded border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-surface-variant/30 text-on-surface dark:text-inverse-on-surface focus:ring-1 focus:ring-primary" id="count-100k" type="number" value="150"/>
+<span class="text-label-sm text-on-surface-variant">برگ</span>
+</div>
+</div>
+<!-- ایران‌چک ۵۰۰,۰۰۰ ریالی -->
+<div class="p-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-low/40 dark:bg-inverse-surface/40 flex items-center justify-between gap-3">
+<div>
+<div class="font-title-md text-on-surface dark:text-inverse-on-surface">ایران‌چک ۵۰,۰۰۰ تومانی</div>
+<div class="text-label-sm text-on-surface-variant">بسته ۱۰۰ عددی یا تکی</div>
+</div>
+<div class="flex items-center gap-2">
+<input class="w-20 px-2 py-1 text-center font-tabular-num font-bold rounded border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-surface-variant/30 text-on-surface dark:text-inverse-on-surface focus:ring-1 focus:ring-primary" id="count-50k" type="number" value="84"/>
+<span class="text-label-sm text-on-surface-variant">برگ</span>
+</div>
+</div>
+<!-- اسکناس ۱۰,۰۰۰ تومانی -->
+<div class="p-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-low/40 dark:bg-inverse-surface/40 flex items-center justify-between gap-3">
+<div>
+<div class="font-title-md text-on-surface dark:text-inverse-on-surface">اسکناس ۱۰,۰۰۰ تومانی</div>
+<div class="text-label-sm text-on-surface-variant">خرده و برگ‌های نقدی</div>
+</div>
+<div class="flex items-center gap-2">
+<input class="w-20 px-2 py-1 text-center font-tabular-num font-bold rounded border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-surface-variant/30 text-on-surface dark:text-inverse-on-surface focus:ring-1 focus:ring-primary" id="count-10k" type="number" value="120"/>
+<span class="text-label-sm text-on-surface-variant">برگ</span>
+</div>
+</div>
+<!-- رسیدهای کارتخوان (پوز فیزیکی) -->
+<div class="p-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-low/40 dark:bg-inverse-surface/40 flex items-center justify-between gap-3">
+<div>
+<div class="font-title-md text-on-surface dark:text-inverse-on-surface">جمع پرینت ژورنال پوزها</div>
+<div class="text-label-sm text-on-surface-variant">رسیدهای POS بانکی</div>
+</div>
+<div class="flex items-center gap-1">
+<input class="w-28 px-2 py-1 text-center font-tabular-num font-bold rounded border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-surface-variant/30 text-on-surface dark:text-inverse-on-surface focus:ring-1 focus:ring-primary" type="text" value="۲۴,۵۰۰,۰۰۰"/>
+<span class="text-label-sm text-on-surface-variant">تومان</span>
+</div>
+</div>
+</div>
+<!-- Note text box -->
+<div class="space-y-1">
+<label class="text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">توضیحات و یادداشت صندوق‌دار:</label>
+<textarea class="w-full rounded-lg border border-outline-variant/70 dark:border-outline bg-surface-container-lowest dark:bg-surface-variant/20 p-2.5 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface focus:ring-2 focus:ring-primary focus:border-primary" placeholder="در صورت وجود مغایرت یا کسری/مازاد، علت آن را در این قسمت درج فرمایید..." rows="2"></textarea>
+</div>
+</div>
+<!-- Right 5 Cols: Calculation & Result Card -->
+<div class="lg:col-span-5 bg-surface-container-low dark:bg-inverse-surface/60 rounded-xl p-5 border border-outline-variant/70 dark:border-outline/40 flex flex-col justify-between space-y-4">
+<div>
+<h4 class="text-title-lg font-title-lg text-on-surface dark:text-inverse-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">balance</span>
+              خلاصه تطبیق صندوق و مانده دفتری
+            </h4>
+<div class="space-y-3">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant dark:text-outline-variant">موجودی دفتری سیستم (دفتر کل):</span>
+<span class="font-tabular-num font-title-md text-on-surface dark:text-inverse-on-surface">۴۴,۹۰۰,۰۰۰ تومان</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant dark:text-outline-variant">مجموع شمارش فیزیکی + پوز:</span>
+<span class="font-tabular-num font-title-md text-on-surface dark:text-inverse-on-surface">۴۴,۹۰۰,۰۰۰ تومان</span>
+</div>
+<div class="h-px bg-outline-variant/60 dark:bg-outline/40 my-2"></div>
+<!-- Difference Display -->
+<div class="p-3 rounded-lg bg-surface-container-lowest dark:bg-on-surface border border-secondary/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[22px]">check_circle</span>
+<span class="font-title-md text-on-surface dark:text-inverse-on-surface">وضعیت مغایرت:</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2.5 py-0.5 rounded-full text-label-md font-bold bg-secondary-fixed/50 dark:bg-secondary/40 text-secondary dark:text-secondary-fixed">
+                    تراز کامل (۰ ریال اختلاف)
+                  </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Action Buttons inside Widget -->
+<div class="space-y-2 pt-2">
+<button class="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-title-md transition-all shadow-md active:scale-95" type="button">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+<span>تأیید و بستن نهایی صندوق شیفت</span>
+</button>
+<p class="text-center text-label-sm text-on-surface-variant dark:text-outline-variant">
+              با تأیید نهایی، دسترسی ثبت تراکنش در این شیفت قفل و سند به حسابداری کل ارسال می‌شود.
+            </p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Lightweight Standalone Micro-interaction Script -->
+<style>
+.excel-filter-dropdown { position: fixed; background: #fff; border: 2px solid #2563eb; border-radius: 10px; box-shadow: 0 15px 50px rgba(0,0,0,0.25); z-index: 10000; min-width: 300px; max-width: 350px; width: 100%; height: 420px; max-height: 420px; display: none; overflow: hidden; flex-direction: column; box-sizing: border-box; font-family: inherit; }
+.dark .excel-filter-dropdown { background: #1e293b; color: #e2e8f0; border-color: #3b82f6; }
+.excel-filter-dropdown.show { display: flex !important; animation: dropdownSlide .3s ease; }
+@keyframes dropdownSlide { from { opacity:0; transform: translateY(-15px) scale(.95);} to { opacity:1; transform: translateY(0) scale(1);} }
+.filter-dropdown-header { padding: 8px 12px; border-bottom: 2px solid #e2e8f0; background: linear-gradient(135deg,#2563eb 0%,#3b82f6 100%); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; color:#fff; }
+.filter-dropdown-title { font-weight:600; font-size:.95rem; }
+.filter-close-btn { background: rgba(255,255,255,.2); border:none; color:#fff; cursor:pointer; font-size:1.2rem; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+.filter-close-btn:hover { background: rgba(255,255,255,.3); }
+.filter-sort-box, .filter-search-box, .filter-select-all { padding: 12px; border-bottom: 1px solid #e2e8f0; background:#f8fafc; flex-shrink:0; }
+.dark .filter-sort-box, .dark .filter-search-box, .dark .filter-select-all { background:#0f172a; border-color:#334155; }
+.filter-sort-title { font-size:.85rem; font-weight:700; color:#1e293b; margin-bottom:6px; }
+.dark .filter-sort-title { color:#e2e8f0; }
+.filter-sort-select { width:100%; padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; background:#fff; color:#1e293b; font-size:.85rem; font-family:inherit; cursor:pointer; }
+.filter-search-input { width:100%; padding:10px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:.85rem; background:#fff; color:#1e293b; font-family:inherit; }
+.filter-select-all { display:flex; align-items:center; gap:8px; }
+.filter-options-container { flex:1 1 0; overflow-y:auto; padding:8px; background:#fff; min-height:0; height:0; }
+.dark .filter-options-container { background:#1e293b; }
+.filter-option { display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:6px; cursor:pointer; }
+.filter-option:hover { background:#f1f5f9; }
+.dark .filter-option:hover { background:#334155; }
+.filter-option input { accent-color:#2563eb; }
+.filter-option label { cursor:pointer; font-size:.85rem; color:#1e293b; }
+.dark .filter-option label { color:#e2e8f0; }
+.filter-actions { padding:12px; border-top:1px solid #e2e8f0; display:flex; gap:8px; flex-shrink:0; background:#f8fafc; }
+.dark .filter-actions { background:#0f172a; border-color:#334155; }
+.filter-action-btn { flex:1; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; font-size:.85rem; font-weight:600; font-family:inherit; }
+.filter-apply-btn { background:#2563eb; color:#fff; }
+.filter-clear-btn { background:#e2e8f0; color:#1e293b; }
+.dark .filter-clear-btn { background:#334155; color:#e2e8f0; }
+.filter-empty { padding:12px; text-align:center; color:#64748b; font-size:.85rem; }
+.filter-close-btn { font-family:inherit; }
+.date-tree { display:flex; flex-direction:column; gap:6px; padding:4px 2px; }
+.date-tree-node { display:flex; flex-direction:column; gap:4px; }
+.date-tree-row { display:flex; align-items:center; gap:6px; padding:4px 6px; border-radius:6px; }
+.date-tree-row:hover { background:#f1f5f9; }
+.dark .date-tree-row:hover { background:#334155; }
+.date-tree-toggle { background:none; border:none; cursor:pointer; color:#64748b; font-size:.8rem; padding:2px; }
+.date-tree-label { font-size:.9rem; font-weight:600; color:#1e293b; }
+.dark .date-tree-label { color:#e2e8f0; }
+.date-tree-children { padding-right:18px; }
+.date-tree-days { display:grid; grid-template-columns: repeat(6,1fr); gap:6px; padding:4px 2px; }
+.date-tree-day { display:flex; align-items:center; justify-content:center; gap:4px; padding:6px 4px; border:1px solid #e2e8f0; border-radius:8px; cursor:pointer; background:#f8fafc; font-size:.8rem; }
+.dark .date-tree-day { background:#0f172a; border-color:#334155; color:#e2e8f0; }
+.date-tree-day:hover { border-color:#2563eb; transform:translateY(-1px); }
+.date-tree-day input { accent-color:#2563eb; margin:0; }
+.date-tree-toggle .date-caret { transition: transform .2s; transform: rotate(-90deg); display:inline-block; font-size:18px; }
+.date-tree-node[data-expanded="1"] > .date-tree-row .date-tree-toggle .date-caret { transform: rotate(0deg); }
+.filter-dropdown-title { font-size:.85rem; }
+.filter-close-btn { width:24px; height:24px; font-size:1rem; }
+.filter-compact-row { display:flex; gap:6px; padding:8px 10px; border-bottom:1px solid #e2e8f0; background:#f8fafc; flex-shrink:0; }
+.dark .filter-compact-row { background:#0f172a; border-color:#334155; }
+.filter-compact-row .filter-sort-select { flex:0 0 38%; padding:6px 8px; font-size:.8rem; border-radius:8px; }
+.filter-compact-row .filter-search-input { flex:1; padding:6px 8px; font-size:.8rem; border-radius:8px; }
+.filter-select-all { padding:6px 10px; font-size:.8rem; }
+.filter-options-container { padding:6px; }
+.filter-action-btn { padding:6px 10px; font-size:.8rem; }
+.excel-filter-dropdown { min-width:260px; max-width:340px; height:380px; max-height:80vh; }
+@media (max-width: 640px) {
+  .excel-filter-dropdown { left: 8px !important; right: 8px !important; width: auto !important; min-width:0; max-width:none; max-height: 70vh; }
+  .filter-compact-row { flex-direction: column; }
+  .filter-compact-row .filter-sort-select, .filter-compact-row .filter-search-input { flex: 1 1 100%; }
+}
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  body { margin: 0 !important; padding: 0 !important; background: #fff !important; color: #000 !important; }
+  .no-print { display: none !important; }
+  .excel-filter-dropdown { display: none !important; }
+  #invoiceModal { display: none !important; }
+  section { box-shadow: none !important; border: 1px solid #ccc !important; }
+  table { width: 100% !important; border-collapse: collapse !important; }
+  th, td { border: 1px solid #ccc !important; padding: 4px 6px !important; }
+  thead { display: table-header-group !important; }
+  tr { break-inside: avoid !important; }
+}
+
+</style>
+<script>
+    // 1. Dark Mode Toggle with Persisted Guarantee
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    const htmlElem = document.documentElement;
+
+    function applyTheme(isDark) {
+      if (isDark) {
+        htmlElem.classList.add('dark');
+        document.body.classList.add('dark');
+        themeIcon.textContent = 'light_mode';
+        themeIcon.classList.remove('text-tertiary-container');
+        themeIcon.classList.add('text-tertiary-fixed');
+        themeText.textContent = 'حالت روشن';
+      } else {
+        htmlElem.classList.remove('dark');
+        document.body.classList.remove('dark');
+        themeIcon.textContent = 'dark_mode';
+        themeIcon.classList.add('text-tertiary-container');
+        themeIcon.classList.remove('text-tertiary-fixed');
+        themeText.textContent = 'حالت تاریک';
+      }
+    }
+
+    if (themeBtn) themeBtn.addEventListener('click', () => {
+      const isCurrentlyDark = htmlElem.classList.contains('dark');
+      applyTheme(!isCurrentlyDark);
+    });
+
+    // 2. Excel Column Filter (client-side) — upgraded Excel-like
+    window.excelFilters = {
+      activeFilters: {},
+      advancedFilters: {},
+      dropdowns: {},
+      columnData: {},
+      dateSelections: {},
+      activeSort: { column: null, dir: null },
+      columnType: { time:'time', date:'date', type:'category', desc:'text', party:'text', method:'category', amount:'number', account:'category', docno:'text', creator:'category' },
+      getType: function(col){ return this.columnType[col] || 'text'; },
+      getColumnIndex: function(colKey) {
+        const ths = Array.from(document.querySelectorAll('thead th'));
+        return ths.findIndex(th => th.getAttribute('data-col-key') === colKey);
+      },
+      getColumnTitle: function(colKey) {
+        const th = document.querySelector('thead th[data-col-key="' + colKey + '"]');
+        return th ? th.textContent.trim().replace(/\s+/g,' ') : colKey;
+      },
+      getCellText: function(tr, idx) {
+        const td = tr.children[idx];
+        if (!td) return '';
+        const clone = td.cloneNode(true);
+        clone.querySelectorAll('.material-symbols-outlined').forEach(el => el.remove());
+        return (clone.textContent || '').trim().replace(/\s+/g,' ');
+      },
+      persianToAscii: function(str) {
+        return String(str).replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+                         .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+      },
+      parseNumber: function(str) {
+        const a = this.persianToAscii(str).trim();
+        if (a.indexOf(':') !== -1) {
+          const parts = a.split(':');
+          const h = parseInt((parts[0]||'').replace(/[^\d]/g,''),10) || 0;
+          const m = parseInt((parts[1]||'0').replace(/[^\d]/g,''),10) || 0;
+          return h*60 + m;
+        }
+        const b = a.replace(/[^\d.\-]/g,'');
+        if (b === '' || b === '-' || b === '.') return NaN;
+        return parseFloat(b);
+      },
+      parseShamsi: function(str) {
+        const m = String(str).trim().match(/^([۰-۹٠-٩\d]{4})[\/\-]([۰-۹٠-٩\d]{1,2})[\/\-]([۰-۹٠-٩\d]{1,2})$/);
+        if (!m) return null;
+        const toAscii = (s) => this.persianToAscii(s);
+        return { y: parseInt(toAscii(m[1]),10), mo: parseInt(toAscii(m[2]),10), d: parseInt(toAscii(m[3]),10) };
+      },
+      shamsiToComparable: function(str) {
+        const p = this.parseShamsi(str);
+        if (!p) return null;
+        return p.y*10000 + p.mo*100 + p.d;
+      },
+      g2j: function(gy,gm,gd){
+        const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];
+        let gy2=(gm>2)?(gy+1):gy;
+        let days=355666+(365*gy)+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)+gd+gdm[gm-1];
+        let jy=-1595+(33*Math.floor(days/12053)); days%=12053;
+        jy+=4*Math.floor(days/1461); days%=1461;
+        if(days>365){ jy+=Math.floor((days-1)/365); days=(days-1)%365; }
+        let jm,jd;
+        if(days<186){ jm=1+Math.floor(days/31); jd=1+(days%31); }
+        else { jm=7+Math.floor((days-186)/30); jd=1+((days-186)%30); }
+        return [jy,jm,jd];
+      },
+      todayShamsi: function() {
+        const n = new Date();
+        const [jy,jm,jd] = this.g2j(n.getFullYear(), n.getMonth()+1, n.getDate());
+        return jy + '/' + String(jm).padStart(2,'0') + '/' + String(jd).padStart(2,'0');
+      },
+      j2g: function(jy,jm,jd) {
+        let gy;
+        if (jy > 979) { gy = 1600; jy -= 979; }
+        else { gy = 621; }
+        let days = (365*jy) + (Math.floor(jy/33)*8) + Math.floor(((jy%33)+3)/4) + 78 + jd + ((jm<7)?(jm-1)*31:((jm-7)*30+186));
+        gy += 400*Math.floor(days/146097); days %= 146097;
+        if (days > 36524) { gy += 100*Math.floor(--days/36524); days %= 36524; if (days >= 365) days++; }
+        gy += 4*Math.floor(days/1461); days %= 1461;
+        if (days > 365) { gy += Math.floor((days-1)/365); days = (days-1)%365; }
+        let gm = (days < 186) ? 1+Math.floor(days/31) : 7+Math.floor((days-186)/30);
+        let gd = 1 + ((days < 186) ? (days%31) : ((days-186)%30));
+        return [gy, gm, gd];
+      },
+      addDaysShamsi: function(iso, delta) {
+        const p = this.parseShamsi(iso); if (!p) return iso;
+        const g = this.j2g(p.y, p.mo, p.d);
+        const dt = new Date(g[0], g[1]-1, g[2]);
+        dt.setDate(dt.getDate() + delta);
+        const [jy,jm,jd] = this.g2j(dt.getFullYear(), dt.getMonth()+1, dt.getDate());
+        return jy + '/' + String(jm).padStart(2,'0') + '/' + String(jd).padStart(2,'0');
+      },
+      getDistinctValues: function(colKey) {
+        const idx = this.getColumnIndex(colKey);
+        const vals = new Set();
+        document.querySelectorAll('tbody tr').forEach(tr => {
+          const t = this.getCellText(tr, idx);
+          vals.add(t);
+        });
+        const arr = Array.from(vals);
+        if (this.getType(colKey) === 'number' || this.getType(colKey) === 'time') {
+          arr.sort((a,b) => this.parseNumber(a) - this.parseNumber(b));
+        } else if (this.getType(colKey) === 'date') {
+          arr.sort((a,b) => (this.shamsiToComparable(a)||0) - (this.shamsiToComparable(b)||0));
+        } else {
+          arr.sort();
+        }
+        return arr;
+      },
+      getValueCounts: function(colKey) {
+        const idx = this.getColumnIndex(colKey);
+        const counts = {};
+        document.querySelectorAll('tbody tr').forEach(tr => {
+          const t = this.getCellText(tr, idx);
+          counts[t] = (counts[t] || 0) + 1;
+        });
+        return counts;
+      },
+      isDateColumn: function(colKey){ return this.getType(colKey) === 'date'; },
+      toggle: function(event, column) {
+        if (event) event.stopPropagation();
+        Object.keys(this.dropdowns).forEach(col => {
+          if (col !== column && this.dropdowns[col]) {
+            this.dropdowns[col].remove();
+            delete this.dropdowns[col];
+          }
+        });
+        if (this.dropdowns[column]) {
+          this.dropdowns[column].remove();
+          delete this.dropdowns[column];
+          return;
+        }
+        this.createDropdown(event && event.target, column);
+      },
+      createDropdown: function(icon, column) {
+        const dropdown = document.createElement('div');
+        dropdown.className = 'excel-filter-dropdown';
+        const type = this.getType(column);
+        dropdown.innerHTML = this.buildDropdownHtml(column, type);
+        document.body.appendChild(dropdown);
+        dropdown.addEventListener('click', function(e){ e.stopPropagation(); });
+        this.dropdowns[column] = dropdown;
+        const anchor = (icon && icon.closest) ? (icon.closest('th') || icon) : null;
+        this.positionDropdown(dropdown, anchor || document.body);
+        dropdown.classList.add('show');
+        this.columnData[column] = this.getDistinctValues(column);
+        this.renderBody(column);
+      },
+      buildDropdownHtml: function(column, type) {
+        const title = this.getColumnTitle(column);
+        const sortOpts = this.sortOptions(type);
+        return `
+          <div class="filter-dropdown-header">
+            <span class="filter-dropdown-title">فیلتر: ${title}</span>
+            <button type="button" class="filter-close-btn" onclick="event.stopPropagation(); excelFilters.close('${column}');">×</button>
+          </div>
+          <div class="filter-compact-row">
+            <select class="filter-sort-select" id="sort-${column}" onchange="excelFilters.sort('${column}', this.value)" title="مرتب‌سازی">
+              ${sortOpts}
+            </select>
+            <input type="text" class="filter-search-input" id="search-${column}" placeholder="جستجو..." oninput="excelFilters.searchInDropdown(this, '${column}')">
+          </div>
+          <div class="filter-select-all">
+            <input type="checkbox" id="select-all-${column}" onchange="excelFilters.toggleSelectAll('${column}')">
+            <label for="select-all-${column}">انتخاب همه</label>
+            <span id="count-${column}" style="margin-right:auto;font-size:.75rem;color:#64748b"></span>
+          </div>
+          <div class="filter-options-container" id="filter-options-${column}"></div>
+          <div id="advanced-${column}" style="border-top:1px solid #e2e8f0;padding:8px 10px;background:#f8fafc;flex-shrink:0;">
+            <details>
+              <summary style="cursor:pointer;font-size:.8rem;font-weight:600;color:#1e293b;">فیلتر پیشرفته</summary>
+              <div id="adv-body-${column}" style="margin-top:6px;"></div>
+            </details>
+          </div>
+          <div class="filter-actions">
+            <button type="button" class="filter-action-btn filter-apply-btn" onclick="excelFilters.apply('${column}')" disabled style="opacity:.5;cursor:not-allowed;">اعمال</button>
+            <button type="button" class="filter-action-btn filter-clear-btn" onclick="excelFilters.clearColumn('${column}')">پاک کردن</button>
+          </div>
+        `;
+      },
+      sortOptions: function(type) {
+        let asc='↑ صعودی', desc='↓ نزولی';
+        if (type === 'number' || type === 'time') { asc='↑ کوچک به بزرگ'; desc='↓ بزرگ به کوچک'; }
+        if (type === 'date') { asc='↑ قدیمی به جدید'; desc='↓ جدید به قدیمی'; }
+        if (type === 'text' || type === 'category') { asc='↑ الف تا ی'; desc='↓ ی تا الف'; }
+        return `<option value="none">↕ بدون مرتب‌سازی</option>
+                <option value="asc">${asc}</option>
+                <option value="desc">${desc}</option>`;
+      },
+      positionDropdown: function(dropdown, filterDiv) {
+        const rect = (filterDiv && filterDiv.getBoundingClientRect) ? filterDiv.getBoundingClientRect() : {left:100, bottom:100, top:100};
+        const w = 320, h = 420, pad = 10;
+        let left = rect.left, top = rect.bottom + 5;
+        if (left + w > window.innerWidth - pad) left = window.innerWidth - w - pad;
+        if (top + h > window.innerHeight - pad) top = window.innerHeight - h - pad;
+        if (top < pad) top = pad;
+        if (left < pad) left = pad;
+        dropdown.style.left = left + 'px';
+        dropdown.style.top = top + 'px';
+      },
+      renderBody: function(column) {
+        const type = this.getType(column);
+        if (type === 'date') {
+          // preserve date tree
+          this.renderDateHierarchy(column);
+        } else {
+          this.renderValueList(column);
+        }
+        this.renderAdvanced(column, type);
+        // restore sort select
+        const sel = document.getElementById('sort-' + column);
+        if (sel && this.activeSort.column === column && this.activeSort.dir) {
+          sel.value = this.activeSort.dir;
+        }
+        // select-all state
+        this.updateSelectAll(column);
+        this.updateApplyState(column);
+        this.updateClearState(column);
+        // count
+        const c = document.getElementById('count-' + column);
+        const vals = this.columnData[column] || [];
+        if (c) c.textContent = vals.length + ' مقدار';
+      },
+      renderValueList: function(column) {
+        const container = document.getElementById('filter-options-' + column);
+        if (!container) return;
+        const values = this.columnData[column] || [];
+        const active = this.activeFilters[column];
+        const counts = this.getValueCounts(column);
+        if (values.length === 0) {
+          container.innerHTML = '<div class="filter-empty">موردی یافت نشد</div>';
+          return;
+        }
+        const selectedSet = (active && Array.isArray(active)) ? new Set(active) : new Set();
+        container.innerHTML = values.map((v, i) => {
+          const checked = (selectedSet.has(v)) ? 'checked' : '';
+          const safe = v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+          const cnt = counts[v] || 0;
+          return '<div class="filter-option">' +
+            '<input type="checkbox" id="filter-' + column + '-' + i + '" value="' + safe + '" ' + checked + ' onchange="excelFilters.updateSelectAll(\'' + column + '\'); excelFilters.updateApplyState(\'' + column + '\')">' +
+            '<label for="filter-' + column + '-' + i + '">' + (safe === '' ? '(خالی)' : safe) + '</label>' +
+            '<span style="margin-right:auto;font-size:.75rem;color:#64748b;">' + cnt + '</span>' +
+            '</div>';
+        }).join('');
+      },
+      renderDateHierarchy: function(column) {
+        // reuse existing date tree code
+        const container = document.getElementById('filter-options-' + column);
+        if (!container) return;
+        const values = this.columnData[column] || this.getDistinctValues(column);
+        this.columnData[column] = values;
+        const byYearMonth = {};
+        const yearsSet = new Set();
+        const ymByIso = {};
+        values.forEach(iso => {
+          const p = this.parseShamsi(iso);
+          if (!p) return;
+          yearsSet.add(p.y);
+          if (!byYearMonth[p.y]) byYearMonth[p.y] = {};
+          if (!byYearMonth[p.y][p.mo]) byYearMonth[p.y][p.mo] = [];
+          byYearMonth[p.y][p.mo].push({ day: p.d, iso: iso });
+          ymByIso[iso] = { y: p.y, m: p.mo, d: p.d };
+        });
+        const years = Array.from(yearsSet).sort((a,b)=>a-b);
+        if (years.length === 0) { container.innerHTML = '<div class="filter-empty">موردی یافت نشد</div>'; return; }
+        Object.keys(byYearMonth).forEach(y => {
+          Object.keys(byYearMonth[y]).forEach(m => { byYearMonth[y][m].sort((a,b)=>a.day-b.day); });
+        });
+        const selection = this.dateSelections[column] || new Set();
+        if (!this.dateSelections[column]) this.dateSelections[column] = selection;
+        const active = this.activeFilters[column];
+        if (active && Array.isArray(active) && selection.size === 0) {
+          active.forEach(v => selection.add(v));
+        }
+        const isoByYear = {};
+        const isoByYearMonth = {};
+        years.forEach(y => {
+          isoByYear[y] = [];
+          isoByYearMonth[y] = {};
+          const months = Object.keys(byYearMonth[y] || {}).map(v=>parseInt(v,10)).sort((a,b)=>a-b);
+          months.forEach(m => {
+            const items = byYearMonth[y][m] || [];
+            isoByYearMonth[y][m] = items.map(it=>it.iso);
+            isoByYear[y].push(...isoByYearMonth[y][m]);
+          });
+        });
+        const getYearCb = (y) => container.querySelector('input[type="checkbox"][data-level="year"][data-year="' + y + '"]');
+        const getMonthCb = (y,m) => container.querySelector('input[type="checkbox"][data-level="month"][data-year="' + y + '"][data-month="' + m + '"]');
+        const setState = (cb, checked, ind) => { if (!cb) return; cb.checked = !!checked; cb.indeterminate = !!ind; };
+        const updateParent = (y, m) => {
+          const monthIso = (isoByYearMonth[y] && isoByYearMonth[y][m]) ? isoByYearMonth[y][m] : [];
+          const mc = monthIso.filter(iso => selection.has(iso)).length;
+          const mAll = monthIso.length > 0 && mc === monthIso.length;
+          const mNone = mc === 0;
+          setState(getMonthCb(y,m), mAll, !mAll && !mNone);
+          const yearIso = isoByYear[y] || [];
+          const yc = yearIso.filter(iso => selection.has(iso)).length;
+          const yAll = yearIso.length > 0 && yc === yearIso.length;
+          const yNone = yc === 0;
+          setState(getYearCb(y), yAll, !yAll && !yNone);
+        };
+        const updateAllParents = () => {
+          years.forEach(y => {
+            const months = Object.keys(isoByYearMonth[y] || {}).map(v=>parseInt(v,10));
+            months.forEach(m => updateParent(y,m));
+          });
+        };
+        const toggleExpand = (node) => {
+          if (!node) return;
+          const expanded = node.getAttribute('data-expanded') === '1';
+          node.setAttribute('data-expanded', expanded ? '0' : '1');
+          const children = node.querySelector(':scope > .date-tree-children');
+          if (children) children.hidden = expanded;
+        };
+        container.innerHTML = '<div class="date-tree">' + years.map(y => {
+          const months = Object.keys(byYearMonth[y] || {}).map(v=>parseInt(v,10)).sort((a,b)=>a-b);
+          return '<div class="date-tree-node date-tree-year" data-expanded="0" data-year-node="' + y + '">' +
+            '<div class="date-tree-row">' +
+              '<button type="button" class="date-tree-toggle" data-toggle="year" data-year="' + y + '" aria-label="باز/بسته"><span class="material-symbols-outlined date-caret">expand_more</span></button>' +
+              '<input type="checkbox" data-level="year" data-year="' + y + '">' +
+              '<span class="date-tree-label">' + this.toPersianDigits(y) + '</span>' +
+            '</div>' +
+            '<div class="date-tree-children" hidden>' +
+              months.map(m => {
+                const days = (byYearMonth[y] && byYearMonth[y][m]) ? byYearMonth[y][m] : [];
+                return '<div class="date-tree-node date-tree-month" data-expanded="0" data-year="' + y + '" data-month-node="' + m + '">' +
+                  '<div class="date-tree-row">' +
+                    '<button type="button" class="date-tree-toggle" data-toggle="month" data-year="' + y + '" data-month="' + m + '" aria-label="باز/بسته"><span class="material-symbols-outlined date-caret">expand_more</span></button>' +
+                    '<input type="checkbox" data-level="month" data-year="' + y + '" data-month="' + m + '">' +
+                    '<span class="date-tree-label">' + this.monthsFa[m-1] + '</span>' +
+                  '</div>' +
+                  '<div class="date-tree-children" hidden>' +
+                    '<div class="date-tree-days">' +
+                      days.map(item => {
+                        const checked = selection.has(item.iso) ? 'checked' : '';
+                        const id = 'date-' + column + '-' + y + '-' + m + '-' + item.day;
+                        return '<label class="date-tree-day" for="' + id + '">' +
+                          '<input type="checkbox" id="' + id + '" data-level="day" data-year="' + y + '" data-month="' + m + '" data-iso="' + item.iso + '" ' + checked + '>' +
+                          '<span>' + this.toPersianDigits(item.day) + '</span>' +
+                        '</label>';
+                      }).join('') +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+              }).join('') +
+            '</div>' +
+          '</div>';
+        }).join('') + '</div>';
+
+        const firstSelectedIso = Array.from(selection)[0];
+        if (firstSelectedIso && ymByIso[firstSelectedIso]) {
+          const y = ymByIso[firstSelectedIso].y;
+          const m = ymByIso[firstSelectedIso].m;
+          const yearNode = container.querySelector('[data-year-node="' + y + '"]');
+          if (yearNode) { yearNode.setAttribute('data-expanded','1'); const c = yearNode.querySelector(':scope > .date-tree-children'); if (c) c.hidden = false; }
+          const monthNode = container.querySelector('[data-year="' + y + '"][data-month-node="' + m + '"]');
+          if (monthNode) { monthNode.setAttribute('data-expanded','1'); const c = monthNode.querySelector(':scope > .date-tree-children'); if (c) c.hidden = false; }
+        }
+        updateAllParents();
+
+        container.querySelectorAll('.date-tree-toggle').forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            const toggleType = this.getAttribute('data-toggle');
+            if (toggleType === 'year') {
+              const y = this.getAttribute('data-year');
+              const node = container.querySelector('[data-year-node="' + y + '"]');
+              if (node) toggleExpand(node);
+              return;
+            }
+            if (toggleType === 'month') {
+              const y = this.getAttribute('data-year');
+              const m = this.getAttribute('data-month');
+              const node = container.querySelector('[data-year="' + y + '"][data-month-node="' + m + '"]');
+              if (node) toggleExpand(node);
+            }
+          });
+        });
+        container.querySelectorAll('input[type="checkbox"][data-level="day"][data-iso]').forEach(cb => {
+          cb.addEventListener('change', function() {
+            const iso = this.getAttribute('data-iso');
+            const y = parseInt(this.getAttribute('data-year'),10);
+            const m = parseInt(this.getAttribute('data-month'),10);
+            if (!iso) return;
+            if (this.checked) selection.add(iso); else selection.delete(iso);
+            updateParent(y, m);
+            excelFilters.updateApplyState(column);
+          });
+        });
+        container.querySelectorAll('input[type="checkbox"][data-level="month"]').forEach(cb => {
+          cb.addEventListener('change', function() {
+            const y = parseInt(this.getAttribute('data-year'),10);
+            const m = parseInt(this.getAttribute('data-month'),10);
+            const monthIso = (isoByYearMonth[y] && isoByYearMonth[y][m]) ? isoByYearMonth[y][m] : [];
+            if (this.checked) monthIso.forEach(iso => selection.add(iso)); else monthIso.forEach(iso => selection.delete(iso));
+            const daysContainer = this.closest('.date-tree-node').querySelector('.date-tree-days');
+            if (daysContainer) daysContainer.querySelectorAll('input[type="checkbox"][data-level="day"]').forEach(dcb => { dcb.checked = this.checked; });
+            updateParent(y, m);
+            excelFilters.updateApplyState(column);
+          });
+        });
+        container.querySelectorAll('input[type="checkbox"][data-level="year"]').forEach(cb => {
+          cb.addEventListener('change', function() {
+            const y = parseInt(this.getAttribute('data-year'),10);
+            const yearIso = isoByYear[y] || [];
+            if (this.checked) yearIso.forEach(iso => selection.add(iso)); else yearIso.forEach(iso => selection.delete(iso));
+            const node = this.closest('.date-tree-node');
+            if (node) node.querySelectorAll('input[type="checkbox"][data-level="month"], input[type="checkbox"][data-level="day"]').forEach(c => { c.checked = this.checked; });
+            updateAllParents();
+            excelFilters.updateApplyState(column);
+          });
+        });
+      },
+      monthsFa: ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'],
+      toPersianDigits: function(str) {
+        return String(str).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d,10)]);
+      },
+      renderAdvanced: function(column, type) {
+        const body = document.getElementById('adv-body-' + column);
+        if (!body) return;
+        const adv = this.advancedFilters[column] || {};
+        if (type === 'number' || type === 'time') {
+          body.innerHTML = this.advancedNumberHtml(column, adv);
+        } else if (type === 'date') {
+          body.innerHTML = this.advancedDateHtml(column, adv);
+        } else {
+          body.innerHTML = this.advancedTextHtml(column, adv);
+        }
+        // bind inputs
+      },
+      advancedTextHtml: function(column, adv) {
+        const ops = [
+          ['contains','شامل'],
+          ['notContains','فاقد'],
+          ['begins','شروع‌شونده با'],
+          ['ends','پایان‌یابنده با'],
+          ['equals','برابر با'],
+          ['notEquals','مخالف با'],
+          ['blank','خالی'],
+          ['nonBlank','غیرخالی']
+        ];
+        const opOpts = ops.map(o => `<option value="${o[0]}" ${adv.op===o[0]?'selected':''}>${o[1]}</option>`).join('');
+        const op2Opts = ops.map(o => `<option value="${o[0]}" ${adv.op2===o[0]?'selected':''}>${o[1]}</option>`).join('');
+        return `
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:.8rem;">
+            <div style="display:flex;gap:4px;">
+              <select id="adv-op1-${column}" class="filter-sort-select" style="flex:0 0 45%;">${opOpts}</select>
+              <input id="adv-v1-${column}" class="filter-search-input" placeholder="مقدار" value="${(adv.v1||'').replace(/"/g,'&quot;')}">
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;">
+              <select id="adv-logic-${column}" class="filter-sort-select" style="flex:0 0 30%;">
+                <option value="and" ${adv.logic!=='or'?'selected':''}>و (AND)</option>
+                <option value="or" ${adv.logic==='or'?'selected':''}>یا (OR)</option>
+              </select>
+              <select id="adv-op2-${column}" class="filter-sort-select" style="flex:0 0 45%;">${op2Opts}</select>
+              <input id="adv-v2-${column}" class="filter-search-input" placeholder="مقدار" value="${(adv.v2||'').replace(/"/g,'&quot;')}">
+            </div>
+            <label style="display:flex;align-items:center;gap:4px;"><input type="checkbox" id="adv-on-${column}" ${adv.enabled?'checked':''} onchange="excelFilters.updateApplyState('${column}')"> فعال</label>
+          </div>
+        `;
+      },
+      advancedNumberHtml: function(column, adv) {
+        const ops = [
+          ['equals','برابر با'],
+          ['notEquals','مخالف با'],
+          ['gt','بزرگ‌تر از'],
+          ['gte','بزرگ‌تر یا مساوی'],
+          ['lt','کوچک‌تر از'],
+          ['lte','کوچک‌تر یا مساوی'],
+          ['between','بین'],
+          ['notBetween','خارج از محدوده'],
+          ['aboveAvg','بیشتر از میانگین'],
+          ['belowAvg','کمتر از میانگین'],
+          ['top10','۱۰ مقدار بزرگ'],
+          ['bottom10','۱۰ مقدار کوچک'],
+          ['blank','خالی'],
+          ['nonBlank','غیرخالی']
+        ];
+        const opOpts = ops.map(o => `<option value="${o[0]}" ${adv.op===o[0]?'selected':''}>${o[1]}</option>`).join('');
+        const op2Opts = ops.map(o => `<option value="${o[0]}" ${adv.op2===o[0]?'selected':''}>${o[1]}</option>`).join('');
+        return `
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:.8rem;">
+            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+              <select id="adv-op1-${column}" class="filter-sort-select" style="flex:0 0 45%;">${opOpts}</select>
+              <input id="adv-v1-${column}" class="filter-search-input" placeholder="مقدار" value="${adv.v1||''}" style="flex:1;">
+              <input id="adv-v1b-${column}" class="filter-search-input" placeholder="تا (برای بین)" value="${adv.v1b||''}" style="flex:1;">
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+              <select id="adv-logic-${column}" class="filter-sort-select" style="flex:0 0 30%;">
+                <option value="and" ${adv.logic!=='or'?'selected':''}>و (AND)</option>
+                <option value="or" ${adv.logic==='or'?'selected':''}>یا (OR)</option>
+              </select>
+              <select id="adv-op2-${column}" class="filter-sort-select" style="flex:0 0 45%;">${op2Opts}</select>
+              <input id="adv-v2-${column}" class="filter-search-input" placeholder="مقدار" value="${adv.v2||''}" style="flex:1;">
+            </div>
+            <label style="display:flex;align-items:center;gap:4px;"><input type="checkbox" id="adv-on-${column}" ${adv.enabled?'checked':''} onchange="excelFilters.updateApplyState('${column}')"> فعال</label>
+          </div>
+        `;
+      },
+      advancedDateHtml: function(column, adv) {
+        const ops = [
+          ['equals','برابر با تاریخ'],
+          ['before','قبل از'],
+          ['after','بعد از'],
+          ['between','بین دو تاریخ'],
+          ['today','امروز'],
+          ['yesterday','دیروز'],
+          ['tomorrow','فردا'],
+          ['thisWeek','این هفته'],
+          ['lastWeek','هفته گذشته'],
+          ['thisMonth','ماه جاری'],
+          ['lastMonth','ماه گذشته'],
+          ['nextMonth','ماه آینده'],
+          ['thisYear','سال جاری'],
+          ['lastYear','سال گذشته'],
+          ['blank','خالی'],
+          ['nonBlank','غیرخالی']
+        ];
+        const opOpts = ops.map(o => `<option value="${o[0]}" ${adv.op===o[0]?'selected':''}>${o[1]}</option>`).join('');
+        return `
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:.8rem;">
+            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+              <select id="adv-op1-${column}" class="filter-sort-select" style="flex:0 0 45%;">${opOpts}</select>
+              <input id="adv-v1-${column}" class="filter-search-input" placeholder="تاریخ (۱۴۰۳/۰۸/۲۴)" value="${adv.v1||''}" style="flex:1;">
+              <input id="adv-v1b-${column}" class="filter-search-input" placeholder="تا تاریخ" value="${adv.v1b||''}" style="flex:1;">
+            </div>
+            <label style="display:flex;align-items:center;gap:4px;"><input type="checkbox" id="adv-on-${column}" ${adv.enabled?'checked':''} onchange="excelFilters.updateApplyState('${column}')"> فعال</label>
+          </div>
+        `;
+      },
+      searchInDropdown: function(input, column) {
+        const q = (input.value || '').toLowerCase();
+        const container = document.getElementById('filter-options-' + column);
+        if (!container) return;
+        container.querySelectorAll('.filter-option').forEach(opt => {
+          const txt = (opt.textContent || '').toLowerCase();
+          opt.style.display = txt.indexOf(q) !== -1 ? '' : 'none';
+        });
+      },
+      toggleSelectAll: function(column) {
+        const cb = document.getElementById('select-all-' + column);
+        const container = document.getElementById('filter-options-' + column);
+        if (!container) return;
+        container.querySelectorAll('input[type="checkbox"]').forEach(c => {
+          if (c.parentElement.style.display !== 'none') c.checked = cb.checked;
+        });
+        this.updateApplyState(column);
+      },
+      updateSelectAll: function(column) {
+        const cb = document.getElementById('select-all-' + column);
+        if (!cb) return;
+        const container = document.getElementById('filter-options-' + column);
+        if (!container) return;
+        const all = container.querySelectorAll('.filter-option input[type="checkbox"]');
+        const checked = container.querySelectorAll('.filter-option input[type="checkbox"]:checked');
+        cb.checked = all.length > 0 && all.length === checked.length;
+        cb.indeterminate = checked.length > 0 && checked.length < all.length;
+      },
+      getSelectedValues: function(column) {
+        const container = document.getElementById('filter-options-' + column);
+        const vals = [];
+        if (!container) return vals;
+        if (this.getType(column) === 'date') {
+          // date uses dateSelections
+          return Array.from(this.dateSelections[column] || []);
+        }
+        container.querySelectorAll('.filter-option input[type="checkbox"]:checked').forEach(c => vals.push(c.value));
+        return vals;
+      },
+      apply: function(column) {
+        // capture advanced filter state
+        const onEl = document.getElementById('adv-on-' + column);
+        const enabled = onEl && onEl.checked;
+        const type = this.getType(column);
+        if (enabled) {
+          if (type === 'text' || type === 'category') {
+            this.advancedFilters[column] = {
+              enabled: true,
+              op: (document.getElementById('adv-op1-'+column)||{}).value,
+              v1: (document.getElementById('adv-v1-'+column)||{}).value || '',
+              logic: (document.getElementById('adv-logic-'+column)||{}).value || 'and',
+              op2: (document.getElementById('adv-op2-'+column)||{}).value,
+              v2: (document.getElementById('adv-v2-'+column)||{}).value || ''
+            };
+          } else if (type === 'number' || type === 'time') {
+            this.advancedFilters[column] = {
+              enabled: true,
+              op: (document.getElementById('adv-op1-'+column)||{}).value,
+              v1: (document.getElementById('adv-v1-'+column)||{}).value || '',
+              v1b: (document.getElementById('adv-v1b-'+column)||{}).value || '',
+              logic: (document.getElementById('adv-logic-'+column)||{}).value || 'and',
+              op2: (document.getElementById('adv-op2-'+column)||{}).value,
+              v2: (document.getElementById('adv-v2-'+column)||{}).value || ''
+            };
+          } else if (type === 'date') {
+            this.advancedFilters[column] = {
+              enabled: true,
+              op: (document.getElementById('adv-op1-'+column)||{}).value,
+              v1: (document.getElementById('adv-v1-'+column)||{}).value || '',
+              v1b: (document.getElementById('adv-v1b-'+column)||{}).value || ''
+            };
+          }
+        } else {
+          delete this.advancedFilters[column];
+        }
+
+        if (this.getType(column) === 'date') {
+          const selection = this.dateSelections[column] || new Set();
+          const allValues = this.columnData[column] || [];
+          if (selection.size === allValues.length || selection.size === 0) {
+            // if advanced enabled, keep activeFilters? We'll store selected values only if not all
+          }
+          const advEnabled = !!(this.advancedFilters[column] && this.advancedFilters[column].enabled);
+          if (advEnabled || selection.size === 0) {
+            delete this.activeFilters[column];
+          } else if (selection.size === allValues.length) {
+            delete this.activeFilters[column];
+          } else {
+            this.activeFilters[column] = Array.from(selection);
+          }
+        } else {
+          const selected = this.getSelectedValues(column);
+          const allValues = this.columnData[column] || [];
+          const advEnabled = !!(this.advancedFilters[column] && this.advancedFilters[column].enabled);
+          if (advEnabled || selected.length === 0) {
+            // advanced-only or nothing selected: no value-list restriction
+            delete this.activeFilters[column];
+          } else if (selected.length === allValues.length) {
+            delete this.activeFilters[column];
+          } else {
+            this.activeFilters[column] = selected;
+          }
+        }
+        this.close(column);
+        this.applyFilters();
+        this.updateFilterIcon(column);
+        this.updateClearState(column);
+      },
+      clearColumn: function(column) {
+        if (this.getType(column) === 'date') {
+          if (this.dateSelections[column]) {
+            const vals = this.columnData[column] || this.getDistinctValues(column);
+            this.dateSelections[column] = new Set(vals);
+          }
+        }
+        delete this.activeFilters[column];
+        delete this.advancedFilters[column];
+        const container = document.getElementById('filter-options-' + column);
+        if (container) container.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = true);
+        this.close(column);
+        this.applyFilters();
+        this.updateFilterIcon(column);
+      },
+      updateApplyState: function(column) {
+        const btn = (this.dropdowns[column] || document).querySelector('.filter-apply-btn');
+        if (!btn) return;
+        const type = this.getType(column);
+        const advOn = document.getElementById('adv-on-' + column);
+        const advEnabled = !!(advOn && advOn.checked);
+        let hasSelection = false;
+        if (type === 'date') {
+          hasSelection = !!(this.dateSelections[column] && this.dateSelections[column].size > 0);
+        } else {
+          const container = document.getElementById('filter-options-' + column);
+          hasSelection = !!(container && container.querySelectorAll('.filter-option input[type="checkbox"]:checked').length > 0);
+        }
+        const enable = advEnabled || hasSelection;
+        btn.disabled = !enable;
+        btn.style.opacity = enable ? '1' : '0.5';
+        btn.style.cursor = enable ? 'pointer' : 'not-allowed';
+      },
+      updateClearState: function(column) {
+        const btn = (this.dropdowns[column] ? this.dropdowns[column].querySelector('.filter-clear-btn') : document.querySelector('.filter-clear-btn'));
+        // find within correct dropdown
+        let b = null;
+        if (this.dropdowns[column]) b = this.dropdowns[column].querySelector('.filter-clear-btn');
+        if (!b) return;
+        const applied = Object.prototype.hasOwnProperty.call(this.activeFilters, column) ||
+                        Object.prototype.hasOwnProperty.call(this.advancedFilters, column);
+        b.disabled = !applied;
+        b.style.opacity = applied ? '1' : '0.5';
+        b.style.cursor = applied ? 'pointer' : 'not-allowed';
+      },
+      close: function(column) {
+        if (this.dropdowns[column]) {
+          this.dropdowns[column].remove();
+          delete this.dropdowns[column];
+        }
+      },
+      closeAll: function() {
+        Object.keys(this.dropdowns).forEach(col => this.close(col));
+      },
+      // evaluation
+      evalTextOp: function(op, cell, val) {
+        const c = (cell||'').toLowerCase();
+        const v = (val||'').toLowerCase();
+        switch(op) {
+          case 'contains': return c.indexOf(v) !== -1;
+          case 'notContains': return c.indexOf(v) === -1;
+          case 'begins': return c.indexOf(v) === 0;
+          case 'ends': return v === '' ? true : c.lastIndexOf(v) === c.length - v.length;
+          case 'equals': return c === v;
+          case 'notEquals': return c !== v;
+          case 'blank': return c === '';
+          case 'nonBlank': return c !== '';
+        }
+        return true;
+      },
+      evalNumberOp: function(op, cell, v, v2, vals) {
+        const n = this.parseNumber(cell);
+        const blank = (cell === '');
+        const a = this.parseNumber(v);
+        const b = this.parseNumber(v2);
+        const nums = (vals || []).map(x => this.parseNumber(x)).filter(x => !isNaN(x));
+        const avg = nums.length ? nums.reduce((s,x)=>s+x,0)/nums.length : 0;
+        const sorted = nums.slice().sort((x,y)=>x-y);
+        const topSet = new Set(sorted.slice(-10));
+        const botSet = new Set(sorted.slice(0,10));
+        switch(op) {
+          case 'equals': return !isNaN(n) && n === a;
+          case 'notEquals': return !isNaN(n) && n !== a;
+          case 'gt': return !isNaN(n) && n > a;
+          case 'gte': return !isNaN(n) && n >= a;
+          case 'lt': return !isNaN(n) && n < a;
+          case 'lte': return !isNaN(n) && n <= a;
+          case 'between': return !isNaN(n) && n >= a && n <= b;
+          case 'notBetween': return !isNaN(n) && (n < a || n > b);
+          case 'aboveAvg': return !isNaN(n) && n > avg;
+          case 'belowAvg': return !isNaN(n) && n < avg;
+          case 'top10': return !isNaN(n) && topSet.has(n);
+          case 'bottom10': return !isNaN(n) && botSet.has(n);
+          case 'blank': return blank || isNaN(n);
+          case 'nonBlank': return !blank && !isNaN(n);
+        }
+        return true;
+      },
+      evalDateOp: function(op, cell, v, v2) {
+        const n = this.shamsiToComparable(cell);
+        const blank = (cell === '');
+        const a = this.shamsiToComparable(v);
+        const b = this.shamsiToComparable(v2);
+        const today = this.todayShamsi();
+        const tc = this.shamsiToComparable(today);
+        switch(op) {
+          case 'equals': return n !== null && n === a;
+          case 'before': return n !== null && a !== null && n < a;
+          case 'after': return n !== null && a !== null && n > a;
+          case 'between': return n !== null && a !== null && b !== null && n >= a && n <= b;
+          case 'today': return n === tc;
+          case 'yesterday': return n === this.shamsiToComparable(this.addDaysShamsi(today, -1));
+          case 'tomorrow': return n === this.shamsiToComparable(this.addDaysShamsi(today, 1));
+          case 'thisWeek': {
+            // week: current day-of-week? approximate: last 7 days range
+            const start = this.shamsiToComparable(this.addDaysShamsi(today, -6));
+            return n !== null && n >= start && n <= tc;
+          }
+          case 'lastWeek': {
+            const end = this.shamsiToComparable(this.addDaysShamsi(today, -7));
+            const start = this.shamsiToComparable(this.addDaysShamsi(today, -13));
+            return n !== null && n >= start && n <= end;
+          }
+          case 'thisMonth': {
+            const p = this.parseShamsi(today);
+            const start = p.y*10000 + p.mo*100 + 1;
+            const end = p.y*10000 + p.mo*100 + 31;
+            return n !== null && n >= start && n <= end;
+          }
+          case 'lastMonth': {
+            const p = this.parseShamsi(today);
+            let y = p.y, m = p.mo - 1;
+            if (m < 1) { m = 12; y--; }
+            const start = y*10000 + m*100 + 1;
+            const end = y*10000 + m*100 + 31;
+            return n !== null && n >= start && n <= end;
+          }
+          case 'nextMonth': {
+            const p = this.parseShamsi(today);
+            let y = p.y, m = p.mo + 1;
+            if (m > 12) { m = 1; y++; }
+            const start = y*10000 + m*100 + 1;
+            const end = y*10000 + m*100 + 31;
+            return n !== null && n >= start && n <= end;
+          }
+          case 'thisYear': {
+            const p = this.parseShamsi(today);
+            const start = p.y*10000 + 101;
+            const end = p.y*10000 + 1231;
+            return n !== null && n >= start && n <= end;
+          }
+          case 'lastYear': {
+            const p = this.parseShamsi(today);
+            const y = p.y - 1;
+            const start = y*10000 + 101;
+            const end = y*10000 + 1231;
+            return n !== null && n >= start && n <= end;
+          }
+          case 'blank': return blank || n === null;
+          case 'nonBlank': return !blank && n !== null;
+        }
+        return true;
+      },
+      applyAdvanced: function(column, cell) {
+        const adv = this.advancedFilters[column];
+        if (!adv || !adv.enabled) return true;
+        const type = this.getType(column);
+        const colVals = (this.columnData[column] || []).map(v => this.getCellText? v : v);
+        let r1;
+        if (type === 'text' || type === 'category') {
+          r1 = this.evalTextOp(adv.op, cell, adv.v1);
+        } else if (type === 'number' || type === 'time') {
+          const _allVals = Array.from(document.querySelectorAll('tbody tr')).map(tr => this.getCellText(tr, this.getColumnIndex(column)));
+          r1 = this.evalNumberOp(adv.op, cell, adv.v1, adv.v1b, _allVals);
+        } else if (type === 'date') {
+          r1 = this.evalDateOp(adv.op, cell, adv.v1, adv.v1b);
+        }
+        const noValOps = ['blank','nonBlank','aboveAvg','belowAvg','top10','bottom10'];
+        const secondActive = adv.op2 && (noValOps.indexOf(adv.op2) !== -1 || (adv.v2||'').trim() !== '');
+        if (!secondActive) return r1;
+        let r2;
+        if (type === 'text' || type === 'category') r2 = this.evalTextOp(adv.op2, cell, adv.v2);
+        else if (type === 'number' || type === 'time') r2 = this.evalNumberOp(adv.op2, cell, adv.v2, '', Array.from(document.querySelectorAll('tbody tr')).map(tr => this.getCellText(tr, this.getColumnIndex(column))));
+        else if (type === 'date') r2 = this.evalDateOp(adv.op2, cell, adv.v2, '');
+        if (adv.logic === 'or') return r1 || r2;
+        return r1 && r2;
+      },
+      rowPasses: function(tr) {
+        // value-list filters
+        for (const col of Object.keys(this.activeFilters)) {
+          const idx = this.getColumnIndex(col);
+          const cell = this.getCellText(tr, idx);
+          const sel = this.activeFilters[col] || [];
+          if (sel.length === 0) return false;
+          if (sel.indexOf(cell) === -1) return false;
+        }
+        // advanced filters
+        for (const col of Object.keys(this.advancedFilters)) {
+          const idx = this.getColumnIndex(col);
+          const cell = this.getCellText(tr, idx);
+          if (!this.applyAdvanced(col, cell)) return false;
+        }
+        return true;
+      },
+      applyFilters: function() {
+        // no-op DOM; pagination handles filtering via filteredRows using rowPasses
+      },
+      sort: function(column, dir) {
+        const prev = this.activeSort.column;
+        if (dir === 'none') this.activeSort = { column: null, dir: null };
+        else this.activeSort = { column: column, dir: dir };
+        if (prev && prev !== column) this.updateFilterIcon(prev);
+        this.updateFilterIcon(column);
+        this.sortRows();
+      },
+      sortRows: function() {
+        const tbody = document.querySelector('tbody.divide-y');
+        if (!tbody) return;
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const col = this.activeSort.column, dir = this.activeSort.dir;
+        if (!col || !dir) return;
+        const idx = this.getColumnIndex(col);
+        const type = this.getType(col);
+        const self = this;
+        rows.sort((a, b) => {
+          let va = self.getCellText(a, idx);
+          let vb = self.getCellText(b, idx);
+          let cmp;
+          if (type === 'number') {
+            const na = self.parseNumber(va), nb = self.parseNumber(vb);
+            if (!isNaN(na) && !isNaN(nb)) cmp = na < nb ? -1 : (na > nb ? 1 : 0);
+            else cmp = va < vb ? -1 : (va > vb ? 1 : 0);
+          } else if (type === 'date') {
+            const da = self.shamsiToComparable(va), db = self.shamsiToComparable(vb);
+            if (da !== null && db !== null) cmp = da < db ? -1 : (da > db ? 1 : 0);
+            else cmp = va < vb ? -1 : (va > vb ? 1 : 0);
+          } else {
+            cmp = va < vb ? -1 : (va > vb ? 1 : 0);
+          }
+          return dir === 'desc' ? -cmp : cmp;
+        });
+        rows.forEach(r => tbody.appendChild(r));
+      },
+      updateFilterIcon: function(column) {
+        const th = document.querySelector('th[data-col-key="' + column + '"]');
+        if (!th) return;
+        const wrap = th.querySelector('div');
+        const ic = th.querySelector('.material-symbols-outlined');
+        const filterActive = !!(this.activeFilters[column] || this.advancedFilters[column]);
+        if (ic) {
+          if (filterActive) { ic.textContent = 'filter_alt'; ic.classList.add('text-primary'); ic.style.fontVariationSettings = "'FILL' 1"; }
+          else { ic.textContent = (column === 'amount' ? 'swap_vert' : 'filter_alt'); ic.classList.remove('text-primary'); ic.style.fontVariationSettings = "'FILL' 0"; }
+        }
+        // sort indicator
+        let sortEl = th.querySelector('.sort-indicator');
+        if (!sortEl && wrap) {
+          sortEl = document.createElement('span');
+          sortEl.className = 'material-symbols-outlined sort-indicator text-[14px] text-primary';
+          sortEl.style.display = 'none';
+          wrap.appendChild(sortEl);
+        }
+        if (sortEl) {
+          if (this.activeSort.column === column && this.activeSort.dir) {
+            sortEl.textContent = this.activeSort.dir === 'asc' ? 'arrow_upward' : 'arrow_downward';
+            sortEl.style.display = '';
+          } else {
+            sortEl.style.display = 'none';
+          }
+        }
+        // active badge dot
+        let badge = th.querySelector('.filter-badge');
+        if (filterActive) {
+          if (!badge && wrap) {
+            badge = document.createElement('span');
+            badge.className = 'filter-badge inline-block w-1.5 h-1.5 rounded-full bg-primary ml-1';
+            wrap.appendChild(badge);
+          }
+        } else if (badge) {
+          badge.remove();
+        }
+      },
+      close: function(column) {
+        if (this.dropdowns[column]) {
+          this.dropdowns[column].remove();
+          delete this.dropdowns[column];
+        }
+      }
+    };
+    function toggleExcelFilter(event, column) { excelFilters.toggle(event, column); }
+
+    function toggleExcelFilter(event, column) { excelFilters.toggle(event, column); }
+    function closeExcelFilter() { excelFilters.closeAll(); }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.excel-filter-dropdown') && !e.target.closest('th')) {
+        excelFilters.closeAll();
+      }
+    });
+
+  </script>
+
+<!-- INVOICE MODAL -->
+<div id="invoiceModal" class="fixed inset-0 z-[10001] hidden items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden flex flex-col">
+    <div class="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 border-b border-outline-variant/40 dark:border-slate-800 bg-gradient-to-r from-primary to-blue-600 text-white">
+      <h3 class="font-title-lg text-title-lg truncate" id="invModalTitle">مشاهده فاکتور</h3>
+      <button onclick="closeInvoiceModal()" class="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors shrink-0"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div id="invModalBody" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4"></div>
+    <div class="flex flex-wrap items-center justify-end gap-2 px-4 sm:px-5 py-3 border-t border-outline-variant/40 dark:border-slate-800 bg-surface-container-low dark:bg-slate-900/90">
+      <button id="invEditBtn" onclick="if(window._currentInvoice) editInvoice(window._currentInvoice.id)" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-title-md text-title-md transition-colors">ویرایش</button>
+      <button id="invSaveBtn" onclick="saveInvoice()" class="hidden px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-title-md text-title-md transition-colors">ذخیره</button>
+      <button onclick="closeInvoiceModal()" class="px-4 py-2 rounded-lg bg-surface-container dark:bg-slate-800 text-on-surface dark:text-slate-200 font-title-md text-title-md transition-colors">بستن</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  function toPersianDigits(s){ return String(s).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d,10)]); }
+  function g2j(gy,gm,gd){
+    const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];
+    let gy2=(gm>2)?(gy+1):gy;
+    let days=355666+(365*gy)+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)+gd+gdm[gm-1];
+    let jy=-1595+(33*Math.floor(days/12053)); days%=12053;
+    jy+=4*Math.floor(days/1461); days%=1461;
+    if(days>365){ jy+=Math.floor((days-1)/365); days=(days-1)%365; }
+    let jm,jd;
+    if(days<186){ jm=1+Math.floor(days/31); jd=1+(days%31); }
+    else { jm=7+Math.floor((days-186)/30); jd=1+((days-186)%30); }
+    return [jy,jm,jd];
+  }
+  function formatShamsi(iso){
+    const d=new Date(iso);
+    const [jy,jm,jd]=g2j(d.getFullYear(), d.getMonth()+1, d.getDate());
+    const hh=String(d.getHours()).padStart(2,'0');
+    const mm=String(d.getMinutes()).padStart(2,'0');
+    return { date: toPersianDigits(jy+'/'+String(jm).padStart(2,'0')+'/'+String(jd).padStart(2,'0')), time: toPersianDigits(hh+':'+mm) };
+  }
+  const methodLabel = { cash:'پرداخت نقدی', pos:'کارت‌خوان', credit:'نسیه/ترکیبی' };
+  async function loadPayments() {
+    let creatorName = 'سیستم';
+    try {
+      const meRes = await fetch('/api/accounts/me/', { credentials: 'same-origin' });
+      if (meRes.ok) { const me = await meRes.json(); creatorName = me.name || me.username || creatorName; }
+    } catch (e) {}
+    let warehouseName = 'صندوق اصلی';
+    try {
+      const wRes = await fetch('/api/inventory/warehouses/', { credentials: 'same-origin' });
+      const wData = await wRes.json();
+      const wArr = Array.isArray(wData) ? wData : (wData.results || []);
+      if (wArr.length) warehouseName = wArr[0].name || warehouseName;
+    } catch (e) {}
+    try {
+      const [invRes, payRes] = await Promise.all([
+        fetch('/api/sales/invoices/', { credentials: 'same-origin' }),
+        fetch('/api/sales/invoice-payments/', { credentials: 'same-origin' })
+      ]);
+      const invData = await invRes.json();
+      const payData = await payRes.json();
+      const invoices = Array.isArray(invData) ? invData : (invData.results || []);
+      const payments = Array.isArray(payData) ? payData : (payData.results || []);
+      const invMap = {};
+      invoices.forEach(i => { invMap[i.id] = i; });
+      const tbody = document.querySelector('tbody.divide-y');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      for (const p of payments) {
+        const inv = invMap[p.invoice] || {};
+        const { date, time } = formatShamsi(p.created_at || new Date().toISOString());
+        const amt = Number(p.amount || 0);
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low/50 dark:hover:bg-slate-800/50 transition-colors';
+        tr.innerHTML =
+          '<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface-variant dark:text-outline-variant text-body-sm"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-outline">schedule</span><span>'+time+'</span></div></td>' +
+          '<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface-variant dark:text-outline-variant text-body-sm">'+date+'</td>' +
+'<td class="py-3 px-3.5 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-fixed/50 dark:bg-secondary/40 text-secondary dark:text-secondary-fixed border border-secondary/20"><span class="material-symbols-outlined text-[14px]">arrow_downward</span><span>دریافت</span></span></td>' +
+'<td class="py-3 px-4 min-w-[220px]"><div class="flex flex-col"><span class="font-title-md text-on-surface dark:text-slate-200">پرداخت فاکتور فروش</span></div></td>' +
+'<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface-variant dark:text-outline-variant text-body-sm">'+(inv.customer_name || 'مشتری حضوری')+'</td>' +
+'<td class="py-3 px-3.5 whitespace-nowrap"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container dark:bg-slate-800 text-on-surface-variant dark:text-slate-300 text-label-sm font-label-sm border border-outline-variant/50 dark:border-slate-700">'+(methodLabel[p.method]||p.method)+'</span></td>' +
+          '<td class="py-3 px-3.5 text-left whitespace-nowrap font-tabular-num font-bold text-secondary dark:text-emerald-400">+ '+amt.toLocaleString('fa-IR')+'</td>' +
+          '<td class="py-3 px-3.5 whitespace-nowrap text-on-surface-variant dark:text-slate-400 text-body-sm">'+warehouseName+'</td>' +
+          '<td class="py-3 px-3.5 whitespace-nowrap font-mono text-label-sm text-on-surface-variant dark:text-slate-400">'+(inv.invoice_no||'-')+'</td>' +
+          '<td class="py-3 px-3 whitespace-nowrap text-on-surface-variant dark:text-slate-400 text-body-sm">'+creatorName+'</td>' +
+'<td class="py-3 px-3.5 whitespace-nowrap text-center"><div class="flex items-center justify-center gap-1">' +
+'<button title="چاپ فاکتور" onclick="printSavedInvoice('+ (inv.id||0) +')" class="w-8 h-8 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[18px]">print</span></button>' +
+'<button title="ویرایش" onclick="editInvoice('+ (inv.id||0) +')" class="w-8 h-8 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>' +
+'<button title="حذف" onclick="deleteInvoice('+ (inv.id||0) +')" class="w-8 h-8 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button>' +
+'</div></td>';
+        tbody.appendChild(tr);
+      }
+      if (payments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="py-4 text-center text-on-surface-variant">تراکنشی یافت نشد</td></tr>';
+      }
+      const summaryEl = document.getElementById('cashboxSummaryText');
+      if (summaryEl) summaryEl.textContent = 'نمایش ' + payments.length + ' تراکنش ثبت‌شده';
+      if (window.excelFilters && window.excelFilters.activeSort && window.excelFilters.activeSort.column) { window.excelFilters.sortRows(); }
+      if (window.excelFilters) { Object.keys(window.excelFilters.activeFilters||{}).concat(Object.keys(window.excelFilters.advancedFilters||{})).forEach(function(c){ try{ window.excelFilters.updateFilterIcon(c); }catch(e){} }); }
+      if (window.renderPagination) window.renderPagination();
+    } catch (e) { console.error(e); }
+  }
+  window._currentInvoice = null;
+  function printInvoiceList(data){ return Array.isArray(data) ? data : (data && data.results) || []; }
+  function printMoney(value){ return Number(value || 0).toLocaleString('fa-IR'); }
+  function escapePrintHtml(value){
+    return String(value == null ? '' : value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  }
+  function formatPrintDate(value){
+    if (!value) return '—';
+    const parts = String(value).split('-');
+    if (parts.length !== 3) return escapePrintHtml(value);
+    return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])).toLocaleDateString('fa-IR');
+  }
+  window.printSavedInvoice = async function(id){
+    if (!id) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow){ showToast('برای چاپ، پنجرهٔ جدید مرورگر را مجاز کنید', 'error'); return; }
+    printWindow.document.open();
+    printWindow.document.write('<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><title>آماده‌سازی چاپ فاکتور</title><style>body{font-family:Tahoma,Arial,sans-serif;margin:0;padding:48px;background:#f1f5f9;color:#334155;text-align:center}</style></head><body>در حال آماده‌سازی برگهٔ چاپ…</body></html>');
+    printWindow.document.close();
+    try {
+      const responses = await Promise.all([
+        fetch('/api/sales/invoices/' + id + '/', {credentials:'same-origin'}),
+        fetch('/api/sales/invoice-items/?invoice=' + id, {credentials:'same-origin'}),
+        fetch('/api/sales/invoice-payments/?invoice=' + id, {credentials:'same-origin'}),
+        fetch('/api/products/products/', {credentials:'same-origin'}),
+        fetch('/api/customers/customers/', {credentials:'same-origin'}),
+        fetch('/api/inventory/warehouses/', {credentials:'same-origin'})
+      ]);
+      if (responses.some(response => !response.ok)) throw new Error('Invoice print data could not be loaded');
+      const [invoice, itemsData, paymentsData, productsData, customersData, warehousesData] = await Promise.all(responses.map(response => response.json()));
+      const items = printInvoiceList(itemsData);
+      const payments = printInvoiceList(paymentsData);
+      const products = printInvoiceList(productsData);
+      const customers = printInvoiceList(customersData);
+      const warehouses = printInvoiceList(warehousesData);
+      const productMap = Object.fromEntries(products.map(product => [String(product.id), product]));
+      const customer = customers.find(item => String(item.id) === String(invoice.customer)) || null;
+      const warehouse = warehouses.find(item => String(item.id) === String(invoice.warehouse)) || null;
+      const statusLabels = {draft:'پیش‌نویس',final:'نهایی',cancelled:'لغوشده'};
+      const paymentLabels = {unpaid:'پرداخت‌نشده',partial:'پرداخت جزئی',paid:'پرداخت‌شده'};
+      const methodLabels = {cash:'نقدی',pos:'کارت‌خوان',credit:'اعتباری'};
+      const rows = items.map((item, index) => {
+        const product = productMap[String(item.product)] || {};
+        const quantity = Number(item.quantity || 0);
+        const price = Number(item.unit_price || 0);
+        return '<tr><td class="center">' + (index + 1).toLocaleString('fa-IR') + '</td><td>' + escapePrintHtml(product.name || ('کالا #' + item.product)) + '</td><td class="center">' + quantity.toLocaleString('fa-IR', {maximumFractionDigits:3}) + '</td><td class="numeric">' + printMoney(price) + '</td><td class="numeric">' + printMoney(price * quantity) + '</td></tr>';
+      }).join('') || '<tr><td colspan="5" class="empty">برای این فاکتور قلمی ثبت نشده است.</td></tr>';
+      const methods = [...new Set(payments.map(payment => methodLabels[payment.method] || payment.method).filter(Boolean))].join('، ') || '—';
+      const status = statusLabels[invoice.status] || invoice.status || '—';
+      const paymentStatus = paymentLabels[invoice.payment_status] || invoice.payment_status || '—';
+      const note = invoice.note ? '<section class="note"><strong>یادداشت</strong><p>' + escapePrintHtml(invoice.note) + '</p></section>' : '';
+      const markup = `<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>فاکتور ${escapePrintHtml(invoice.invoice_no || '')}</title><style>
+        @page{size:A4;margin:12mm}*{box-sizing:border-box}body{margin:0;background:#eef2f7;color:#172033;font-family:Tahoma,Arial,sans-serif;font-size:12px;line-height:1.8}.sheet{max-width:210mm;min-height:273mm;margin:20px auto;padding:12mm;background:#fff;box-shadow:0 8px 32px #0f172a1a}.header{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;border-bottom:2px solid #1e293b;padding-bottom:18px;margin-bottom:22px}.eyebrow{display:inline-block;color:#1d4ed8;background:#eff6ff;border-radius:99px;padding:2px 12px;font-weight:bold}.header h1{font-size:25px;margin:8px 0 0}.muted{color:#64748b}.meta{min-width:210px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px}.meta div,.summary div,.detail{display:flex;justify-content:space-between;gap:14px}.meta div+div{margin-top:4px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}.card{border:1px solid #e2e8f0;border-radius:12px;padding:14px}.card h2{font-size:12px;color:#64748b;margin:0 0 8px}.card strong{font-size:14px}.detail+.detail{margin-top:5px}table{width:100%;border-collapse:collapse;margin:0 0 22px}thead{display:table-header-group}th,td{border:1px solid #cbd5e1;padding:7px 9px;text-align:right}th{background:#f1f5f9;color:#334155}td.center,th.center{text-align:center}td.numeric,th.numeric{text-align:left;font-variant-numeric:tabular-nums}tr{break-inside:avoid}.empty{text-align:center;color:#64748b;padding:20px}.summary{width:100%;max-width:360px;margin:0 0 20px auto;background:#f8fafc;border-radius:12px;padding:14px 16px}.summary div+div{margin-top:4px}.summary .discount{color:#047857}.summary .total{border-top:2px solid #1e293b;padding-top:8px;margin-top:8px;font-size:15px;font-weight:bold}.note{border:1px solid #e2e8f0;border-radius:12px;padding:12px 15px;margin-bottom:22px}.note p{white-space:pre-wrap;margin:5px 0 0}.footer{border-top:1px solid #e2e8f0;margin-top:28px;padding-top:10px;text-align:center;color:#94a3b8;font-size:10px}@media screen and (max-width:640px){.sheet{margin:0;padding:8mm;max-width:100%;min-height:auto;box-shadow:none}.header{flex-direction:column;gap:12px}.header h1{font-size:20px}.meta{min-width:0;width:100%}.cards{grid-template-columns:1fr}.th,td{padding:5px 6px;font-size:11px}}@media print{body{background:#fff}.sheet{max-width:none;min-height:0;margin:0;padding:0;box-shadow:none}}
+        </style></head><body><main class="sheet"><header class="header"><div><span class="eyebrow">سند فروش</span><h1>فاکتور فروش</h1><div class="muted">جزئیات فاکتور ثبت‌شده</div></div><div class="meta"><div><span class="muted">شماره فاکتور</span><strong dir="ltr">${escapePrintHtml(invoice.invoice_no || '—')}</strong></div><div><span class="muted">تاریخ</span><strong>${formatPrintDate(invoice.invoice_date)}</strong></div><div><span class="muted">وضعیت</span><strong>${escapePrintHtml(status)}</strong></div></div></header><section class="cards"><div class="card"><h2>خریدار</h2><strong>${escapePrintHtml(customer ? customer.name : 'مشتری عمومی')}</strong>${customer && customer.phone ? '<div class="muted">تلفن: ' + escapePrintHtml(customer.phone) + '</div>' : ''}</div><div class="card"><h2>اطلاعات فروش</h2><div class="detail"><span class="muted">انبار</span><strong>${escapePrintHtml(warehouse ? warehouse.name : '—')}</strong></div><div class="detail"><span class="muted">وضعیت پرداخت</span><strong>${escapePrintHtml(paymentStatus)}</strong></div><div class="detail"><span class="muted">روش پرداخت</span><strong>${escapePrintHtml(methods)}</strong></div></div></section><table><thead><tr><th class="center">ردیف</th><th>شرح کالا</th><th class="center">تعداد</th><th class="numeric">فی (تومان)</th><th class="numeric">جمع ردیف (تومان)</th></tr></thead><tbody>${rows}</tbody></table><section class="summary"><div><span>جمع اقلام</span><strong>${printMoney(invoice.subtotal)}</strong></div><div class="discount"><span>تخفیف</span><strong>${printMoney(invoice.discount)}</strong></div><div><span>مالیات</span><strong>${printMoney(invoice.tax)}</strong></div><div><span>هزینه ارسال</span><strong>${printMoney(invoice.shipping)}</strong></div><div class="total"><span>مبلغ نهایی (تومان)</span><strong>${printMoney(invoice.total)}</strong></div></section>${note}<footer class="footer">این سند از اطلاعات ثبت‌شده در سامانه تهیه شده است.</footer></main></body></html>`;
+      printWindow.document.open(); printWindow.document.write(markup); printWindow.document.close();
+      printWindow.document.title = 'فاکتور ' + (invoice.invoice_no || '');
+      await (printWindow.document.fonts ? printWindow.document.fonts.ready : Promise.resolve());
+      printWindow.focus();
+      setTimeout(() => { if (!printWindow.closed) printWindow.print(); }, 250);
+    } catch (error) {
+      console.error(error);
+      if (!printWindow.closed) printWindow.close();
+      showToast('بارگذاری اطلاعات فاکتور برای چاپ ناموفق بود', 'error');
+    }
+  };
+  window.viewInvoice = async function(id){
+    if(!id){ showToast('شناسه فاکتور نامعتبر', 'error'); return; }
+    try {
+      const [invRes, itemsRes, paysRes, prodRes, stockRes] = await Promise.all([
+        fetch('/api/sales/invoices/'+id+'/', { credentials:'same-origin' }),
+        fetch('/api/sales/invoice-items/?invoice='+id, { credentials:'same-origin' }),
+        fetch('/api/sales/invoice-payments/?invoice='+id, { credentials:'same-origin' }),
+        fetch('/api/products/products/', { credentials:'same-origin' }),
+        fetch('/api/inventory/stock/', { credentials:'same-origin' })
+      ]);
+      const inv = await invRes.json();
+      const itemsData = await itemsRes.json();
+      const paysData = await paysRes.json();
+      const prodData = await prodRes.json();
+      const stockData = await stockRes.json();
+      const items = Array.isArray(itemsData) ? itemsData : (itemsData.results || []);
+      const pays = Array.isArray(paysData) ? paysData : (paysData.results || []);
+      const prods = Array.isArray(prodData) ? prodData : (prodData.results || []);
+      const stocks = Array.isArray(stockData) ? stockData : (stockData.results || []);
+      const prodMap = {};
+      prods.forEach(p => { prodMap[p.id] = p; });
+      const stockMap = {};
+      stocks.forEach(s => { if (String(s.warehouse) === String(inv.warehouse) && s.product != null) stockMap[s.product] = Number(s.quantity || 0) - Number(s.reserved || 0); });
+      window._currentInvoice = inv;
+      window._currentInvoiceItems = items;
+      window._currentInvoicePays = pays;
+      window._productMap = prodMap;
+      renderCartEditModal(inv, items, pays, prodMap, true, stockMap);
+      openInvoiceModal();
+    } catch(e){ console.error(e); showToast('خطا در بارگذاری فاکتور', 'error'); }
+  };
+  window.editInvoice = async function(id){
+    if(!id){ showToast('شناسه فاکتور نامعتبر', 'error'); return; }
+    try {
+      const [invRes, itemsRes, paysRes, prodRes, stockRes] = await Promise.all([
+        fetch('/api/sales/invoices/'+id+'/', { credentials:'same-origin' }),
+        fetch('/api/sales/invoice-items/?invoice='+id, { credentials:'same-origin' }),
+        fetch('/api/sales/invoice-payments/?invoice='+id, { credentials:'same-origin' }),
+        fetch('/api/products/products/', { credentials:'same-origin' }),
+        fetch('/api/inventory/stock/', { credentials:'same-origin' })
+      ]);
+      const inv = await invRes.json();
+      const itemsData = await itemsRes.json();
+      const paysData = await paysRes.json();
+      const prodData = await prodRes.json();
+      const stockData = await stockRes.json();
+      const items = Array.isArray(itemsData) ? itemsData : (itemsData.results || []);
+      const pays = Array.isArray(paysData) ? paysData : (paysData.results || []);
+      const prods = Array.isArray(prodData) ? prodData : (prodData.results || []);
+      const stocks = Array.isArray(stockData) ? stockData : (stockData.results || []);
+      const prodMap = {};
+      prods.forEach(p => { prodMap[p.id] = p; });
+      const stockMap = {};
+      stocks.forEach(s => { if (String(s.warehouse) === String(inv.warehouse) && s.product != null) stockMap[s.product] = Number(s.quantity || 0) - Number(s.reserved || 0); });
+      window._currentInvoice = inv;
+      window._currentInvoiceItems = items;
+      window._currentInvoicePays = pays;
+      window._productMap = prodMap;
+      renderCartEditModal(inv, items, pays, prodMap, false, stockMap);
+      openInvoiceModal();
+    } catch(e){ console.error(e); showToast('خطا در بارگذاری فاکتور', 'error'); }
+  };
+  function openInvoiceModal(){ const m=document.getElementById('invoiceModal'); m.classList.remove('hidden'); m.classList.add('flex'); }
+  window.closeInvoiceModal = function(){ const m=document.getElementById('invoiceModal'); m.classList.add('hidden'); m.classList.remove('flex'); };
+  function renderCartEditModal(inv, items, pays, prodMap, viewMode, stockMap){
+    const title = document.getElementById('invModalTitle');
+    title.textContent = (viewMode ? 'مشاهده فاکتور ' : 'ویرایش فاکتور ') + (inv.invoice_no || '');
+    const body = document.getElementById('invModalBody');
+    const editBtn = document.getElementById('invEditBtn');
+    const saveBtn = document.getElementById('invSaveBtn');
+    if (viewMode){ editBtn.classList.remove('hidden'); saveBtn.classList.add('hidden'); }
+    else { editBtn.classList.add('hidden'); saveBtn.classList.remove('hidden'); }
+    const methodLabel = { cash:'نقدی', pos:'کارت‌خوان', credit:'نسیه' };
+    const currentMethod = (pays && pays.length) ? pays[0].method : 'cash';
+    const D = viewMode ? ' disabled' : '';
+    const posImagesByBarcode = {
+      '62601299': '/static/ui/pos/assets/caa66e2361ce.jpg',
+      '62604521': '/static/ui/pos/assets/543eb20984ed.jpg',
+      '62607814': '/static/ui/pos/assets/d23045354ab0.jpg',
+      '62603390': '/static/ui/pos/assets/38338a1b995a.jpg',
+      '62609011': '/static/ui/pos/assets/a444f519e663.jpg',
+      '62608820': '/static/ui/pos/assets/e4dc0879eb7c.jpg'
+    };
+    const normalizeProductCode = value => String(value || '').replace(/[۰-۹٠-٩]/g, digit => {
+      const code = digit.charCodeAt(0);
+      return String(code >= 0x06f0 ? code - 0x06f0 : code - 0x0660);
+    }).replace(/\D/g, '');
+    let html = '';
+    html += '<div class="space-y-4">';
+    // items: two-column professional layout
+    html += '<div class="space-y-3" id="editCartItemsList">';
+    (items||[]).forEach((it, idx) => {
+      const prod = (prodMap||{})[it.product] || {};
+      const name = prod.name || ('محصول #' + it.product);
+      const code = prod.barcode || prod.sku || '';
+      const price = Number(it.unit_price || 0);
+      const qty = Number(it.quantity || 1);
+      const lineTotal = price * qty;
+      const stock = (stockMap||{})[it.product] != null ? (stockMap||{})[it.product] : '-';
+      const posImage = posImagesByBarcode[normalizeProductCode(code)] || '';
+      let img = prod.image || posImage;
+      if (img && !/^https?:\/\//i.test(img) && !img.startsWith('/')) img = '/media/' + img.replace(/^\/+/, '');
+      const imageFallback = prod.image && posImage ? ' data-fallback="' + posImage + '"' : '';
+      html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-surface-container-lowest dark:bg-slate-800/90 rounded-2xl border border-outline-variant dark:border-slate-700 p-4" data-idx="' + idx + '" data-item-id="' + (it.id||'') + '" data-product="' + (it.product||'') + '" data-price="' + price + '">';
+      // right: product card
+      html += '<div class="flex items-center gap-3 md:border-l md:border-outline-variant/40 md:pl-3">';
+      if (img) html += '<img src="' + img + '"' + imageFallback + ' alt="' + name + '" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=\'\'}else{this.classList.add(\'hidden\');this.nextElementSibling.classList.remove(\'hidden\');this.nextElementSibling.classList.add(\'flex\')}" class="w-16 h-16 rounded-xl object-cover border border-outline-variant/40" /><div class="hidden w-16 h-16 rounded-xl bg-surface-container dark:bg-slate-700 items-center justify-center"><span class="material-symbols-outlined text-[28px] text-outline">inventory_2</span></div>';
+      else html += '<div class="w-16 h-16 rounded-xl bg-surface-container dark:bg-slate-700 flex items-center justify-center"><span class="material-symbols-outlined text-[28px] text-outline">inventory_2</span></div>';
+      html += '<div class="flex-1 min-w-0"><h5 class="font-title-md text-title-md font-bold text-on-surface dark:text-slate-100 truncate">' + name + '</h5>';
+      html += '<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 font-mono">کد: ' + code + '</span>';
+      html += '<div class="mt-1 flex items-center gap-3 text-body-sm"><span class="text-on-surface-variant">قیمت: <span class="font-bold text-primary">' + price.toLocaleString('fa-IR') + '</span></span>';
+      html += '<span class="text-on-surface-variant">موجودی: <span class="font-bold ' + (typeof stock === 'number' && stock <= 0 ? 'text-error' : 'text-secondary') + '">' + (typeof stock === 'number' ? stock.toLocaleString('fa-IR') : stock) + '</span></span></div></div></div>';
+      // left: invoiced qty controls
+      html += '<div class="flex items-center justify-between gap-3">';
+      html += '<div class="flex flex-col gap-1"><span class="text-label-sm text-on-surface-variant">تعداد فاکتور شده</span>';
+      html += '<div class="flex items-center gap-2 bg-surface-container-lowest dark:bg-slate-900 px-2 py-1.5 rounded-xl border border-outline-variant dark:border-slate-700">';
+      html += '<button'+D+' onclick="changeEditQty(' + idx + ', 1)" class="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold transition-colors">+</button>';
+      html += '<span class="font-headline-md font-bold px-2 font-tabular-num dark:text-slate-100 min-w-[2rem] text-center" id="editQty_' + idx + '">' + qty + '</span>';
+      html += '<button'+D+' onclick="changeEditQty(' + idx + ', -1)" class="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold transition-colors">-</button>';
+      html += '</div></div>';
+      html += '<div class="text-left"><div class="font-label-sm text-on-surface-variant">جمع ردیف</div><div class="font-headline-md font-bold text-primary dark:text-blue-400 font-tabular-num" id="editLineTotal_' + idx + '">' + lineTotal.toLocaleString('fa-IR') + '</div><div class="font-label-sm text-on-surface-variant">تومان</div></div>';
+      html += '</div>';
+      html += '</div>';
+    });
+    if (!items || items.length === 0) html += '<div class="text-center text-on-surface-variant py-6">بدون قلم</div>';
+    html += '</div>';
+    // bill summary
+    const subtotal = Number(inv.subtotal || 0);
+    const discount = Number(inv.discount || 0);
+    const tax = Number(inv.tax || 0);
+    const total = Number(inv.total || 0);
+    html += '<div class="p-4 border border-outline-variant/40 dark:border-slate-800 bg-surface-container-low dark:bg-slate-900/90 space-y-3 rounded-2xl">';
+    html += '<div class="flex items-center justify-between text-body-sm"><span class="text-on-surface-variant">جمع اقلام:</span><span class="font-bold font-tabular-num" id="editSubtotal">' + subtotal.toLocaleString('fa-IR') + ' تومان</span></div>';
+    const discountMode = inv.discount_mode || 'amount';
+    const taxMode = inv.tax_mode || 'amount';
+    const discountInput = inv.discount_input != null ? Number(inv.discount_input) : discount;
+    const taxInput = inv.tax_input != null ? Number(inv.tax_input) : tax;
+    html += '<div class="space-y-2"><div class="flex items-center justify-between"><span class="text-on-surface-variant">تخفیف</span><span class="text-xs text-secondary font-bold" id="editDiscountPreview">' + discount.toLocaleString('fa-IR') + ' تومان</span></div>';
+    html += '<div class="flex rounded-xl bg-slate-100 dark:bg-slate-900 p-1 gap-1" role="group" aria-label="روش محاسبه تخفیف"><button type="button" id="editDiscountPercent" aria-pressed="' + (discountMode === 'percent') + '" onclick="setEditMode(\'discount\',\'percent\')" class="flex-1 py-2 rounded-lg text-sm font-bold ' + (discountMode === 'percent' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-on-surface-variant') + '"' + (viewMode ? ' disabled' : '') + '>درصدی (٪)</button><button type="button" id="editDiscountAmount" aria-pressed="' + (discountMode === 'amount') + '" onclick="setEditMode(\'discount\',\'amount\')" class="flex-1 py-2 rounded-lg text-sm font-bold ' + (discountMode === 'amount' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-on-surface-variant') + '"' + (viewMode ? ' disabled' : '') + '>مبلغی (تومان)</button></div>';
+    html += '<div class="flex items-center gap-2"><input id="editDiscount" type="number" min="0" max="100" step="any" class="flex-1 border rounded-lg px-3 py-2 dark:bg-slate-800 text-left" value="' + discountInput + '" oninput="updateEditTotals()"' + D + '><span id="editDiscountSuffix" class="w-12 text-center text-sm text-on-surface-variant">' + (discountMode === 'percent' ? '٪' : 'تومان') + '</span></div><div class="flex flex-wrap gap-2" id="editDiscountPresets"></div></div>';
+    html += '<div class="space-y-2"><div class="flex items-center justify-between"><span class="text-on-surface-variant">مالیات</span><span class="text-xs text-primary font-bold" id="editTaxPreview">' + tax.toLocaleString('fa-IR') + ' تومان</span></div>';
+    html += '<div class="flex rounded-xl bg-slate-100 dark:bg-slate-900 p-1 gap-1" role="group" aria-label="روش محاسبه مالیات"><button type="button" id="editTaxPercent" aria-pressed="' + (taxMode === 'percent') + '" onclick="setEditMode(\'tax\',\'percent\')" class="flex-1 py-2 rounded-lg text-sm font-bold ' + (taxMode === 'percent' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-on-surface-variant') + '"' + (viewMode ? ' disabled' : '') + '>درصدی (٪)</button><button type="button" id="editTaxAmount" aria-pressed="' + (taxMode === 'amount') + '" onclick="setEditMode(\'tax\',\'amount\')" class="flex-1 py-2 rounded-lg text-sm font-bold ' + (taxMode === 'amount' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-on-surface-variant') + '"' + (viewMode ? ' disabled' : '') + '>مبلغی (تومان)</button></div>';
+    html += '<div class="flex items-center gap-2"><input id="editTax" type="number" min="0" max="100" step="any" class="flex-1 border rounded-lg px-3 py-2 dark:bg-slate-800 text-left" value="' + taxInput + '" oninput="updateEditTotals()"' + D + '><span id="editTaxSuffix" class="w-12 text-center text-sm text-on-surface-variant">' + (taxMode === 'percent' ? '٪' : 'تومان') + '</span></div><div class="flex flex-wrap gap-2" id="editTaxPresets"></div></div>';
+    html += '<div class="flex items-center justify-between pt-2 border-t border-outline-variant/40 dark:border-slate-800"><span class="font-title-md text-title-md font-bold">مبلغ نهایی:</span><span class="font-display-lg text-primary font-tabular-num" id="editTotal">' + total.toLocaleString('fa-IR') + ' تومان</span></div>';
+    html += '</div>';
+    // payment method
+    html += '<div class="space-y-1"><span class="text-body-sm text-on-surface-variant">روش پرداخت:</span><select id="editPayMethod" class="w-full border rounded-lg px-3 py-2 dark:bg-slate-800"' + D + '>' + ['cash','pos','credit'].map(m => '<option value="' + m + '"' + (m===currentMethod?' selected':'') + '>' + ({cash:'نقدی',pos:'کارت‌خوان',credit:'نسیه'}[m]) + '</option>').join('') + '</select></div>';
+    // note
+    html += '<div><span class="text-body-sm text-on-surface-variant">یادداشت:</span><textarea id="editNote" class="w-full border rounded-lg px-3 py-2 mt-1 dark:bg-slate-800" rows="2"' + D + '>' + (inv.note||'') + '</textarea></div>';
+    // status
+    html += '<div class="grid grid-cols-2 gap-2"><div><span class="text-body-sm text-on-surface-variant">وضعیت:</span><select id="editStatus" class="w-full border rounded-lg px-3 py-2 dark:bg-slate-800"' + D + '><option value="draft">پیش‌نویس</option><option value="final">نهایی</option><option value="cancelled">لغو</option></select></div>';
+    html += '<div><span class="text-body-sm text-on-surface-variant">وضعیت پرداخت:</span><select id="editPayStatus" class="w-full border rounded-lg px-3 py-2 dark:bg-slate-800"' + D + '><option value="unpaid">پرداخت‌نشده</option><option value="partial">بخشی</option><option value="paid">پرداخت‌شده</option></select></div></div>';
+    html += '</div>';
+    body.innerHTML = html;
+    const st = document.getElementById('editStatus'); if (st) st.value = inv.status || 'final';
+    const ps = document.getElementById('editPayStatus'); if (ps) ps.value = inv.payment_status || 'unpaid';
+    window._editItems = items.map(it => ({...it}));
+    window._editDiscountMode = discountMode;
+    window._editTaxMode = taxMode;
+    renderEditPresets('discount');
+    renderEditPresets('tax');
+    updateEditTotals();
+  }
+  window.setEditMode = function(kind, mode){
+    const isDiscount = kind === 'discount';
+    const modeKey = isDiscount ? '_editDiscountMode' : '_editTaxMode';
+    window[modeKey] = mode;
+    ['percent','amount'].forEach(option => {
+      const button = document.getElementById('edit' + (isDiscount ? 'Discount' : 'Tax') + option[0].toUpperCase() + option.slice(1));
+      if (!button) return;
+      const active = option === mode;
+      button.setAttribute('aria-pressed', String(active));
+      button.className = 'flex-1 py-2 rounded-lg text-sm font-bold ' + (active ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-on-surface-variant');
+    });
+    const suffix = document.getElementById(isDiscount ? 'editDiscountSuffix' : 'editTaxSuffix');
+    if (suffix) suffix.textContent = mode === 'percent' ? '٪' : 'تومان';
+    const input = document.getElementById(isDiscount ? 'editDiscount' : 'editTax');
+    if (input) { if (mode === 'percent') input.max = '100'; else input.removeAttribute('max'); }
+    renderEditPresets(kind);
+    updateEditTotals();
+  };
+  function renderEditPresets(kind){
+    const isDiscount = kind === 'discount';
+    const mode = window[isDiscount ? '_editDiscountMode' : '_editTaxMode'] || 'amount';
+    const box = document.getElementById(isDiscount ? 'editDiscountPresets' : 'editTaxPresets');
+    if (!box) return;
+    box.replaceChildren();
+    const values = mode === 'percent' ? (isDiscount ? [5,10,15,20,30] : [5,8,9,10,15]) : [10000,25000,50000,100000];
+    values.forEach(value => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.disabled = !!(document.getElementById('invSaveBtn') && document.getElementById('invSaveBtn').classList.contains('hidden'));
+      button.className = 'px-3 py-1.5 rounded-lg text-xs font-bold border border-outline-variant dark:border-slate-700 hover:border-primary hover:text-primary disabled:opacity-50';
+      button.textContent = mode === 'percent' ? value + '٪' : value.toLocaleString('fa-IR') + ' تومان';
+      button.onclick = () => { const input = document.getElementById(isDiscount ? 'editDiscount' : 'editTax'); if (input) input.value = value; updateEditTotals(); };
+      box.appendChild(button);
+    });
+  }
+  window.changeEditQty = function(idx, delta){
+    const items = window._editItems || [];
+    if (!items[idx]) return;
+    items[idx].quantity = Math.max(0, Number(items[idx].quantity||0) + delta);
+    const qtyEl = document.getElementById('editQty_' + idx);
+    const price = Number(items[idx].unit_price || 0);
+    if (qtyEl) qtyEl.textContent = items[idx].quantity;
+    const lineEl = document.getElementById('editLineTotal_' + idx);
+    if (lineEl) lineEl.textContent = (price * items[idx].quantity).toLocaleString('fa-IR');
+    updateEditTotals();
+  };
+  window.updateEditTotals = function(){
+    const items = window._editItems || [];
+    const subtotal = items.reduce((s,it) => s + Number(it.unit_price||0)*Number(it.quantity||0), 0);
+    const discountInput = Math.max(0, parseFloat((document.getElementById('editDiscount')||{}).value) || 0);
+    const taxInput = Math.max(0, parseFloat((document.getElementById('editTax')||{}).value) || 0);
+    const discount = Math.min(subtotal, window._editDiscountMode === 'percent' ? subtotal * Math.min(discountInput, 100) / 100 : discountInput);
+    const taxBase = Math.max(0, subtotal - discount);
+    const tax = window._editTaxMode === 'percent' ? taxBase * Math.min(taxInput, 100) / 100 : taxInput;
+    const total = subtotal - discount + tax + Number((window._currentInvoice || {}).shipping || 0);
+    const subEl = document.getElementById('editSubtotal'); if (subEl) subEl.textContent = subtotal.toLocaleString('fa-IR') + ' تومان';
+    const totEl = document.getElementById('editTotal'); if (totEl) totEl.textContent = total.toLocaleString('fa-IR') + ' تومان';
+    const discountEl = document.getElementById('editDiscountPreview'); if (discountEl) discountEl.textContent = Math.round(discount).toLocaleString('fa-IR') + ' تومان';
+    const taxEl = document.getElementById('editTaxPreview'); if (taxEl) taxEl.textContent = Math.round(tax).toLocaleString('fa-IR') + ' تومان';
+    window._editCalculated = {subtotal, discount: Math.round(discount), tax: Math.round(tax), total: Math.round(total), discountInput, taxInput};
+  };
+  window.saveInvoice = async function(){
+    const inv = window._currentInvoice;
+    if(!inv) return;
+    const items = window._editItems || [];
+    const csrf = (document.cookie.match(/csrftoken=([^;]+)/)||[])[1] || '';
+    const headers = { 'Content-Type':'application/json', 'X-CSRFToken': csrf };
+    updateEditTotals();
+    const calculated = window._editCalculated;
+    const discount = calculated.discount;
+    const tax = calculated.tax;
+    const subtotal = calculated.subtotal;
+    const total = calculated.total;
+    const payload = {
+      invoice_no: inv.invoice_no,
+      invoice_date: inv.invoice_date,
+      warehouse: inv.warehouse,
+      status: (document.getElementById('editStatus')||{}).value || inv.status,
+      payment_status: (document.getElementById('editPayStatus')||{}).value || inv.payment_status,
+      subtotal: subtotal, discount: discount, discount_mode: window._editDiscountMode, discount_input: calculated.discountInput,
+      tax: tax, tax_mode: window._editTaxMode, tax_input: calculated.taxInput, shipping: inv.shipping || 0, total: total,
+      note: (document.getElementById('editNote')||{}).value || inv.note
+    };
+    try {
+      const r = await fetch('/api/sales/invoices/'+inv.id+'/', { method:'PUT', credentials:'same-origin', headers, body: JSON.stringify(payload) });
+      if (r.ok){
+        // update invoice items quantities
+        for (const it of items) {
+          if (it.id) {
+            await fetch('/api/sales/invoice-items/'+it.id+'/', { method:'PUT', credentials:'same-origin', headers, body: JSON.stringify({ invoice: inv.id, product: it.product, quantity: it.quantity, unit_price: it.unit_price, discount: it.discount||0, tax: it.tax||0 }) });
+          }
+        }
+        // update payment method
+        const pays = window._currentInvoicePays || [];
+        const method = (document.getElementById('editPayMethod')||{}).value;
+        if (pays.length && method) {
+          const p = pays[0];
+          await fetch('/api/sales/invoice-payments/'+p.id+'/', { method:'PUT', credentials:'same-origin', headers, body: JSON.stringify({ invoice: inv.id, amount: total, method: method, reference: p.reference||'' }) });
+        }
+        showToast('فاکتور به‌روزرسانی شد', 'check_circle');
+        closeInvoiceModal();
+        setTimeout(()=>location.reload(), 800);
+      } else { showToast('به‌روزرسانی ناموفق بود', 'error'); }
+    } catch(e){ console.error(e); showToast('خطا در ذخیره', 'error'); }
+  };
+  window.deleteInvoice = async function(id){
+    if(!id){ showToast('شناسه فاکتور نامعتبر', 'error'); return; }
+    if(!confirm('آیا از حذف این فاکتور اطمینان دارید؟')) return;
+    try {
+      const csrf = (document.cookie.match(/csrftoken=([^;]+)/)||[])[1] || '';
+      const r = await fetch('/api/sales/invoices/'+id+'/', { method:'DELETE', credentials:'same-origin', headers:{'X-CSRFToken':csrf} });
+      if(r.ok){ showToast('فاکتور حذف شد', 'delete'); setTimeout(()=>location.reload(), 800); }
+      else { showToast('حذف ناموفق بود', 'error'); }
+    } catch(e){ showToast('خطا در حذف', 'error'); }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadPayments);
+  else loadPayments();
+})();
+</script>
+<script src="/static/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="/static/xlsx.full.min.js"></script>
+<script>
+(function() {
+  let currentPage = 1;
+  let pageSize = 10;
+  function allRows() { return Array.from(document.querySelectorAll('tbody.divide-y tr')); }
+  function filteredRows() {
+    return allRows().filter(tr => {
+      // check search
+      const inp = document.getElementById('tableSearchInput');
+      const q = inp ? inp.value.trim().toLowerCase() : '';
+      if (q !== '' && (tr.textContent || '').toLowerCase().indexOf(q) === -1) return false;
+      // check excel filters
+      if (typeof excelFilters !== 'undefined') {
+        if (!excelFilters.rowPasses(tr)) return false;
+      }
+      return true;
+    });
+  }
+  function renderPagination() {
+    const rows = allRows();
+    const filtered = filteredRows();
+    const total = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    const pageRows = filtered.slice(start, end);
+    // hide all rows first
+    rows.forEach(tr => { tr.style.display = 'none'; });
+    pageRows.forEach(tr => { tr.style.display = ''; });
+    // update summary
+    const summaryEl = document.getElementById('cashboxSummaryText');
+    if (summaryEl) {
+      if (total === 0) summaryEl.textContent = 'تراکنشی یافت نشد';
+      else summaryEl.textContent = 'نمایش ' + (start + 1) + ' تا ' + Math.min(end, total) + ' از ' + total + ' تراکنش';
+    }
+    const badge = document.getElementById('cashboxRowCountBadge');
+    if (badge) badge.textContent = total + ' ردیف ثبت‌شده';
+    // render page buttons
+    const ctrl = document.getElementById('paginationControls');
+    if (!ctrl) return;
+    let html = '';
+    // prev
+    html += '<button onclick="goToPage(' + (currentPage - 1) + ')" class="w-8 h-8 flex items-center justify-center rounded-md border border-outline-variant dark:border-outline hover:bg-surface-container-low text-outline ' + (currentPage <= 1 ? 'opacity-40 cursor-not-allowed" disabled' : '"') + ' type="button"><span class="material-symbols-outlined text-[16px]">chevron_right</span></button>';
+    // page numbers
+    html += '<div class="flex items-center gap-1 mx-2">';
+    const maxBtns = 5;
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + maxBtns - 1);
+    if (endPage - startPage < maxBtns - 1) startPage = Math.max(1, endPage - maxBtns + 1);
+    for (let p = startPage; p <= endPage; p++) {
+      if (p === currentPage) html += '<button class="w-8 h-8 flex items-center justify-center rounded-md bg-primary-container text-on-primary font-bold" type="button">' + toPersian(p) + '</button>';
+      else html += '<button onclick="goToPage(' + p + ')" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-container-low border border-outline-variant dark:border-outline" type="button">' + toPersian(p) + '</button>';
+    }
+    html += '</div>';
+    // next
+    html += '<button onclick="goToPage(' + (currentPage + 1) + ')" class="w-8 h-8 flex items-center justify-center rounded-md border border-outline-variant dark:border-outline hover:bg-surface-container-low ' + (currentPage >= totalPages ? 'opacity-40 cursor-not-allowed" disabled' : '"') + ' type="button"><span class="material-symbols-outlined text-[16px]">chevron_left</span></button>';
+    ctrl.innerHTML = html;
+  }
+  function toPersian(n){ return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d,10)]); }
+  window.renderPagination = renderPagination;
+  window.goToPage = function(p) {
+    const total = filteredRows().length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if (p < 1 || p > totalPages) return;
+    currentPage = p;
+    renderPagination();
+  };
+  window.changePageSize = function(v) {
+    pageSize = parseInt(v, 10) || 10;
+    currentPage = 1;
+    renderPagination();
+  };
+  window.filterTableBySearch = function(q) {
+    currentPage = 1;
+    renderPagination();
+  };
+  // hook applyFilters
+  const origApply = (typeof excelFilters !== 'undefined') ? excelFilters.applyFilters.bind(excelFilters) : null;
+  if (origApply) {
+    excelFilters.applyFilters = function() {
+      origApply();
+      currentPage = 1;
+      renderPagination();
+    };
+  }
+  // initial render after data loads
+  function initPagination() {
+    const tbody = document.querySelector('tbody.divide-y');
+    if (!tbody || tbody.querySelectorAll('tr').length === 0) { setTimeout(initPagination, 500); return; }
+    currentPage = 1;
+    renderPagination();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(initPagination, 2500));
+  else setTimeout(initPagination, 2500);
+})();
+</script>
+<script>
+(function() {
+  window.toggleExportMenu = function(e) {
+    if (e) e.stopPropagation();
+    const m = document.getElementById('exportMenu');
+    if (m) m.classList.toggle('hidden');
+  };
+  document.addEventListener('click', function(e) {
+    const m = document.getElementById('exportMenu');
+    if (m && !m.classList.contains('hidden') && !e.target.closest('.relative.no-print')) m.classList.add('hidden');
+  });
+  function getTableData() {
+    const mainTable = document.querySelector('section table') || document.querySelector('table');
+    const tbody = mainTable ? mainTable.querySelector('tbody') : document.querySelector('tbody.divide-y');
+    const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
+    const allHeaders = Array.from(mainTable.querySelectorAll('thead th')).map(th => {
+      const clone = th.cloneNode(true);
+      clone.querySelectorAll('.material-symbols-outlined').forEach(el => el.remove());
+      return (clone.textContent || '').trim().replace(/\s+/g,' ');
+    });
+    // exclude actions column (last)
+    const headers = allHeaders.slice(0, -1);
+    const data = rows.map(tr => {
+      const tds = Array.from(tr.querySelectorAll('td'));
+      // exclude last (actions)
+      return tds.slice(0, -1).map(td => {
+        const clone = td.cloneNode(true);
+        clone.querySelectorAll('.material-symbols-outlined').forEach(el => el.remove());
+        return (clone.textContent || '').trim().replace(/\s+/g,' ');
+      });
+    });
+    return { headers, data };
+  }
+  window.exportTableToExcel = function() {
+    try {
+      const { headers, data } = getTableData();
+      let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40" dir="rtl">';
+      html += '<head><meta charset="utf-8"><style>';
+      html += 'table { border-collapse: collapse; width: 100%; direction: rtl; }';
+      html += 'th, td { border: 1px solid #999; padding: 6px 8px; text-align: center; font-family: Tahoma, Arial, sans-serif; font-size: 11pt; }';
+      html += 'th { background: #2563eb; color: #fff; font-weight: bold; }';
+      html += 'tr:nth-child(even) { background: #f1f5f9; }';
+      html += 'td { white-space: nowrap; }';
+      html += '</style></head><body>';
+      html += '<table dir="rtl"><thead><tr>';
+      headers.forEach(h => { html += '<th>' + h.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</th>'; });
+      html += '</tr></thead><tbody>';
+      data.forEach(row => {
+        html += '<tr>';
+        row.forEach(cell => { html += '<td>' + String(cell).replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</td>'; });
+        html += '</tr>';
+      });
+      html += '</tbody></table></body></html>';
+      const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'cashbox-payments.xls';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      document.getElementById('exportMenu').classList.add('hidden');
+    } catch (e) { console.error(e); showToast('خطا در خروجی Excel', 'error'); }
+  };
+  window.exportTableToPDF = function() {
+    document.getElementById('exportMenu').classList.add('hidden');
+    window.print();
+  };
+})();
+</script>
+<!-- PRINT TABLE (A4) -->
+<div id="printTable" class="bg-white text-slate-900 p-6 max-w-[297mm] mx-auto font-sans flex flex-col" style="font-family: Vazirmatn, Tahoma, sans-serif; display:none;">
+  <div class="flex items-start justify-between mb-4 pb-3 border-b-2 border-slate-900">
+    <div>
+      <h1 class="text-xl font-bold text-slate-900">دفتر روزنامه تراکنش‌های صندوق</h1>
+      <p class="text-sm text-slate-500 mt-1">گزارش تراکنش‌های صندوق و خزانه</p>
+    </div>
+    <div class="text-left text-sm text-slate-600">
+      <div>تعداد ردیف: <span class="font-bold text-slate-900" id="printRowCount">0</span></div>
+      <div>تاریخ چاپ: <span class="font-bold text-slate-900" id="printDate"></span></div>
+    </div>
+  </div>
+  <table class="w-full border-collapse mb-4" style="font-size:11px;">
+    <thead>
+      <tr class="bg-slate-100">
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">#</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">زمان</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">تاریخ</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">نوع</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">شرح سند</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">طرف حساب</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">روش</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">مبلغ</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">صندوق/حساب</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">شماره سند</th>
+<th style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;font-size:11px;">ثبت‌کننده</th>
+      </tr>
+    </thead>
+    <tbody id="printTableBody"></tbody>
+  </table>
+  <div class="text-center text-xs text-slate-400 pt-3 border-t border-slate-200 mt-auto">
+    با تشکر — سامانه جامع سازمانی — دفتر روزنامه صندوق
+  </div>
+</div>
+
+<script>
+(function() {
+  window.printTable = function() {
+    const tbody = document.querySelector('tbody.divide-y');
+    const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
+    const w = window.open('', '_blank');
+    if (!w) { showToast('پنجرهٔ چاپ باز نشد', 'error'); return; }
+    const rowsHtml = rows.map((tr, idx) => {
+      const cells = Array.from(tr.querySelectorAll('td'));
+      const getText = (i) => {
+        if (!cells[i]) return '';
+        const clone = cells[i].cloneNode(true);
+        clone.querySelectorAll('.material-symbols-outlined').forEach(el => el.remove());
+        return (clone.textContent || '').trim().replace(/\s+/g,' ');
+      };
+      const time = getText(0).replace('schedule','').trim();
+      const date = getText(1);
+      const type = getText(2);
+      const desc = getText(3);
+      const party = getText(4);
+      const method = getText(5);
+      const amount = getText(6);
+      const account = getText(7);
+      const docno = getText(8);
+      const creator = getText(9);
+      return '<tr>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;">' + (idx+1) + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;">' + time + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;">' + date + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;">' + type + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;">' + desc + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;">' + party + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;">' + method + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-weight:bold;">' + amount + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;">' + account + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;font-family:monospace;font-size:11px;">' + docno + '</td>' +
+        '<td style="border:1px solid #cbd5e1;padding:6px;text-align:center;">' + creator + '</td>' +
+        '</tr>';
+    }).join('');
+    const markup = '<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><title>دفتر روزنامه صندوق</title><style>' +
+      'body{margin:0;background:#eef2f7;color:#172033;font-family:Tahoma,Arial,sans-serif;font-size:12px;line-height:1.7}' +
+      '.sheet{max-width:297mm;margin:20px auto;padding:12mm;background:#fff;box-shadow:0 8px 32px #0f172a1a}' +
+      '.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1e293b;padding-bottom:12px;margin-bottom:16px}' +
+      '.header h1{font-size:20px;margin:0 0 4px}' +
+      '.muted{color:#64748b;font-size:12px}' +
+      '.meta{min-width:180px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;font-size:12px}' +
+      '.meta div{display:flex;justify-content:space-between;gap:10px;margin-top:2px}' +
+      'table{width:100%;border-collapse:collapse;margin:0 0 16px}' +
+      'thead{display:table-header-group}' +
+      'th,td{border:1px solid #cbd5e1;padding:6px 8px;text-align:right}' +
+      'th{background:#f1f5f9;color:#334155;font-weight:bold;font-size:11px}' +
+      'tr{break-inside:avoid}' +
+      '.footer{border-top:1px solid #e2e8f0;margin-top:16px;padding-top:8px;text-align:center;color:#94a3b8;font-size:10px}' +
+      '@media print{body{background:#fff}.sheet{box-shadow:none;margin:0;padding:0}}' +
+      '</style></head><body><main class="sheet">' +
+      '<div class="header"><div><h1>دفتر روزنامه تراکنش‌های صندوق</h1><div class="muted">گزارش تراکنش‌های صندوق و خزانه</div></div>' +
+      '<div class="meta"><div><span class="muted">تعداد ردیف</span><strong>' + rows.length + '</strong></div>' +
+      '<div><span class="muted">تاریخ چاپ</span><strong>' + new Date().toLocaleDateString('fa-IR') + '</strong></div></div></div>' +
+      '<table><thead><tr><th style="text-align:center;">#</th><th style="text-align:center;">زمان</th><th style="text-align:center;">تاریخ</th><th style="text-align:center;">نوع</th><th style="text-align:center;">شرح سند</th><th style="text-align:center;">طرف حساب</th><th style="text-align:center;">روش</th><th style="text-align:center;">مبلغ</th><th style="text-align:center;">صندوق/حساب</th><th style="text-align:center;">شماره سند</th><th style="text-align:center;">ثبت‌کننده</th></tr></thead>' +
+      '<tbody>' + rowsHtml + '</tbody></table>' +
+      '<div class="footer">با تشکر — سامانه جامع سازمانی — دفتر روزنامه صندوق</div>' +
+      '</main></body></html>';
+    w.document.open();
+    w.document.write(markup);
+    w.document.close();
+    w.document.title = 'دفتر روزنامه صندوق';
+    setTimeout(() => { if (!w.closed) w.print(); }, 300);
+  };
+})();
+</script>
+
+<style>
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  body { margin: 0 !important; padding: 0 !important; background: #fff !important; color: #000 !important; }
+  body:not(.printing-table) .no-print { display: none !important; }
+  body.printing-table > * { display: none !important; }
+  body.printing-table #printTable { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+  #printTable { display: none; }
+  .no-print { display: none !important; }
+  table { width: 100% !important; border-collapse: collapse !important; }
+  th, td { border: 1px solid #999 !important; padding: 4px 6px !important; font-size: 10px !important; }
+  thead { display: table-header-group !important; }
+  tr { break-inside: avoid !important; }
+}
+</style>
+{% endblock %}

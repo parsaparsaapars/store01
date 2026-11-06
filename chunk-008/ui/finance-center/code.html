@@ -1,0 +1,820 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- MODULAR CONTAINER: No fixed master sidebar/navbar, ready for direct SaaS shell integration -->
+<main class="w-full ] px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+<!-- 1. LOCAL ACTION BAR (عنوان و ابزارهای محلی اکشن) -->
+<header class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-surface-container-lowest dark:bg-inverse-surface/40 p-5 rounded-xl border border-outline-variant/40 shadow-sm">
+<div class="space-y-1">
+<div class="flex items-center gap-3">
+<span class="inline-flex p-2 rounded-lg bg-surface-container-high dark:bg-surface-container text-primary">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+</span>
+<h1 class="font-headline-xl text-headline-xl text-on-surface dark:text-inverse-on-surface tracking-tight">
+            ۱۶. مرکز مالی و حساب‌ها
+          </h1>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container text-primary dark:bg-surface-container-highest dark:text-inverse-primary border border-outline-variant/30">
+            نسخه سازمانی ۳.۴
+          </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant pr-11">
+          مدیریت جامع نقدینگی، مطالبات، تعهدات، هزینه‌ها و حساب‌های بانکی
+        </p>
+</div>
+<!-- Actions & Mode Switcher -->
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- Dark Mode Toggle Button -->
+
+<!-- Excel Export Button -->
+<button class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg border border-outline-variant/60 dark:border-outline text-on-surface dark:text-inverse-on-surface bg-surface-container-lowest dark:bg-inverse-surface hover:bg-surface-container-low transition-colors duration-150 font-title-md text-title-md active:scale-95" onclick="simulateExport()">
+<span class="material-symbols-outlined text-secondary" data-icon="table_view">table_view</span>
+<span class="font-label-md text-label-md">خروجی اسناد / گزارش جامع اکسل</span>
+</button>
+<!-- Batch Pay Action Button -->
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container-high dark:bg-surface-container text-primary dark:text-inverse-primary font-title-md text-title-md hover:bg-surface-variant transition-colors duration-150 border border-outline-variant/30 active:scale-95" onclick="openModal('batchPayModal')">
+<span class="material-symbols-outlined" data-icon="checklist">checklist</span>
+<span class="">+ پرداخت گروهی اسناد</span>
+</button>
+<!-- New Expense Action Button -->
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary-container text-on-primary font-title-md text-title-md hover:bg-primary transition-colors duration-150 shadow-sm active:scale-95" onclick="scrollToExpenseForm()">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="">+ ثبت هزینه جدید</span>
+</button>
+</div>
+</header>
+<!-- 2. FINANCIAL NAVIGATION TABS (تب‌های ناوبری داخلی مرکز مالی) -->
+<nav class="flex items-center gap-2 overflow-x-auto pb-1 border-b border-outline-variant/40 dark:border-outline/40 select-none">
+<button class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-title-md text-title-md text-primary dark:text-inverse-primary border-b-2 border-primary-container dark:border-inverse-primary bg-surface-container-lowest dark:bg-inverse-surface/30 whitespace-nowrap transition-colors" onclick="switchTab(this, 'summaryTab')">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="">خلاصه وضعیت مالی</span>
+</button>
+<button class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-inverse-primary whitespace-nowrap transition-colors" onclick="switchTab(this, 'receivablesTab')">
+<span class="material-symbols-outlined" data-icon="arrow_circle_down">arrow_circle_down</span>
+<span class="">دریافتنی‌ها (مطالبات مشتریان)</span>
+<span class="px-2 py-0.2 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant tabular-num-font">۱۲</span>
+</button>
+<button class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-inverse-primary whitespace-nowrap transition-colors" onclick="switchTab(this, 'payablesTab')">
+<span class="material-symbols-outlined" data-icon="arrow_circle_up">arrow_circle_up</span>
+<span class="">پرداختنی‌ها (بدهی تأمین‌کنندگان)</span>
+<span class="px-2 py-0.2 rounded-full text-label-sm font-label-sm bg-error-container text-error tabular-num-font">۵</span>
+</button>
+<button class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-inverse-primary whitespace-nowrap transition-colors" onclick="switchTab(this, 'expensesTab')">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="">هزینه‌ها و مخارج</span>
+</button>
+<button class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-inverse-primary whitespace-nowrap transition-colors" onclick="switchTab(this, 'bankAccountsTab')">
+<span class="material-symbols-outlined" data-icon="credit_card">credit_card</span>
+<span class="">حساب‌ها و کارت‌های بانکی</span>
+</button>
+<button class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-inverse-primary whitespace-nowrap transition-colors" onclick="switchTab(this, 'categoriesTab')">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span class="">دسته‌بندی سرفصل‌های حساب</span>
+</button>
+</nav>
+<!-- 3. FINANCIAL KPIS (شاخص‌های کلیدی مالی در یک ردیف ریسپانسیو) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5"><!-- KPI 1: Gross Revenue -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/40 flex flex-col justify-between shadow-sm min-w-0 overflow-hidden">
+  <div class="flex items-center justify-between text-on-surface-variant dark:text-outline-variant mb-2 gap-1">
+    <span class="font-label-md text-label-md truncate">درآمد ناخالص دوره</span>
+    <span class="material-symbols-outlined text-primary-container flex-shrink-0" data-icon="trending_up">trending_up</span>
+  </div>
+  <div class="min-w-0">
+    <div class="flex items-baseline flex-wrap gap-1 min-w-0">
+      <span class="font-title-lg font-bold tabular-num-font text-on-surface dark:text-inverse-on-surface truncate">۴,۹۲۰,۰۰۰,۰۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline flex-shrink-0">تومان</span>
+    </div>
+    <div class="flex items-center gap-1 mt-2 text-secondary dark:text-secondary-fixed min-w-0">
+      <span class="material-symbols-outlined text-body-sm flex-shrink-0" data-icon="arrow_upward">arrow_upward</span>
+      <span class="font-label-sm text-label-sm font-semibold tabular-num-font flex-shrink-0">+۱۴.۸٪</span>
+      <span class="font-label-sm text-label-sm text-outline-variant truncate">نسبت به قبل</span>
+    </div>
+  </div>
+</article>
+<!-- KPI 2: Operating Expenses -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/40 flex flex-col justify-between shadow-sm min-w-0 overflow-hidden">
+  <div class="flex items-center justify-between text-on-surface-variant dark:text-outline-variant mb-2 gap-1">
+    <span class="font-label-md text-label-md truncate">هزینه‌های عملیاتی</span>
+    <span class="material-symbols-outlined text-tertiary flex-shrink-0" data-icon="payments">payments</span>
+  </div>
+  <div class="min-w-0">
+    <div class="flex items-baseline flex-wrap gap-1 min-w-0">
+      <span class="font-title-lg font-bold tabular-num-font text-on-surface dark:text-inverse-on-surface truncate">۱,۱۵۰,۰۰۰,۰۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline flex-shrink-0">تومان</span>
+    </div>
+    <div class="flex items-center gap-1 mt-2 text-secondary dark:text-secondary-fixed min-w-0">
+      <span class="material-symbols-outlined text-body-sm flex-shrink-0" data-icon="arrow_downward">arrow_downward</span>
+      <span class="font-label-sm text-label-sm font-semibold tabular-num-font flex-shrink-0">-۳.۲٪</span>
+      <span class="font-label-sm text-label-sm text-outline-variant truncate">کاهش هزینه</span>
+    </div>
+  </div>
+</article>
+<!-- KPI 3: Net Operating Profit -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/40 flex flex-col justify-between shadow-sm min-w-0 overflow-hidden">
+  <div class="flex items-center justify-between text-on-surface-variant dark:text-outline-variant mb-2 gap-1">
+    <span class="font-label-md text-label-md truncate">سود خالص عملیاتی</span>
+    <span class="material-symbols-outlined text-secondary flex-shrink-0" data-icon="savings">savings</span>
+  </div>
+  <div class="min-w-0">
+    <div class="flex items-baseline flex-wrap gap-1 min-w-0">
+      <span class="font-title-lg font-bold tabular-num-font text-on-surface dark:text-inverse-on-surface truncate">۳,۷۷۰,۰۰۰,۰۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline flex-shrink-0">تومان</span>
+    </div>
+    <div class="flex items-center gap-1 mt-2 text-primary dark:text-inverse-primary min-w-0">
+      <span class="material-symbols-outlined text-body-sm flex-shrink-0" data-icon="pie_chart">pie_chart</span>
+      <span class="font-label-sm text-label-sm font-semibold tabular-num-font truncate">حاشیه سود ۷۶.۶٪</span>
+    </div>
+  </div>
+</article>
+<!-- KPI 4: Accounts Receivable (A/R) -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/40 flex flex-col justify-between shadow-sm min-w-0 overflow-hidden">
+  <div class="flex items-center justify-between text-on-surface-variant dark:text-outline-variant mb-2 gap-1">
+    <span class="font-label-md text-label-md truncate">مطالبات و دریافتنی‌ها</span>
+    <span class="material-symbols-outlined text-primary-container flex-shrink-0" data-icon="request_quote">request_quote</span>
+  </div>
+  <div class="min-w-0">
+    <div class="flex items-baseline flex-wrap gap-1 min-w-0">
+      <span class="font-title-lg font-bold tabular-num-font text-on-surface dark:text-inverse-on-surface truncate">۱,۸۴۰,۰۰۰,۰۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline flex-shrink-0">تومان</span>
+    </div>
+    <div class="flex items-center gap-1 mt-2 text-outline min-w-0">
+      <span class="material-symbols-outlined text-body-sm flex-shrink-0" data-icon="schedule">schedule</span>
+      <span class="font-label-sm text-label-sm truncate">سررسید جاری و اقساط</span>
+    </div>
+  </div>
+</article>
+<!-- KPI 5: Accounts Payable (A/P) -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/40 flex flex-col justify-between shadow-sm min-w-0 overflow-hidden">
+  <div class="flex items-center justify-between text-on-surface-variant dark:text-outline-variant mb-2 gap-1">
+    <span class="font-label-md text-label-md truncate">بدهی‌ها و پرداختنی‌ها</span>
+    <span class="material-symbols-outlined text-error flex-shrink-0" data-icon="outbox">outbox</span>
+  </div>
+  <div class="min-w-0">
+    <div class="flex items-baseline flex-wrap gap-1 min-w-0">
+      <span class="font-title-lg font-bold tabular-num-font text-on-surface dark:text-inverse-on-surface truncate">۹۲۰,۰۰۰,۰۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline flex-shrink-0">تومان</span>
+    </div>
+    <div class="flex items-center gap-1 mt-2 text-tertiary dark:text-tertiary-fixed min-w-0">
+      <span class="material-symbols-outlined text-body-sm flex-shrink-0" data-icon="domain">domain</span>
+      <span class="font-label-sm text-label-sm truncate">تعهدات تأمین‌کنندگان</span>
+    </div>
+  </div>
+</article>
+<!-- KPI 6: Net Cash Flow -->
+<article class="p-3.5 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-secondary/30 dark:border-secondary-fixed/30 flex flex-col justify-between shadow-sm min-w-0 overflow-hidden">
+  <div class="flex items-center justify-between text-secondary dark:text-secondary-fixed mb-2 gap-1">
+    <span class="font-label-md text-label-md font-bold truncate">جریان نقدی خالص</span>
+    <span class="material-symbols-outlined flex-shrink-0" data-icon="account_balance">account_balance</span>
+  </div>
+  <div class="min-w-0">
+    <div class="flex items-baseline flex-wrap gap-1 min-w-0">
+      <span class="font-title-lg font-bold tabular-num-font text-secondary dark:text-secondary-fixed truncate">۲,۸۵۰,۰۰۰,۰۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline flex-shrink-0">تومان</span>
+    </div>
+    <div class="flex items-center gap-1 mt-2 text-secondary dark:text-secondary-fixed min-w-0">
+      <span class="material-symbols-outlined text-body-sm flex-shrink-0" data-icon="check_circle">check_circle</span>
+      <span class="font-label-sm text-label-sm font-semibold truncate">وضعیت سبز و مثبت</span>
+    </div>
+  </div>
+</article></section>
+<!-- 4. URGENT ACTIONS & OVERDUE NOTIFICATIONS (کارت‌های سررسید فوری و هشدار اسناد) -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+<!-- Alert Box 1: Overdue Checks & Invoices -->
+<div class="p-4 rounded-xl bg-error-container/20 border border-error/30 dark:border-error/40 flex items-start gap-3.5">
+<span class="p-2 rounded-lg bg-error-container text-error flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+</span>
+<div class="flex-1 space-y-1.5">
+<div class="flex items-center justify-between">
+<h2 class="font-title-lg text-title-lg text-error dark:text-error-container font-bold">
+              ۳ فقره چک معوقه و پرداخت‌نشده نیازمند پیگیری فوری حقوقی/بانکی
+            </h2>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-error/15 text-error tabular-num-font font-bold">
+              ۲۴۰,۰۰۰,۰۰۰ تومان
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">
+            مشتریان: صنایع چوب پویا (سررسید ۱۴۰۳/۰۸/۱۰)، بازرگانی پارس آریا (سررسید ۱۴۰۳/۰۸/۱۲). اخطار پیامکی ارسال شده است.
+          </p>
+<div class="pt-1 flex items-center gap-3">
+<button class="font-label-md text-label-md font-bold text-error hover:underline inline-flex items-center gap-1">
+<span class="">مشاهده و ارسال اخطاریه رسمی</span>
+<span class="material-symbols-outlined text-label-sm" data-icon="arrow_back">arrow_back</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Alert Box 2: Due Today -->
+<div class="p-4 rounded-xl bg-tertiary-fixed/20 border border-tertiary/30 dark:border-tertiary-fixed-dim/40 flex items-start gap-3.5">
+<span class="p-2 rounded-lg bg-tertiary-container/30 text-tertiary dark:text-tertiary-fixed flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="notification_important">notification_important</span>
+</span>
+<div class="flex-1 space-y-1.5">
+<div class="flex items-center justify-between">
+<h2 class="font-title-lg text-title-lg text-tertiary dark:text-tertiary-fixed font-bold">
+              ۲ تعهد بانکی و سند پرداختنی با سررسید امروز (۱۵ آبان ۱۴۰۳)
+            </h2>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-tertiary-container/20 text-tertiary dark:text-tertiary-fixed tabular-num-font font-bold">
+              ۱۸۵,۰۰۰,۰۰۰ تومان
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">
+            سند تسویه پتروشیمی زاگرس (۱۵۰ م.ت) و بیمه تأمین اجتماعی پرسنل (۳۵ م.ت). موجودی حساب جاری ملت برای پاس شدن مکفی است.
+          </p>
+<div class="pt-1 flex items-center gap-3">
+<button class="font-label-md text-label-md font-bold text-tertiary dark:text-tertiary-fixed hover:underline inline-flex items-center gap-1" onclick="openModal('batchPayModal')">
+<span class="">تأیید و صدور حواله پایا/ساتنا</span>
+<span class="material-symbols-outlined text-label-sm" data-icon="arrow_back">arrow_back</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. BANK ACCOUNTS & VAULT MONITORING (کارت‌های مانیتورینگ موجودی زنده حساب‌های بانکی و صندوق‌ها) -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="account_balance">account_balance</span>
+<h2 class="font-title-lg text-title-lg text-on-surface dark:text-inverse-on-surface font-bold">
+            مانیتورینگ موجودی زنده حساب‌های بانکی و صندوق‌ها
+          </h2>
+</div>
+<button class="font-label-md text-label-md text-primary dark:text-inverse-primary hover:underline inline-flex items-center gap-1">
+<span class="">+ اتصال حساب یا پوز بانکی جدید</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"><!-- Bank 1: Mellat -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/40 shadow-sm relative overflow-hidden group">
+  <div class="absolute top-0 right-0 left-0 h-1 bg-red-600"></div>
+  <div class="flex items-start justify-between gap-2 mb-3">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <span class="w-8 h-8 rounded-lg bg-red-50 text-red-600 dark:bg-red-950/40 flex items-center justify-center font-bold text-label-md flex-shrink-0">
+        ملت
+      </span>
+      <div class="min-w-0">
+        <h3 class="font-title-md text-title-md text-on-surface dark:text-inverse-on-surface truncate">حساب جاری اصلی</h3>
+        <p class="font-label-sm text-label-sm text-outline truncate">شعبه مرکزی - کد ۴۹۳۲</p>
+      </div>
+    </div>
+    <span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-secondary-container/30 text-on-secondary-container flex-shrink-0">فعال</span>
+  </div>
+  <div class="space-y-1 my-3">
+    <span class="font-label-sm text-label-sm text-outline block">موجودی در دسترس:</span>
+    <div class="flex items-baseline flex-wrap gap-1">
+      <span class="font-headline-lg text-headline-lg font-bold tabular-num-font text-on-surface dark:text-inverse-on-surface">۱,۴۲۰,۵۰۰,۰۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline">تومان</span>
+    </div>
+  </div>
+  <div class="pt-2 border-t border-outline-variant/30 flex items-center justify-between text-outline text-label-sm font-label-sm gap-2">
+    <span class="tabular-num-font truncate">IR09 0120 0000 0001 2345 6789 01</span>
+    <button class="hover:text-primary transition-colors flex-shrink-0" onclick="navigator.clipboard.writeText('IR090120000000012345678901')" title="کپی شبا">
+      <span class="material-symbols-outlined text-body-sm" data-icon="content_copy">content_copy</span>
+    </button>
+  </div>
+</div>
+<!-- Bank 2: Saman -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/40 shadow-sm relative overflow-hidden group">
+  <div class="absolute top-0 right-0 left-0 h-1 bg-primary-container"></div>
+  <div class="flex items-start justify-between gap-2 mb-3">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <span class="w-8 h-8 rounded-lg bg-blue-50 text-primary-container dark:bg-blue-950/40 flex items-center justify-center font-bold text-label-md flex-shrink-0">
+        سامان
+      </span>
+      <div class="min-w-0">
+        <h3 class="font-title-md text-title-md text-on-surface dark:text-inverse-on-surface truncate">حساب تجاری آنلاین</h3>
+        <p class="font-label-sm text-label-sm text-outline truncate">شعبه آفریقا - درگاه پرداخت</p>
+      </div>
+    </div>
+    <span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-secondary-container/30 text-on-secondary-container flex-shrink-0">فعال</span>
+  </div>
+  <div class="space-y-1 my-3">
+    <span class="font-label-sm text-label-sm text-outline block">موجودی در دسترس:</span>
+    <div class="flex items-baseline flex-wrap gap-1">
+      <span class="font-headline-lg text-headline-lg font-bold tabular-num-font text-on-surface dark:text-inverse-on-surface">۸۹۰,۳۰۰,۰۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline">تومان</span>
+    </div>
+  </div>
+  <div class="pt-2 border-t border-outline-variant/30 flex items-center justify-between text-outline text-label-sm font-label-sm gap-2">
+    <span class="tabular-num-font truncate">IR56 0560 0000 0002 9876 5432 10</span>
+    <button class="hover:text-primary transition-colors flex-shrink-0" title="کپی شبا">
+      <span class="material-symbols-outlined text-body-sm" data-icon="content_copy">content_copy</span>
+    </button>
+  </div>
+</div>
+<!-- Bank 3: Foreign Currency (AED / EUR) -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/40 shadow-sm relative overflow-hidden group">
+  <div class="absolute top-0 right-0 left-0 h-1 bg-amber-500"></div>
+  <div class="flex items-start justify-between gap-2 mb-3">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-950/40 flex items-center justify-center font-bold text-label-md flex-shrink-0">
+        ارزی
+      </span>
+      <div class="min-w-0">
+        <h3 class="font-title-md text-title-md text-on-surface dark:text-inverse-on-surface truncate">حساب ارزی درهم (AED)</h3>
+        <p class="font-label-sm text-label-sm text-outline truncate">حساب صرافی و اعتبارات اسنادی</p>
+      </div>
+    </div>
+    <span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-secondary-container/30 text-on-secondary-container flex-shrink-0">تأیید سوئیفت</span>
+  </div>
+  <div class="space-y-1 my-3">
+    <span class="font-label-sm text-label-sm text-outline block">موجودی ارزی:</span>
+    <div class="flex items-baseline flex-wrap gap-1">
+      <span class="font-headline-lg text-headline-lg font-bold tabular-num-font text-on-surface dark:text-inverse-on-surface">۶۲,۴۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline">درهم امارات (AED)</span>
+    </div>
+  </div>
+  <div class="pt-2 border-t border-outline-variant/30 flex items-center justify-between text-outline text-label-sm font-label-sm gap-2">
+    <span class="truncate">معادل: ۱,۰۹۲,۰۰۰,۰۰۰ تومان</span>
+    <span class="material-symbols-outlined text-body-sm flex-shrink-0" data-icon="currency_exchange">currency_exchange</span>
+  </div>
+</div>
+<!-- Bank 4: Central Vault -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/40 shadow-sm relative overflow-hidden group">
+  <div class="absolute top-0 right-0 left-0 h-1 bg-secondary"></div>
+  <div class="flex items-start justify-between gap-2 mb-3">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <span class="w-8 h-8 rounded-lg bg-emerald-50 text-secondary dark:bg-emerald-950/40 flex items-center justify-center font-bold text-label-md flex-shrink-0">
+        صندوق
+      </span>
+      <div class="min-w-0">
+        <h3 class="font-title-md text-title-md text-on-surface dark:text-inverse-on-surface truncate">صندوق مرکزی و تنخواه</h3>
+        <p class="font-label-sm text-label-sm text-outline truncate">تحویل مسئول مالی: آقای صادقی</p>
+      </div>
+    </div>
+    <span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container text-on-surface-variant flex-shrink-0">شمارش روزانه</span>
+  </div>
+  <div class="space-y-1 my-3">
+    <span class="font-label-sm text-label-sm text-outline block">وجه نقد موجود:</span>
+    <div class="flex items-baseline flex-wrap gap-1">
+      <span class="font-headline-lg text-headline-lg font-bold tabular-num-font text-on-surface dark:text-inverse-on-surface">۴۵,۰۰۰,۰۰۰</span>
+      <span class="font-label-sm text-label-sm text-outline">تومان</span>
+    </div>
+  </div>
+  <div class="pt-2 border-t border-outline-variant/30 flex items-center justify-between text-outline text-label-sm font-label-sm gap-2">
+    <span class="truncate">سقف مجاز: ۵۰ م.ت</span>
+    <button class="hover:text-primary transition-colors text-label-sm flex-shrink-0">شارژ تنخواه</button>
+  </div>
+</div></div>
+</section>
+<!-- 6. COMPREHENSIVE DATA TABLE WITH EXCEL-STYLE HEADER FILTERS (جدول جامع اسناد با فیلتر هدر اکسل) -->
+<section class="bg-surface-container-lowest dark:bg-inverse-surface/40 rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden">
+<!-- Table Header & Quick Toolbar -->
+<div class="p-4 border-b border-outline-variant/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="description">description</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface">
+            اسناد دریافتنی و پرداختنی دوره (A/R &amp; A/P)
+          </h2>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high dark:bg-surface-container text-primary tabular-num-font font-bold">
+            ۵۶ سند ثبت‌شده
+          </span>
+</div>
+<!-- Search & Filter Controls -->
+<div class="flex flex-wrap items-center gap-2">
+<div class="relative min-w-[240px]">
+<input class="w-full h-10 pr-9 pl-3 text-body-sm rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" id="tableSearch" onkeyup="filterTableSearch()" placeholder="جستجو بر اساس نام طرف حساب، شماره سند..." type="text">
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-outline" data-icon="search">search</span>
+</div>
+<button class="h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container font-label-md text-label-md inline-flex items-center gap-1.5 transition-colors" onclick="resetExcelFilters()">
+<span class="material-symbols-outlined text-body-sm" data-icon="filter_alt_off">filter_alt_off</span>
+<span class="">پاکسازی فیلترها</span>
+</button>
+</div>
+</div>
+<!-- Advanced Responsive Data Table -->
+<div class="overflow-x-auto relative min-h-[340px]">
+<table class="w-full text-right border-collapse" id="financeTable">
+<thead>
+<tr class="bg-surface-container-low dark:bg-inverse-surface/80 text-on-surface-variant dark:text-outline-variant font-title-md text-title-md border-b border-outline-variant/40 select-none">
+<!-- Excel-Filterable Column: Party Name -->
+<th class="py-3 px-4 relative">
+<div class="flex items-center justify-between gap-1 cursor-pointer" onclick="toggleFilterDropdown('filterParty')">
+<span class="">طرف حساب / شرکت</span>
+<span class="material-symbols-outlined text-body-sm text-outline hover:text-primary" data-icon="filter_list">filter_list</span>
+</div>
+<!-- Excel Filter Popup -->
+<div class="hidden absolute top-full right-2 mt-1 z-30 w-52 p-3 bg-surface-container-lowest dark:bg-inverse-surface rounded-xl shadow-lg border border-outline-variant/60 dark:border-outline" id="filterParty">
+<span class="font-label-sm text-label-sm text-outline mb-2 block">فیلتر طرف حساب:</span>
+<div class="space-y-1.5 max-h-36 overflow-y-auto text-body-sm">
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary-container" type="checkbox"> همه موارد</label>
+<label class="flex items-center gap-2"><input class="rounded text-primary-container" type="checkbox"> فولاد مبارکه اصفهان</label>
+<label class="flex items-center gap-2"><input class="rounded text-primary-container" type="checkbox"> بازرگانی پارس آریا</label>
+<label class="flex items-center gap-2"><input class="rounded text-primary-container" type="checkbox"> پتروشیمی زاگرس</label>
+<label class="flex items-center gap-2"><input class="rounded text-primary-container" type="checkbox"> شرکت پخش هجرت</label>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/30 flex justify-end gap-1">
+<button class="px-2 py-1 text-label-sm bg-primary-container text-on-primary rounded" onclick="toggleFilterDropdown('filterParty')">اعمال</button>
+</div>
+</div>
+</th>
+<!-- Document Number -->
+<th class="py-3 px-4">
+<span class="">شماره سند</span>
+</th>
+<!-- Total Amount -->
+<th class="py-3 px-4">
+<span class="">مبلغ کل (تومان)</span>
+</th>
+<!-- Paid Amount -->
+<th class="py-3 px-4">
+<span class="">پرداخت‌شده</span>
+</th>
+<!-- Remaining Balance -->
+<th class="py-3 px-4">
+<span class="">مانده (تومان)</span>
+</th>
+<!-- Due Date -->
+<th class="py-3 px-4">
+<span class="">تاریخ سررسید شمسی</span>
+</th>
+<!-- Excel-Filterable Column: Status -->
+<th class="py-3 px-4 relative">
+<div class="flex items-center justify-between gap-1 cursor-pointer" onclick="toggleFilterDropdown('filterStatus')">
+<span class="">وضعیت سند</span>
+<span class="material-symbols-outlined text-body-sm text-outline hover:text-primary" data-icon="filter_list">filter_list</span>
+</div>
+<!-- Excel Filter Popup -->
+<div class="hidden absolute top-full right-2 mt-1 z-30 w-48 p-3 bg-surface-container-lowest dark:bg-inverse-surface rounded-xl shadow-lg border border-outline-variant/60 dark:border-outline" id="filterStatus">
+<span class="font-label-sm text-label-sm text-outline mb-2 block">وضعیت:</span>
+<div class="space-y-1.5 text-body-sm">
+<label class="flex items-center gap-2"><input checked="" class="rounded text-primary-container" type="checkbox"> همه</label>
+<label class="flex items-center gap-2"><input class="rounded text-primary-container" type="checkbox"> تسویه کامل</label>
+<label class="flex items-center gap-2"><input class="rounded text-primary-container" type="checkbox"> در جریان</label>
+<label class="flex items-center gap-2"><input class="rounded text-primary-container" type="checkbox"> معوقه</label>
+<label class="flex items-center gap-2"><input class="rounded text-primary-container" type="checkbox"> سررسید امروز</label>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/30 flex justify-end">
+<button class="px-2 py-1 text-label-sm bg-primary-container text-on-primary rounded" onclick="toggleFilterDropdown('filterStatus')">اعمال</button>
+</div>
+</div>
+</th>
+<!-- Actions (Sticky to left) -->
+<th class="py-3 px-4 text-center">
+<span class="">عملیات</span>
+</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 font-body-md text-body-md text-on-surface dark:text-inverse-on-surface">
+{% for tx in fc_transactions %}
+<tr class="hover:bg-surface-container-low dark:hover:bg-inverse-surface/60 transition-colors">
+<td class="py-3 px-4 whitespace-nowrap font-tabular-num text-on-surface-variant dark:text-outline-variant text-body-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span>{{ tx.created_at|date:"Y/m/d H:i" }}</span>
+</div>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface-variant dark:text-outline-variant text-body-sm">
+{{ tx.tx_type }}
+</td>
+<td class="py-3 px-4">
+<div class="font-title-md text-on-surface dark:text-inverse-on-surface">{{ tx.note }}</div>
+<div class="text-label-sm text-on-surface-variant dark:text-outline-variant">{{ tx.reference }}</div>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface dark:text-inverse-on-surface">
+<span class="font-bold text-{% if tx.amount > 0 %}emerald-600 dark:text-emerald-400{% else %}rose-600 dark:text-rose-400{% endif %}">
+{% if tx.amount > 0 %}+{% endif %}{{ tx.amount|floatformat:"-0" }}
+</span>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-body-sm text-on-surface-variant dark:text-outline-variant">
+<button class="text-primary dark:text-blue-400 hover:underline text-body-sm" title="مشاهده جزئیات">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+</button>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="6" class="text-center py-8 text-[#64748b] dark:text-[#94a3b8]">هیچ تراکنشی ثبت نشده است.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="p-3.5 bg-surface-container-low dark:bg-inverse-surface/50 border-t border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-body-sm text-outline">
+<div class="flex items-center gap-2">
+<span class="">نمایش ردیف ۱ تا ۴ از مجموع ۵۶ سند</span>
+<span class="text-outline-variant">|</span>
+<label class="flex items-center gap-1">
+<span class="">تعداد در صفحه:</span>
+<select class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/40 rounded px-2 py-0.5 text-on-surface text-label-sm">
+<option>۱۰</option>
+<option>۲۵</option>
+<option>۵۰</option>
+</select>
+</label>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded border border-outline-variant/40 bg-surface-container-lowest dark:bg-inverse-surface hover:bg-surface-container transition-colors disabled:opacity-50" disabled="">قبلی</button>
+<button class="px-3 py-1 rounded bg-primary-container text-on-primary font-bold text-label-sm">۱</button>
+<button class="px-3 py-1 rounded border border-outline-variant/40 bg-surface-container-lowest dark:bg-inverse-surface hover:bg-surface-container transition-colors">۲</button>
+<button class="px-3 py-1 rounded border border-outline-variant/40 bg-surface-container-lowest dark:bg-inverse-surface hover:bg-surface-container transition-colors">۳</button>
+<button class="px-2.5 py-1 rounded border border-outline-variant/40 bg-surface-container-lowest dark:bg-inverse-surface hover:bg-surface-container transition-colors">بعدی</button>
+</div>
+</div>
+</section>
+<!-- 7. QUICK EXPENSE ENTRY FORM (بخش و فرم ثبت سریع هزینه سازمان) -->
+<section class="bg-surface-container-lowest dark:bg-inverse-surface/40 p-5 rounded-xl border border-outline-variant/40 shadow-sm space-y-4" id="quickExpenseSection">
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="post_add">post_add</span>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface">
+              ثبت سریع هزینه و خروج نقدینگی سازمان
+            </h2>
+<p class="font-body-sm text-body-sm text-outline">
+              ثبت بی‌درنگ تنخواه‌گردان، قبوض اداری، حمل و نقل، حقوق و تسویه روزانه با صدور خودکار سند حسابداری
+            </p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-secondary bg-secondary-container/20 px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-label-sm" data-icon="verified">verified</span>
+          اتصال خودکار به ماژول حسابداری دوبل
+        </span>
+</div>
+<!-- Expense Form Fields -->
+<form class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4" id="expenseForm" onsubmit="handleExpenseSubmit(event)">
+<!-- Field 1: Category -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface">دسته‌بندی هزینه *</label>
+<select class="w-full h-10 px-3 text-body-sm rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" required="">
+<option value="">انتخاب سرفصل...</option>
+<option value="rent">اجاره و شارژ دفتر مرکزی</option>
+<option value="payroll">حقوق، دستمزد و مزایا</option>
+<option value="logistics">حمل و نقل و باربری کالا</option>
+<option value="marketing">بازاریابی و تبلیغات دیجیتال</option>
+<option value="office">ملزومات و مصرفی اداری</option>
+<option value="bills">قبوض آب، برق، گاز و اینترنت</option>
+</select>
+</div>
+<!-- Field 2: Amount (Toman) -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface">مبلغ هزینه (تومان) *</label>
+<div class="relative">
+<input class="w-full h-10 pl-12 pr-3 text-body-sm rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 tabular-num-font" placeholder="مثال: ۱۲,۵۰۰,۰۰۰" required="" type="text">
+<span class="absolute left-3 top-2.5 text-label-sm text-outline">تومان</span>
+</div>
+</div>
+<!-- Field 3: Bank Account / Vault -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface">حساب بانکی یا صندوق مبدأ *</label>
+<select class="w-full h-10 px-3 text-body-sm rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" required="">
+<option value="mellat">جاری بانک ملت (۴۹۳۲)</option>
+<option value="saman">تجاری بانک سامان (درگاه)</option>
+<option value="vault">صندوق مرکزی و تنخواه</option>
+<option value="foreign">حساب ارزی صرافی (درهم)</option>
+</select>
+</div>
+<!-- Field 4: Persian Date -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface">تاریخ ثبت هزینه *</label>
+<div class="relative">
+<input class="w-full h-10 pr-9 pl-3 text-body-sm rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 tabular-num-font" type="text" value="۱۴۰۳/۰۸/۱۵">
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-outline" data-icon="calendar_today">calendar_today</span>
+</div>
+</div>
+<!-- Field 5: Cost Center -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface">مرکز هزینه / دپارتمان</label>
+<select class="w-full h-10 px-3 text-body-sm rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-inverse-on-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/20">
+<option value="hq">ستاد مرکزی و مدیریت</option>
+<option value="warehouse">انبار مرکزی تهران</option>
+<option value="sales">واحد فروش و بازرگانی</option>
+<option value="it">واحد فنی و زیرساخت IT</option>
+</select>
+</div>
+<!-- Field 6: Upload Invoice & Submit Action -->
+<div class="space-y-1.5 flex flex-col justify-end">
+<div class="flex items-center gap-2">
+<!-- File upload button -->
+<label class="flex-1 h-10 rounded-lg border border-dashed border-outline-variant/80 hover:border-primary flex items-center justify-center gap-1.5 cursor-pointer text-body-sm text-outline hover:text-primary transition-colors bg-surface-container-low dark:bg-inverse-surface">
+<span class="material-symbols-outlined text-body-sm" data-icon="attach_file">attach_file</span>
+<span class="font-label-sm text-label-sm">پیوست فاکتور</span>
+<input class="hidden" type="file">
+</label>
+<!-- Submit Button -->
+<button class="h-10 px-4 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-title-md text-title-md flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all" type="submit">
+<span class="material-symbols-outlined text-body-sm" data-icon="check">check</span>
+<span class="">ثبت سند</span>
+</button>
+</div>
+</div>
+</form>
+</section>
+</main>
+<!-- MODAL: BATCH PAYMENT MODAL (مودال پرداخت گروهی اسناد) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" id="batchPayModal">
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-xl border border-outline-variant/60 max-w-xl w-full p-5 space-y-4 shadow-xl">
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+<div class="flex items-center gap-2 text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined" data-icon="checklist">checklist</span>
+<h3 class="font-headline-md text-headline-md font-bold">پرداخت گروهی و صدور حواله پایا/ساتنا</h3>
+</div>
+<button class="text-outline hover:text-on-surface" onclick="closeModal('batchPayModal')">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="space-y-3 font-body-sm text-body-sm">
+<p class="text-on-surface-variant dark:text-outline-variant">
+          شما ۲ سند سررسید شده با مجموع مبلغ <strong class="text-primary tabular-num-font">۱۸۵,۰۰۰,۰۰۰ تومان</strong> را انتخاب کرده‌اید:
+        </p>
+<div class="p-3 rounded-lg bg-surface-container-low dark:bg-inverse-surface/80 space-y-2">
+<div class="flex justify-between items-center text-body-sm">
+<span class="">۱. پتروشیمی زاگرس (خرید مواد اولیه)</span>
+<span class="font-bold tabular-num-font">۱۵۰,۰۰۰,۰۰۰ تومان</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="">۲. سازمان تأمین اجتماعی (حق بیمه آبان)</span>
+<span class="font-bold tabular-num-font">۳۵,۰۰۰,۰۰۰ تومان</span>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md">برداشت از حساب مبدأ:</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface">
+<option>حساب جاری اصلی بانک ملت (موجودی: ۱,۴۲۰,۵۰۰,۰۰۰ تومان)</option>
+<option>حساب تجاری بانک سامان (موجودی: ۸۹۰,۳۰۰,۰۰۰ تومان)</option>
+</select>
+</div>
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md">نوع انتقال:</label>
+<div class="flex items-center gap-4">
+<label class="flex items-center gap-1.5"><input checked="" class="text-primary-container" name="transferType" type="radio"> حواله پایا (چرخه بعدی)</label>
+<label class="flex items-center gap-1.5"><input class="text-primary-container" name="transferType" type="radio"> حواله فوری ساتنا</label>
+</div>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex items-center justify-end gap-2">
+<button class="px-4 py-2 rounded-lg border border-outline-variant/60 text-outline hover:bg-surface-container-low font-label-md" onclick="closeModal('batchPayModal')">
+          انصراف
+        </button>
+<button class="px-5 py-2 rounded-lg bg-primary-container text-on-primary font-title-md hover:bg-primary shadow-sm" onclick="confirmBatchPay()">
+          تأیید نهایی و ارسال به درگاه بانکی
+        </button>
+</div>
+</div>
+</div>
+<!-- MODAL: RECORD PAYMENT MODAL (مودال ثبت تکی وصول/پرداخت) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" id="recordPaymentModal">
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-xl border border-outline-variant/60 max-w-md w-full p-5 space-y-4 shadow-xl">
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
+<div class="flex items-center gap-2 text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined" data-icon="add_card">add_card</span>
+<h3 class="font-headline-md text-headline-md font-bold">ثبت تراکنش و تسویه سند</h3>
+</div>
+<button class="text-outline hover:text-on-surface" onclick="closeModal('recordPaymentModal')">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="space-y-3 font-body-sm text-body-sm">
+<div class="space-y-1">
+<label class="block font-label-md text-label-md">مبلغ واریز / برداشت (تومان):</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface tabular-num-font font-bold" type="text" value="۱۴۰,۰۰۰,۰۰۰">
+</div>
+<div class="space-y-1">
+<label class="block font-label-md text-label-md">روش تسویه:</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface">
+<option>واریز مستقیم به حساب / فیش نقدی</option>
+<option>پاس شدن چک بانکی</option>
+<option>دستگاه کارتخوان (POS)</option>
+<option>تهاتر با فاکتور خرید</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="block font-label-md text-label-md">شماره پیگیری / ارجاع بانکی:</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface" placeholder="مثال: ۸۹۰۲۳۴۱۱" type="text">
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex items-center justify-end gap-2">
+<button class="px-4 py-2 rounded-lg border border-outline-variant/60 text-outline hover:bg-surface-container-low font-label-md" onclick="closeModal('recordPaymentModal')">انصراف</button>
+<button class="px-5 py-2 rounded-lg bg-primary-container text-on-primary font-title-md hover:bg-primary shadow-sm" onclick="confirmRecordPayment()">ثبت قطعی در دفاتر</button>
+</div>
+</div>
+</div>
+<!-- INLINE JAVASCRIPT: Full Interaction, Dark Mode, Excel Filter Simulation, Modals -->
+<script>
+    // 1. Guaranteed Dark Mode Switcher Logic
+    function toggleTheme() {
+      const htmlEl = document.documentElement;
+      const themeText = document.getElementById('themeText');
+      const themeIcon = document.getElementById('themeIcon');
+      
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        localStorage.setItem('saas-theme', 'light');
+        if (themeText) themeText.textContent = 'حالت تاریک';
+        if (themeIcon) themeIcon.textContent = 'dark_mode';
+      } else {
+        htmlEl.classList.add('dark');
+        localStorage.setItem('saas-theme', 'dark');
+        if (themeText) themeText.textContent = 'حالت روز';
+        if (themeIcon) themeIcon.textContent = 'light_mode';
+      }
+    }
+
+    // Initialize user preferred theme
+    (function initTheme() {
+      const savedTheme = localStorage.getItem('saas-theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        const themeText = document.getElementById('themeText');
+        const themeIcon = document.getElementById('themeIcon');
+        if (themeText) themeText.textContent = 'حالت روز';
+        if (themeIcon) themeIcon.textContent = 'light_mode';
+      }
+    })();
+
+    // 2. Tab Navigation Switching
+    function switchTab(btn, tabId) {
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.className = 'tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-inverse-primary whitespace-nowrap transition-colors';
+      });
+      btn.className = 'tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-t-lg font-title-md text-title-md text-primary dark:text-inverse-primary border-b-2 border-primary-container dark:border-inverse-primary bg-surface-container-lowest dark:bg-inverse-surface/30 whitespace-nowrap transition-colors';
+    }
+
+    // 3. Scroll to quick expense form
+    function scrollToExpenseForm() {
+      const section = document.getElementById('quickExpenseSection');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+        section.classList.add('ring-2', 'ring-primary-container');
+        setTimeout(() => section.classList.remove('ring-2', 'ring-primary-container'), 1800);
+      }
+    }
+
+    // 4. Excel Header Filter Dropdown Toggle
+    function toggleFilterDropdown(dropdownId) {
+      const dropdown = document.getElementById(dropdownId);
+      if (!dropdown) return;
+      
+      // Close other dropdowns
+      ['filterParty', 'filterStatus'].forEach(id => {
+        if (id !== dropdownId) {
+          const el = document.getElementById(id);
+          if (el) el.classList.add('hidden');
+        }
+      });
+      dropdown.classList.toggle('hidden');
+    }
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('th')) {
+        const p = document.getElementById('filterParty');
+        const s = document.getElementById('filterStatus');
+        if (p) p.classList.add('hidden');
+        if (s) s.classList.add('hidden');
+      }
+    });
+
+    // 5. Table Quick Search
+    function filterTableSearch() {
+      const input = document.getElementById('tableSearch');
+      const filter = input.value.toLowerCase();
+      const rows = document.querySelectorAll('#financeTable tbody tr');
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+      });
+    }
+
+    function resetExcelFilters() {
+      const input = document.getElementById('tableSearch');
+      if (input) input.value = '';
+      const rows = document.querySelectorAll('#financeTable tbody tr');
+      rows.forEach(row => row.style.display = '');
+    }
+
+    // 6. Modals Control
+    function openModal(modalId) {
+      const m = document.getElementById(modalId);
+      if (m) m.classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+      const m = document.getElementById(modalId);
+      if (m) m.classList.add('hidden');
+    }
+
+    function confirmBatchPay() {
+      alert('دستور پرداخت گروهی صادر گردید و کد تأیید ارسال شد.');
+      closeModal('batchPayModal');
+    }
+
+    function confirmRecordPayment() {
+      alert('سند با موفقیت در دفاتر کل و معین به عنوان تسویه ثبت شد.');
+      closeModal('recordPaymentModal');
+    }
+
+    // 7. Form Handler
+    function handleExpenseSubmit(e) {
+      e.preventDefault();
+      alert('سند هزینه با موفقیت ثبت شد و از حساب بانکی کسر گردید.');
+      e.target.reset();
+    }
+
+    // 8. Export Simulation
+    function simulateExport() {
+      alert('فایل اکسل جامع اسناد دریافتنی، پرداختنی و دفاتر کل در حال آماده‌سازی و دانلود است...');
+    }
+  </script>
+
+
+
+{% endblock %}
