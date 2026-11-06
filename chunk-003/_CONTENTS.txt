@@ -1,0 +1,5 @@
+Contains:
+backend/apps/reports
+backend/apps/sales
+backend/apps/search
+backend/apps/settings_app
