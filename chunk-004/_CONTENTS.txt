@@ -1,0 +1,7 @@
+Contains:
+backend/config
+backend/manage.py
+backend/media
+backend/requirements.txt
+backend/seed.py
+backend/static
