@@ -1,0 +1,5 @@
+Contains:
+ui-design/pricing-discounts
+ui-design/product-create
+ui-design/product-form
+ui-design/product-list

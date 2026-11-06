@@ -1,0 +1,1082 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- PAGE WRAPPER (Designed for direct embed in Master Layout) -->
+<div class="] space-y-6">
+<!-- 1. HEADER SECTION (Actions & Mode Switcher) -->
+<header class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-outline-variant/40 dark:border-slate-800">
+<div class="space-y-1">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container/10 dark:bg-primary/20 text-primary dark:text-inverse-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">query_stats</span>
+</div>
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface dark:text-white tracking-tight">
+              ۱۷. گزارش فروش ماهیانه و تحلیل سودآوری
+            </h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-slate-400">
+              سامانه جامع سازمانی • تحلیل پویای درآمد ناخالص، بهای تمام‌شده و نرخ بازگشت سرمایه دوره مالی
+            </p>
+</div>
+</div>
+</div>
+<!-- Action Cluster -->
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- Export Dropdown / Button -->
+<div class="relative group">
+<button class="h-10 px-4 rounded-lg border border-outline-variant/60 dark:border-slate-700 bg-surface-container-lowest dark:bg-slate-900 text-on-surface dark:text-slate-200 hover:bg-surface-container-low dark:hover:bg-slate-800 flex items-center gap-2 transition-all active:scale-95 shadow-sm font-title-md text-title-md" type="button">
+<span class="material-symbols-outlined text-[20px] text-secondary">file_download</span>
+<span>خروجی اکسل / PDF</span>
+<span class="material-symbols-outlined text-[18px] text-outline">expand_more</span>
+</button>
+<div class="absolute left-0 mt-1.5 w-44 rounded-xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 p-1.5 space-y-1">
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-body-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-200" href="#">
+<span class="material-symbols-outlined text-[18px] text-emerald-600">table_view</span>
+<span>خروجی Excel (.xlsx)</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-body-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-200" href="#">
+<span class="material-symbols-outlined text-[18px] text-rose-600">picture_as_pdf</span>
+<span>گزارش چاپی PDF</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-body-sm hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-200" href="#">
+<span class="material-symbols-outlined text-[18px] text-blue-600">csv</span>
+<span>خروجی خام CSV</span>
+</a>
+</div>
+</div>
+<!-- Official Print Action -->
+<button class="h-10 px-4 rounded-lg bg-primary-container text-white hover:bg-blue-700 flex items-center gap-2 transition-all active:scale-95 shadow-sm font-title-md text-title-md" onclick="window.print()" type="button">
+<span class="material-symbols-outlined text-[20px]">print</span>
+<span>چاپ گزارش رسمی</span>
+</button>
+</div>
+</header>
+<!-- 2. STICKY FILTER BAR -->
+<section class="lg:sticky lg:top-16 z-20 bg-surface-container-lowest/95 dark:bg-slate-900/95 backdrop-blur-md p-4 rounded-xl border border-outline-variant/50 dark:border-slate-800 shadow-sm transition-shadow hover:shadow">
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 items-end">
+<!-- Month Picker -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 mb-1">ماه محاسباتی</label>
+<div class="relative">
+<select class="w-full h-10 pr-9 pl-3 text-body-sm bg-surface-bright dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface dark:text-slate-200 transition-colors">
+<option selected="">آبان ۱۴۰۳ (دوره جاری)</option>
+<option>مهر ۱۴۰۳</option>
+<option>شهریور ۱۴۰۳</option>
+<option>مرداد ۱۴۰۳</option>
+<option>تیر ۱۴۰۳</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[20px] text-outline pointer-events-none">calendar_month</span>
+</div>
+</div>
+<!-- Custom Date Range -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 mb-1">بازه سفارشی تاریخ</label>
+<div class="relative">
+<input class="w-full h-10 pr-9 pl-3 text-body-sm bg-surface-bright dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface dark:text-slate-200 transition-colors" type="text" value="۱۴۰۳/۰۸/۰۱ الی ۱۴۰۳/۰۸/۳۰"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[20px] text-outline pointer-events-none">date_range</span>
+</div>
+</div>
+<!-- Branch -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 mb-1">شعبه سازمانی</label>
+<div class="relative">
+<select class="w-full h-10 pr-9 pl-3 text-body-sm bg-surface-bright dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface dark:text-slate-200 transition-colors">
+<option selected="">همه شعب (تجمیعی)</option>
+<option>شعبه مرکزی</option>
+<option>شعبه غرب</option>
+<option>مرکز پخش آنلاین</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[20px] text-outline pointer-events-none">store</span>
+</div>
+</div>
+<!-- Salesperson -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 mb-1">فروشنده / ویزیتور</label>
+<div class="relative">
+<select class="w-full h-10 pr-9 pl-3 text-body-sm bg-surface-bright dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface dark:text-slate-200 transition-colors">
+<option selected="">تمامی ویزیتورها</option>
+<option>مهندس شریفی (تیم A)</option>
+<option>خانم رضوانی (شعبه غرب)</option>
+<option>آقای کریمی (آنلاین)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[20px] text-outline pointer-events-none">badge</span>
+</div>
+</div>
+<!-- Category -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 mb-1">دسته‌بندی کالا</label>
+<div class="relative">
+<select class="w-full h-10 pr-9 pl-3 text-body-sm bg-surface-bright dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface dark:text-slate-200 transition-colors">
+<option selected="">تمامی رده‌ها</option>
+<option>مواد غذایی و اساسی</option>
+<option>شوینده و بهداشتی</option>
+<option>خشکبار و تنقلات</option>
+<option>نوشیدنی‌ها</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[20px] text-outline pointer-events-none">category</span>
+</div>
+</div>
+<!-- Sales Channel -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 mb-1">کانال فروش</label>
+<div class="relative">
+<select class="w-full h-10 pr-9 pl-3 text-body-sm bg-surface-bright dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface dark:text-slate-200 transition-colors">
+<option selected="">همه کانال‌ها</option>
+<option>فروشگاهی POS حضوری</option>
+<option>سفارش تلفنی و مویرگی</option>
+<option>درگاه آنلاین B2B</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[20px] text-outline pointer-events-none">devices</span>
+</div>
+</div>
+<!-- Customer Segment -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 mb-1">نوع مشتری</label>
+<div class="relative">
+<select class="w-full h-10 pr-9 pl-3 text-body-sm bg-surface-bright dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-on-surface dark:text-slate-200 transition-colors">
+<option selected="">همه انواع طرف حساب</option>
+<option>حقیقی (عمومی)</option>
+<option>حقوقی (شرکتی)</option>
+<option>همکار VIP (عمده)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[20px] text-outline pointer-events-none">groups</span>
+</div>
+</div>
+</div>
+<!-- Filter footer row / Quick indicators -->
+<div class="mt-3 pt-3 border-t border-outline-variant/30 dark:border-slate-800 flex flex-wrap items-center justify-between text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 gap-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>داده‌های مالی آنلاین و همگام با دیتابیس مرکزی (آخرین به‌روزرسانی: امروز ساعت ۱۸:۴۵)</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="text-primary dark:text-inverse-primary hover:underline flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+<span>بازنشانی فیلترها</span>
+</button>
+<span class="text-outline/40">|</span>
+<span class="text-on-surface dark:text-slate-300 font-medium">نمایش نتایج برای ۳۰ روز کاری آبان</span>
+</div>
+</div>
+</section>
+<!-- 3. KPI CARDS (Robust responsive grid, no overflow, deep dark mode support) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+<!-- KPI 1: Gross Sales -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400">
+<span class="font-title-md text-title-md">فروش ناخالص</span>
+<span class="material-symbols-outlined text-primary text-[20px]">payments</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-1 text-on-surface dark:text-white">
+<span class="text-2xl font-black font-tabular-num tracking-tight">{{ sr_total_sales|floatformat:"-0" }}</span>
+<span class="text-label-sm font-label-sm text-outline">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/20 dark:border-slate-800/80 text-label-sm">
+<span class="inline-flex items-center gap-0.5 text-emerald-600 dark:text-emerald-400 font-semibold dir-ltr">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+            +۱۶.۴٪
+          </span>
+<span class="text-outline">نسبت به ماه قبل</span>
+</div>
+</div>
+<!-- KPI 2: Discounts -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-amber-500/50 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400">
+<span class="font-title-md text-title-md">مجموع تخفیفات</span>
+<span class="material-symbols-outlined text-amber-500 text-[20px]">percent</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-1 text-on-surface dark:text-white">
+<span class="text-2xl font-black font-tabular-num tracking-tight">{{ sr_total_discount|floatformat:"-0" }}</span>
+<span class="text-label-sm font-label-sm text-outline">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/20 dark:border-slate-800/80 text-label-sm">
+<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 font-semibold font-tabular-num">
+            ۵.۹٪ از کل فروش
+          </span>
+<span class="text-outline">کمپین‌های فصلی</span>
+</div>
+</div>
+<!-- KPI 3: Returns -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-rose-500/50 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400">
+<span class="font-title-md text-title-md">مرجوعی‌ها</span>
+<span class="material-symbols-outlined text-rose-500 text-[20px]">assignment_return</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-1 text-on-surface dark:text-white">
+<span class="text-2xl font-black font-tabular-num tracking-tight">{{ sr_total_returns|floatformat:"-0" }}</span>
+<span class="text-label-sm font-label-sm text-outline">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/20 dark:border-slate-800/80 text-label-sm">
+<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 font-semibold font-tabular-num">
+            ۱.۵٪ نرخ مرجوع
+          </span>
+<span class="text-outline">محدوده ایمن</span>
+</div>
+</div>
+<!-- KPI 4: Net Sales -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-emerald-500/50 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400">
+<span class="font-title-md text-title-md">فروش خالص</span>
+<span class="material-symbols-outlined text-emerald-600 text-[20px]">account_balance_wallet</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-1 text-on-surface dark:text-white">
+<span class="text-2xl font-black font-tabular-num tracking-tight text-emerald-700 dark:text-emerald-400">{{ sr_net_sales|floatformat:"-0" }}</span>
+<span class="text-label-sm font-label-sm text-outline">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/20 dark:border-slate-800/80 text-label-sm">
+<span class="inline-flex items-center gap-0.5 text-emerald-600 dark:text-emerald-400 font-semibold dir-ltr">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+            +۱۵.۲٪
+          </span>
+<span class="text-outline">رشد واقعی ماهانه</span>
+</div>
+</div>
+<!-- KPI 5: Gross Profit -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-blue-500/50 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400">
+<span class="font-title-md text-title-md">سود ناخالص</span>
+<span class="material-symbols-outlined text-primary-container text-[20px]">savings</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-1 text-on-surface dark:text-white">
+<span class="text-2xl font-black font-tabular-num tracking-tight text-blue-700 dark:text-blue-400">{{ sr_gross_profit|floatformat:"-0" }}</span>
+<span class="text-label-sm font-label-sm text-outline">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/20 dark:border-slate-800/80 text-label-sm">
+<span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 font-semibold font-tabular-num">
+            حاشیه سود: ۳۷.۶٪
+          </span>
+<span class="text-outline">افزایش ۲.۱٪</span>
+</div>
+</div>
+<!-- KPI 6: Invoice Count -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:border-purple-500/50 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400">
+<span class="font-title-md text-title-md">تعداد فاکتورها</span>
+<span class="material-symbols-outlined text-purple-600 text-[20px]">receipt_long</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline gap-1 text-on-surface dark:text-white">
+<span class="text-2xl font-black font-tabular-num tracking-tight">{{ sr_invoice_count }}</span>
+<span class="text-label-sm font-label-sm text-outline">فقره</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/20 dark:border-slate-800/80 text-label-sm">
+<span class="text-on-surface-variant dark:text-slate-300 font-medium">
+            میانگین: <span class="font-tabular-num font-bold">۲,۳۴۰,۰۰۰</span> تومان
+          </span>
+<span class="text-outline">سبد خرید</span>
+</div>
+</div>
+</section>
+<!-- 4. ANALYTICAL CHARTS SECTION (Rich SVG Visualizations) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+<!-- Chart A: Daily Sales Trend Line Chart (8 cols) -->
+<div class="lg:col-span-8 p-5 rounded-2xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-white flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+              روند روزانه فروش آبان در مقایسه با مهر
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-slate-400">
+              ارزیابی ۳۰ روزه عملکرد فروش ناخالص روزانه بر حسب میلیون تومان
+            </p>
+</div>
+<!-- Legend -->
+<div class="flex items-center gap-4 text-label-md font-label-md">
+<div class="flex items-center gap-1.5">
+<span class="w-3.5 h-3.5 rounded-md bg-blue-600"></span>
+<span class="text-on-surface dark:text-slate-300">ماه جاری (آبان)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3.5 h-1 border-t-2 border-dashed border-slate-400"></span>
+<span class="text-outline dark:text-slate-400">ماه گذشته (مهر)</span>
+</div>
+</div>
+</div>
+<!-- SVG Line Trend Chart -->
+<div class="w-full overflow-x-auto">
+<div class="min-w-[620px] h-72 relative">
+<svg class="w-full h-full overflow-visible" viewbox="0 0 700 240">
+<defs>
+<lineargradient id="blueGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#2563eb" stop-opacity="0.32"></stop>
+<stop offset="100%" stop-color="#2563eb" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid Lines -->
+<line class="text-slate-200 dark:text-slate-800" stroke="currentColor" stroke-dasharray="3 3" x1="40" x2="680" y1="30" y2="30"></line>
+<line class="text-slate-200 dark:text-slate-800" stroke="currentColor" stroke-dasharray="3 3" x1="40" x2="680" y1="80" y2="80"></line>
+<line class="text-slate-200 dark:text-slate-800" stroke="currentColor" stroke-dasharray="3 3" x1="40" x2="680" y1="130" y2="130"></line>
+<line class="text-slate-200 dark:text-slate-800" stroke="currentColor" x1="40" x2="680" y1="180" y2="180"></line>
+<!-- Y-Axis Labels -->
+<text class="text-[10px] fill-slate-400 font-tabular-num" text-anchor="end" x="30" y="34">۲۵۰ م</text>
+<text class="text-[10px] fill-slate-400 font-tabular-num" text-anchor="end" x="30" y="84">۱۸۰ م</text>
+<text class="text-[10px] fill-slate-400 font-tabular-num" text-anchor="end" x="30" y="134">۱۰۰ م</text>
+<text class="text-[10px] fill-slate-400 font-tabular-num" text-anchor="end" x="30" y="184">۰</text>
+<!-- Previous Month Dashed Path -->
+<path d="M 50 155 Q 110 130 160 145 T 260 125 T 360 140 T 470 110 T 570 120 T 670 95" fill="none" opacity="0.75" stroke="#94a3b8" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- Current Month Area & Line -->
+<path d="M 50 140 Q 110 100 160 115 T 260 85 T 360 95 T 470 50 T 570 65 T 670 40 L 670 180 L 50 180 Z" fill="url(#blueGradient)"></path>
+<path d="M 50 140 Q 110 100 160 115 T 260 85 T 360 95 T 470 50 T 570 65 T 670 40" fill="none" stroke="#2563eb" stroke-linecap="round" stroke-width="3"></path>
+<!-- Peak Tooltip Pin at Day 22 -->
+<g transform="translate(470, 50)">
+<circle class="animate-ping opacity-75" fill="#2563eb" r="5" stroke="#ffffff" stroke-width="2"></circle>
+<circle fill="#2563eb" r="4.5" stroke="#ffffff" stroke-width="2"></circle>
+<!-- Tooltip Box -->
+<rect class="fill-slate-900 dark:fill-slate-800 text-white" height="26" rx="6" width="90" x="-45" y="-36"></rect>
+<polygon class="fill-slate-900 dark:fill-slate-800" points="0,-10 -5,-15 5,-15"></polygon>
+<text class="text-[11px] font-bold font-tabular-num" fill="#ffffff" text-anchor="middle" x="0" y="-19">۲۲ آبان: ۲۱۴ م</text>
+</g>
+<!-- X-Axis Labels -->
+<text class="text-[11px] fill-slate-400 font-tabular-num" text-anchor="middle" x="50" y="202">۱ آبان</text>
+<text class="text-[11px] fill-slate-400 font-tabular-num" text-anchor="middle" x="160" y="202">۶ آبان</text>
+<text class="text-[11px] fill-slate-400 font-tabular-num" text-anchor="middle" x="260" y="202">۱۲ آبان</text>
+<text class="text-[11px] fill-slate-400 font-tabular-num" text-anchor="middle" x="360" y="202">۱۸ آبان</text>
+<text class="text-[11px] fill-slate-400 font-tabular-num" text-anchor="middle" x="470" y="202">۲۴ آبان</text>
+<text class="text-[11px] fill-slate-400 font-tabular-num" text-anchor="middle" x="570" y="202">۲۸ آبان</text>
+<text class="text-[11px] fill-slate-400 font-tabular-num ۳۰" text-anchor="middle" x="670" y="202">۳۰ آبان</text>
+</svg>
+</div>
+</div>
+<div class="mt-3 pt-3 border-t border-outline-variant/30 dark:border-slate-800 flex items-center justify-between text-label-md font-label-md">
+<div class="flex items-center gap-2 text-on-surface-variant dark:text-slate-400">
+<span class="material-symbols-outlined text-[18px] text-primary">event_available</span>
+<span>بیشترین حجم فروش دوره در روزهای ۲۱ تا ۲۳ آبان (کمپین تخفیف میانه ماه) رقم خورده است.</span>
+</div>
+<span class="text-emerald-600 dark:text-emerald-400 font-bold font-tabular-num">+۱۸.۲٪ بالاتر از رکورد مهر</span>
+</div>
+</div>
+<!-- Chart B: Donut Payment Breakdown (4 cols) -->
+<div class="lg:col-span-4 p-5 rounded-2xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-white">روش‌های تسویه حساب</h3>
+<span class="material-symbols-outlined text-outline text-[20px]">pie_chart</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-slate-400 mb-4">
+            سهم درصدی ابزارهای دریافت از کل تراکنش‌ها
+          </p>
+<!-- SVG Donut Chart -->
+<div class="flex items-center justify-center my-3 relative">
+<svg class="w-44 h-44 -rotate-90" viewbox="0 0 160 160">
+<!-- Background Ring -->
+<circle class="stroke-slate-100 dark:stroke-slate-800 fill-none" cx="80" cy="80" r="60" stroke-width="22"></circle>
+<!-- POS (48%) -> stroke-dasharray="180.9 377" -->
+<circle class="fill-none" cx="80" cy="80" r="60" stroke="#2563eb" stroke-dasharray="181 377" stroke-dashoffset="0" stroke-width="22"></circle>
+<!-- Cheque (26%) -> 98 -->
+<circle class="fill-none" cx="80" cy="80" r="60" stroke="#10b981" stroke-dasharray="98 377" stroke-dashoffset="-181" stroke-width="22"></circle>
+<!-- Credit (16%) -> 60 -->
+<circle class="fill-none" cx="80" cy="80" r="60" stroke="#f59e0b" stroke-dasharray="60 377" stroke-dashoffset="-279" stroke-width="22"></circle>
+<!-- Cash (10%) -> 38 -->
+<circle class="fill-none" cx="80" cy="80" r="60" stroke="#8b5cf6" stroke-dasharray="38 377" stroke-dashoffset="-339" stroke-width="22"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+<span class="text-xs text-outline dark:text-slate-400">کل دریافتی</span>
+<span class="text-lg font-black font-tabular-num text-on-surface dark:text-white">۵.۴۲ ه.م</span>
+<span class="text-[10px] text-emerald-600 font-bold">تسویه ۹۱٪</span>
+</div>
+</div>
+</div>
+<!-- Donut Legend & Values -->
+<div class="space-y-2 pt-3 border-t border-outline-variant/30 dark:border-slate-800 text-label-md">
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-1.5 text-on-surface dark:text-slate-300">
+<span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+              دستگاه پوز فروشگاهی
+            </span>
+<span class="font-tabular-num font-bold text-on-surface dark:text-slate-200">۴۸٪ (۲,۶۰۱ م)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-1.5 text-on-surface dark:text-slate-300">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              چک صیادی معتبر
+            </span>
+<span class="font-tabular-num font-bold text-on-surface dark:text-slate-200">۲۶٪ (۱,۴۰۹ م)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-1.5 text-on-surface dark:text-slate-300">
+<span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              اعتباری / نسیه همکار
+            </span>
+<span class="font-tabular-num font-bold text-on-surface dark:text-slate-200">۱۶٪ (۸۶۷ م)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-1.5 text-on-surface dark:text-slate-300">
+<span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+              واریز نقدی و کارت
+            </span>
+<span class="font-tabular-num font-bold text-on-surface dark:text-slate-200">۱۰٪ (۵۴۳ م)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 4.1 BOTTOM CHARTS: CATEGORY PROFITABILITY & SALES HEATMAP -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+<!-- Chart C: Category Profitability Bar Chart (6 cols) -->
+<div class="lg:col-span-6 p-5 rounded-2xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-white">سودآوری به تفکیک دسته‌بندی کالاها</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-slate-400">مقایسه حجم فروش ناخالص در برابر سود واقعی هر گروه</p>
+</div>
+<span class="material-symbols-outlined text-outline">bar_chart</span>
+</div>
+<div class="space-y-4 my-2">
+{% for cat in sr_cat_sales %}
+<div class="space-y-1.5">
+<div class="flex justify-between text-body-sm font-medium">
+<span class="text-on-surface dark:text-slate-200">{{ cat.name }}</span>
+<div class="flex gap-3 text-label-md font-tabular-num">
+<span class="text-primary font-bold">فروش: {{ cat.sales|floatformat:"-0" }} م</span>
+<span class="text-emerald-600 dark:text-emerald-400 font-bold">سود: {{ cat.profit|floatformat:"-0" }} م ({{ cat.margin_pct }}٪)</span>
+</div>
+</div>
+<div class="w-full h-3 bg-surface-container dark:bg-slate-800 rounded-full overflow-hidden flex">
+<div class="h-full bg-blue-600 rounded-r-full" style="width: {{ cat.margin_pct }}%"></div>
+<div class="h-full bg-emerald-500 rounded-l-full" style="width: {{ cat.bg_pct }}%"></div>
+</div>
+</div>
+{% endfor %}
+</div>
+<div class="pt-3 border-t border-outline-variant/30 dark:border-slate-800 flex items-center justify-between text-label-sm font-label-sm text-outline">
+<span class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded bg-emerald-500"></span>
+            بیشترین حاشیه سود متعلق به دسته «خشکبار و تنقلات» با ۴۵٪ مارجین خالص است.
+          </span>
+</div>
+</div>
+<!-- Chart D: Heatmap: Peak Sales Hours & Days (6 cols) -->
+<div class="lg:col-span-6 p-5 rounded-2xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-white">نقشه حرارتی تراکم فروش (Heatmap)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-slate-400">توزیع تراکم تراکنش‌ها در ساعات شبانه‌روز و روزهای هفته</p>
+</div>
+<div class="flex items-center gap-1 text-[11px] text-outline">
+<span>کم</span>
+<div class="flex gap-0.5">
+<span class="w-2.5 h-2.5 rounded-sm bg-blue-100 dark:bg-slate-800"></span>
+<span class="w-2.5 h-2.5 rounded-sm bg-blue-300 dark:bg-blue-900"></span>
+<span class="w-2.5 h-2.5 rounded-sm bg-blue-500 dark:bg-blue-700"></span>
+<span class="w-2.5 h-2.5 rounded-sm bg-blue-700 dark:bg-blue-500"></span>
+</div>
+<span>اوج</span>
+</div>
+</div>
+<!-- Heatmap Grid -->
+<div class="overflow-x-auto">
+<table class="w-full text-center border-separate border-spacing-1.5">
+<thead>
+<tr class="text-label-sm text-outline dark:text-slate-400 font-tabular-num">
+<th class="text-right pr-1 font-normal">روز</th>
+<th class="py-1">۸-۱۰</th>
+<th class="py-1 font-bold text-primary dark:text-blue-400 bg-blue-50/50 dark:bg-slate-800/40 rounded">۱۱-۱۳</th>
+<th class="py-1">۱۴-۱۶</th>
+<th class="py-1 font-bold text-primary dark:text-blue-400 bg-blue-50/50 dark:bg-slate-800/40 rounded">۱۷-۲۰</th>
+<th class="py-1">۲۱-۲۳</th>
+</tr>
+</thead>
+<tbody class="text-xs font-tabular-num">
+{% for inv in sr_invoices %}
+<tr>
+<td class="text-right font-medium text-on-surface dark:text-slate-300 pr-1">{{ inv.invoice_date }}</td>
+<td class="text-right font-medium text-on-surface dark:text-slate-300">{{ inv.invoice_no }}</td>
+<td class="text-right font-medium text-on-surface dark:text-slate-300">{{ inv.customer__name }}</td>
+<td class="text-right font-tabular-num text-on-surface dark:text-slate-200 font-bold">{{ inv.total|floatformat:"-0" }}</td>
+<td class="text-right font-tabular-num text-on-surface dark:text-slate-200 font-bold">{{ inv.customer__phone }}</td>
+<td class="p-3.5 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-{% if inv.payment_status == 'paid' %}emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300{% elif inv.payment_status == 'partial' %}amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300{% else %}rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300{% endif %} font-medium">
+{{ inv.payment_status }}
+</span>
+</td>
+<td class="p-3.5 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-{% if inv.status == 'paid' %}emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300{% elif inv.status == 'pending' %}amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300{% else %}rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300{% endif %}">
+{{ inv.status }}
+</span>
+</td>
+<td class="p-3.5 text-center">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]" title="مشاهده فاکتور">
+<span class="material-symbols-outlined text-[18px]" data-icon="receipt_long">receipt_long</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]" title="چاپ">
+<span class="material-symbols-outlined text-[18px]" data-icon="print">print</span>
+</button>
+</div>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="9" class="text-center py-8 text-[#64748b] dark:text-[#94a3b8]">هیچ فاکتور وجود ندارد.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 dark:border-slate-800 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400">
+<span class="flex items-center gap-1 text-primary dark:text-blue-400 font-medium">
+<span class="material-symbols-outlined text-[16px]">alarm</span>
+            پیک اول: ۱۱ تا ۱۳ ظهر • پیک دوم: ۱۷ تا ۲۰ عصر (بهترین زمان برای ارسال پیامک تبلیغاتی)
+          </span>
+</div>
+</div>
+</div>
+<!-- 5. TOP 10 BEST-SELLING PRODUCTS TABLE (With Excel-style filters) -->
+<section class="p-5 rounded-2xl bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/50 dark:border-slate-800 shadow-sm space-y-4">
+<!-- Table Header & Controls -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">leaderboard</span>
+            ۱۰ محصول پرفروش و سودآور دوره (تحلیل ماتریس کالاها)
+          </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-slate-400">
+            رتبه‌بندی محصولات بر اساس ارزش نقدینگی، سود حاشیه‌ای و سهم از کل فروش
+          </p>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<input class="h-9 pr-8 pl-3 text-body-sm bg-surface-bright dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 rounded-lg text-on-surface dark:text-slate-200 focus:ring-1 focus:ring-primary w-56" placeholder="جستجوی سریع کالا یا بارکد..." type="text"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-[18px] text-outline">search</span>
+</div>
+<button class="h-9 px-3 border border-outline-variant/60 dark:border-slate-700 rounded-lg text-body-sm text-on-surface dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 flex items-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+<span>فیلترهای پیشرفته</span>
+</button>
+</div>
+</div>
+<!-- Responsive Table Container -->
+<div class="overflow-x-auto rounded-xl border border-outline-variant/40 dark:border-slate-800">
+<table class="w-full text-right border-collapse text-body-sm">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/90 text-on-surface-variant dark:text-slate-300 font-title-md border-b border-outline-variant/40 dark:border-slate-700 whitespace-nowrap">
+<th class="py-3 px-3 w-12 text-center">#</th>
+<th class="py-3 px-4">
+<div class="flex items-center gap-1">
+<span>نام کالا و برند</span>
+<span class="material-symbols-outlined text-[14px] text-outline cursor-pointer hover:text-primary">unfold_more</span>
+</div>
+</th>
+<th class="py-3 px-3">کد کالا (SKU)</th>
+<th class="py-3 px-3">
+<div class="flex items-center gap-1">
+<span>دسته‌بندی</span>
+<span class="material-symbols-outlined text-[14px] text-outline cursor-pointer hover:text-primary">filter_alt</span>
+</div>
+</th>
+<th class="py-3 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<span>تعداد فروش</span>
+<span class="material-symbols-outlined text-[14px] text-outline cursor-pointer hover:text-primary">arrow_downward</span>
+</div>
+</th>
+<th class="py-3 px-4 text-left">مبلغ کل فروش (تومان)</th>
+<th class="py-3 px-4 text-left">بهای تمام‌شده</th>
+<th class="py-3 px-4 text-left text-emerald-700 dark:text-emerald-400">سود خالص</th>
+<th class="py-3 px-3 text-center">حاشیه سود</th>
+<th class="py-3 px-3 w-36">سهم از کل فروش</th>
+<th class="py-3 px-3 text-center">وضعیت انبار</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 dark:divide-slate-800 font-tabular-num">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۱</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-slate-800 flex items-center justify-center text-primary dark:text-blue-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">روغن سرخ‌کردنی شفاف ۲.۵ لیتری بهار</span>
+<span class="text-[11px] text-outline">کارتن ۶ عددی مصرفی</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-9021</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">مواد غذایی</span></td>
+<td class="py-3 px-3 text-center font-bold">۱,۲۴۰ عدد</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۳۸۴,۴۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۲۹۲,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۹۲,۴۰۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۲۴.۰٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 76%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۷.۶٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">موجود (۶۴۰)</span></td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۲</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-slate-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">پسته اکبری اعلا شور زعفرانی ۵۰۰ گرم</span>
+<span class="text-[11px] text-outline">بسته‌بندی صادراتی وکیوم</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-4412</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">خشکبار</span></td>
+<td class="py-3 px-3 text-center font-bold">۸۵۰ بسته</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۳۲۳,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۱۸۷,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۱۳۶,۰۰۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۴۲.۱٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 64%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۶.۴٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">رو به اتمام (۴۲)</span></td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۳</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-slate-800 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">مایع ظرفشویی ۴ لیتری لیمویی پریل</span>
+<span class="text-[11px] text-outline">گالن خانواده فرمول ضدچربی</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-3108</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">شوینده</span></td>
+<td class="py-3 px-3 text-center font-bold">۱,۱۲۰ گالن</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۲۶۸,۸۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۱۶۹,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۹۹,۸۰۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۳۷.۱٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 53%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۵.۳٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">موجود (۲۹۰)</span></td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۴</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-slate-800 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">برنج هاشمی درجه یک گیلان ۱۰ کیلوگرمی</span>
+<span class="text-[11px] text-outline">کیسه متقال اصیل معطر</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-1092</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">مواد غذایی</span></td>
+<td class="py-3 px-3 text-center font-bold">۲۴۰ کیسه</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۲۴۴,۸۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۱۹۸,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۴۶,۸۰۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۱۹.۱٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 48%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۴.۸٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">موجود (۱۵۰)</span></td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۵</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-sky-100 dark:bg-slate-800 flex items-center justify-center text-sky-600 dark:text-sky-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">پودر لباسشویی ماشینی اکتیو ۵۰۰ گرمی</span>
+<span class="text-[11px] text-outline">بسته ۲۴ عددی مسترکارتن</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-3329</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">شوینده</span></td>
+<td class="py-3 px-3 text-center font-bold">۲,۴۰۰ بسته</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۱۹۲,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۱۲۴,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۶۸,۰۰۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۳۵.۴٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 38%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۳.۸٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">موجود (۷۴۰)</span></td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۶</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-orange-100 dark:bg-slate-800 flex items-center justify-center text-orange-600 dark:text-orange-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">چای سیلان ارل‌گری قوطی فلزی ۴۵۰ گرمی</span>
+<span class="text-[11px] text-outline">برند دوغزال عطری اصل</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-7721</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">نوشیدنی‌ها</span></td>
+<td class="py-3 px-3 text-center font-bold">۶۲۰ قوطی</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۱۶۱,۲۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۱۱۶,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۴۵,۲۰۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۲۸.۰٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 32%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۳.۲٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">موجود (۱۸۰)</span></td>
+</tr>
+<!-- Row 7 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۷</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-teal-100 dark:bg-slate-800 flex items-center justify-center text-teal-600 dark:text-teal-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">قهوه دانه عربیکا ۱ کیلوگرمی کلمبیا</span>
+<span class="text-[11px] text-outline">مدیوم رست تخصصی</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-7750</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">نوشیدنی‌ها</span></td>
+<td class="py-3 px-3 text-center font-bold">۱۷۵ کیلو</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۱۴۸,۷۵۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۸۹,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۵۹,۷۵۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۴۰.۱٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 29%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۲.۹٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300">ناموجود / رزرو</span></td>
+</tr>
+<!-- Row 8 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۸</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-pink-100 dark:bg-slate-800 flex items-center justify-center text-pink-600 dark:text-pink-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">شامپو کراتینه ضدریزش ۵۰۰ میلی هیدرودرم</span>
+<span class="text-[11px] text-outline">بسته تکی آرایشی</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-3814</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">شوینده</span></td>
+<td class="py-3 px-3 text-center font-bold">۹۲۰ بطری</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۱۳۸,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۷۷,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۶۱,۰۰۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۴۴.۲٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 27%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۲.۷٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">موجود (۲۱۰)</span></td>
+</tr>
+<!-- Row 9 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۹</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-yellow-100 dark:bg-slate-800 flex items-center justify-center text-yellow-600 dark:text-yellow-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">مغز گردو درجه یک تویسرکان ۱ کیلوگرمی</span>
+<span class="text-[11px] text-outline">فسفوری تازه پوست کاغذی</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-4902</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">خشکبار</span></td>
+<td class="py-3 px-3 text-center font-bold">۲۱۰ کیلو</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۱۲۶,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۸۱,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۴۵,۰۰۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۳۵.۷٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 25%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۲.۵٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">رو به اتمام (۳۵)</span></td>
+</tr>
+<!-- Row 10 -->
+<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+<td class="py-3 px-3 text-center font-bold text-primary dark:text-blue-400">۱۰</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-red-100 dark:bg-slate-800 flex items-center justify-center text-red-600 dark:text-red-400 shrink-0">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div>
+<span class="font-bold text-on-surface dark:text-white block font-body-md">رب گوجه‌فرنگی ۸۰۰ گرمی ارگانیک روژین</span>
+<span class="text-[11px] text-outline">باکس ۱۲ عددی ایزی اوپن</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-outline">SKU-1823</td>
+<td class="py-3 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs">مواد غذایی</span></td>
+<td class="py-3 px-3 text-center font-bold">۱,۸۰۰ قوطی</td>
+<td class="py-3 px-4 text-left font-bold text-on-surface dark:text-white">۱۱۷,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left text-outline">۸۹,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-left font-bold text-emerald-600 dark:text-emerald-400">۲۸,۰۰۰,۰۰۰</td>
+<td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-xs font-bold">۲۳.۹٪</span></td>
+<td class="py-3 px-3">
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+<div class="bg-blue-600 h-2 rounded-full" style="width: 23%"></div>
+</div>
+<span class="text-[10px] text-outline block text-left mt-0.5">۲.۳٪ از کل</span>
+</td>
+<td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">موجود (۵۸۰)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination and Stats Footer -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-label-md font-label-md text-on-surface-variant dark:text-slate-400">
+<div class="flex items-center gap-2">
+<span>نمایش ۱۰ از ۱۸۴ قلم کالای فعال</span>
+<span class="text-outline/40">•</span>
+<span>مجموع سهم ۱۰ کاله برتر: <strong class="text-on-surface dark:text-white font-tabular-num">۴۱.۶٪</strong> از نقدینگی کل ماه</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg border border-outline-variant/60 dark:border-slate-700 flex items-center justify-center hover:bg-surface-container dark:hover:bg-slate-800 disabled:opacity-50" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+<span class="px-3 py-1 rounded-lg bg-primary-container text-white font-bold">۱</span>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container dark:hover:bg-slate-800 text-on-surface dark:text-slate-300" type="button">۲</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container dark:hover:bg-slate-800 text-on-surface dark:text-slate-300" type="button">۳</button>
+<span class="px-1 text-outline">...</span>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container dark:hover:bg-slate-800 text-on-surface dark:text-slate-300" type="button">۱۹</button>
+<button class="w-8 h-8 rounded-lg border border-outline-variant/60 dark:border-slate-700 flex items-center justify-center hover:bg-surface-container dark:hover:bg-slate-800" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 6. BUSINESS INTELLIGENCE & AI INSIGHTS MODULE -->
+<section class="p-5 rounded-2xl bg-gradient-to-br from-blue-900/10 via-surface-container-lowest to-indigo-900/10 dark:from-slate-900 dark:via-slate-900/90 dark:to-blue-950/40 border border-blue-200/80 dark:border-blue-900/40 shadow-sm relative overflow-hidden">
+<!-- Decorative Backdrop glow -->
+<div class="absolute -top-12 -left-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-4 relative z-10">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-indigo-500 text-white flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-white">
+              هوش تجاری و پیشنهادات تحلیلی سیستم (AI Financial Insights)
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-slate-400">
+              استخراج الگوهای رفتاری بازار، پیش‌بینی هوشمند فروش ماه آینده و کنترل بهای تمام‌شده
+            </p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span>
+          الگوریتم یادگیری فعال
+        </span>
+</div>
+<!-- Insight Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+<!-- Insight 1: Strength -->
+<div class="p-4 rounded-xl bg-surface-container-lowest/80 dark:bg-slate-800/70 border border-emerald-500/30 backdrop-blur-sm space-y-2">
+<div class="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-title-md">
+<span class="material-symbols-outlined text-[20px]">thumb_up</span>
+<span>نقطه قوت برجسته ماه</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface dark:text-slate-200 leading-relaxed">
+            کاهش چشمگیر مرجوعی‌ها به <strong class="font-tabular-num font-bold text-emerald-600 dark:text-emerald-400">۱.۵٪</strong> نشان‌دهنده اثربخشی کنترل کیفیت در ورود انبار و بسته‌بندی مویرگی است. کالاهای دسته بهداشتی بالاترین شاخص رضایت را ثبت کردند.
+          </p>
+<div class="text-label-sm text-outline pt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-emerald-500">check_circle</span>
+<span>صرفه‌جویی تخمینی: ۲۸ میلیون تومان هزینه ترابری معکوس</span>
+</div>
+</div>
+<!-- Insight 2: Forecast -->
+<div class="p-4 rounded-xl bg-surface-container-lowest/80 dark:bg-slate-800/70 border border-primary/30 backdrop-blur-sm space-y-2">
+<div class="flex items-center gap-2 text-primary dark:text-inverse-primary font-title-md">
+<span class="material-symbols-outlined text-[20px]">trending_up</span>
+<span>پیش‌بینی هوشمند آذر ۱۴۰۳</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface dark:text-slate-200 leading-relaxed">
+            با توجه به تقاضای فصلی شب یلدا و روندهای تاریخی، پیش‌بینی می‌شود فروش گروه «خشکبار و تنقلات» حداقل <strong class="font-tabular-num font-bold text-blue-600 dark:text-blue-400">+۲۸٪</strong> افزایش یابد. هدف‌گذاری فروش آذر: <strong class="font-tabular-num font-bold">۵,۸۰۰ میلیارد تومان</strong>.
+          </p>
+<div class="text-label-sm text-outline pt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-primary">inventory</span>
+<span>توصیه: افزایش ۳۰٪ سفارش خرید گردو و پسته پیش از آذرماه</span>
+</div>
+</div>
+<!-- Insight 3: Margin Alert -->
+<div class="p-4 rounded-xl bg-surface-container-lowest/80 dark:bg-slate-800/70 border border-amber-500/30 backdrop-blur-sm space-y-2">
+<div class="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-title-md">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+<span>هشدار افت حاشیه سود برخی اقلام</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface dark:text-slate-200 leading-relaxed">
+            حاشیه سود «برنج هاشمی» و «رب گوجه‌فرنگی» به زیر ۲۴٪ کاهش یافته است. علت این امر افزایش قیمت تمام‌شده تامین‌کننده بدون تعدیل قیمت فروشگاهی بوده است.
+          </p>
+<div class="text-label-sm text-outline pt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-amber-500">price_change</span>
+<span>توصیه: مذاکره برای تخفیف حجمی خرید نقدی با کارخانه مبدا</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 7. FOOTER AUDIT STAMP -->
+<footer class="pt-4 border-t border-outline-variant/30 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400 gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">verified_user</span>
+<span>این گزارش به استناد استانداردهای حسابداری مدیریت و سامانه جامع انبارداری تایید شد. شناسه رهگیری گزارش: <code class="font-tabular-num bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-primary">REP-140308-5420</code></span>
+</div>
+<div>
+<span>تهیه شده توسط: اداره کنترل عملیات مالی و زنجیره تامین</span>
+</div>
+</footer>
+</div>
+<!-- Micro-Interactions & Theme Persistence Script -->
+<script>
+    // Dark mode state handling
+    function initTheme() {
+      const savedTheme = localStorage.getItem('erp_theme');
+      const html = document.documentElement;
+      const themeText = document.getElementById('themeText');
+
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+        html.classList.remove('light');
+        if (themeText) themeText.textContent = 'حالت روشن';
+      } else {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        if (themeText) themeText.textContent = 'حالت تیره';
+      }
+    }
+
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const themeText = document.getElementById('themeText');
+      const isDark = html.classList.contains('dark');
+
+      if (isDark) {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        localStorage.setItem('erp_theme', 'light');
+        if (themeText) themeText.textContent = 'حالت تیره';
+      } else {
+        html.classList.add('dark');
+        html.classList.remove('light');
+        localStorage.setItem('erp_theme', 'dark');
+        if (themeText) themeText.textContent = 'حالت روشن';
+      }
+    }
+
+    // Initialize immediately
+    initTheme();
+  </script>
+
+<!-- ISSUED INVOICES (live from API) -->
+<section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/40 dark:border-slate-800 p-4 mt-6">
+  <h2 class="font-title-lg text-title-lg text-on-surface dark:text-white mb-3">فاکتورهای صادر شده</h2>
+  <div class="overflow-x-auto">
+    <table class="w-full text-right text-body-sm">
+      <thead class="bg-surface-container-low dark:bg-slate-800">
+        <tr>
+          <th class="px-3 py-2">شماره فاکتور</th>
+          <th class="px-3 py-2">تاریخ</th>
+          <th class="px-3 py-2">مبلغ کل</th>
+          <th class="px-3 py-2">وضعیت پرداخت</th>
+          <th class="px-3 py-2">روش پرداخت</th>
+        </tr>
+      </thead>
+      <tbody id="issuedInvoicesBody" class="divide-y divide-outline-variant/30 dark:divide-slate-800 font-tabular-num"></tbody>
+    </table>
+  </div>
+</section>
+<script>
+(function() {
+  async function loadInvoices() {
+    try {
+      const res = await fetch('/api/sales/invoices/', { credentials: 'same-origin' });
+      const data = await res.json();
+      const invoices = Array.isArray(data) ? data : (data.results || []);
+      const tbody = document.getElementById('issuedInvoicesBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      for (const inv of invoices) {
+        const tr = document.createElement('tr');
+        let method = '-';
+        try {
+          const pr = await fetch('/api/sales/invoice-payments/?invoice=' + inv.id, { credentials: 'same-origin' });
+          const pd = await pr.json();
+          const pays = Array.isArray(pd) ? pd : (pd.results || []);
+          if (pays.length) method = pays.map(p => p.method).join(', ');
+        } catch (e) {}
+        tr.innerHTML = '<td class="px-3 py-2">' + (inv.invoice_no || '-') + '</td>' +
+          '<td class="px-3 py-2">' + (inv.invoice_date || '-') + '</td>' +
+          '<td class="px-3 py-2">' + Number(inv.total || 0).toLocaleString('fa-IR') + '</td>' +
+          '<td class="px-3 py-2">' + (inv.payment_status || '-') + '</td>' +
+          '<td class="px-3 py-2">' + method + '</td>';
+        tbody.appendChild(tr);
+      }
+      if (invoices.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-3 py-4 text-center text-on-surface-variant">فاکتوری یافت نشد</td></tr>';
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadInvoices);
+  else loadInvoices();
+})();
+</script>
+{% endblock %}

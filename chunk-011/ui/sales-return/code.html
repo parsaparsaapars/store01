@@ -1,0 +1,565 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Content Workspace Canvas: Designed as a self-contained modular desktop unit -->
+<main class="w-full ] p-4 md:p-6 lg:p-8 space-y-6">
+<!-- 1. Local Header Toolbar -->
+<header class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant dark:border-slate-800 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2.5 flex-wrap">
+<span class="p-2 rounded-lg bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">assignment_return</span>
+</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">۱۹. مرجوعی فروش و اصلاح سند</h1>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm border border-outline-variant">نسخه سازمانی v4.8</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">ERP Core</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">مدیریت درخواست‌های مرجوعی، بررسی فنی و کیفی کالا، استرداد وجه و صدور سند بستانکاری/اصلاحی</p>
+</div>
+<!-- Action Cluster -->
+<div class="flex items-center gap-2.5 flex-wrap w-full lg:w-auto justify-end">
+<!-- Theme Toggle Button -->
+
+<button class="px-3.5 py-2 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container text-body-sm font-body-sm flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined">print</span>
+<span class="">چاپ برگه مرجوعی</span>
+</button>
+<button class="px-3.5 py-2 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container text-body-sm font-body-sm flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined">file_download</span>
+<span class="">خروجی اسناد / اکسل</span>
+</button>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-title-md text-title-md hover:bg-primary transition-colors flex items-center gap-2 shadow-sm" type="button">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="">ثبت درخواست مرجوعی جدید</span>
+</button>
+</div>
+</header>
+<!-- 2. KPI Summary Cards (Robust flex-wrap, min-w-0 layout) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 [&amp;&gt;div]:dark:bg-slate-900 [&amp;&gt;div]:dark:border-slate-800 [&amp;_span.text-on-surface]:dark:text-slate-100 [&amp;_span.text-on-surface-variant]:dark:text-slate-400">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2 mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant">ارزش کل مرجوعی‌های ماه</span>
+<span class="p-1.5 rounded-md bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">payments</span>
+</span>
+</div>
+<div class="flex items-baseline gap-1.5 flex-wrap min-w-0 my-1">
+<span class="font-headline-xl text-headline-xl text-on-surface tracking-tight font-tabular-num">۸۵,۰۰۰,۰۰۰</span>
+<span class="font-label-md text-label-md text-on-surface-variant">تومان</span>
+</div>
+<div class="flex items-center gap-1.5 pt-2 mt-2 border-t border-outline-variant/50">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm">۱.۵۲٪ از کل فروش</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">محدوده ایمن کنترل کیفیت</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2 mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant">تعداد پرونده‌های مرجوعی</span>
+<span class="p-1.5 rounded-md bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">inventory_2</span>
+</span>
+</div>
+<div class="flex items-baseline gap-1.5 flex-wrap min-w-0 my-1">
+<span class="font-headline-xl text-headline-xl text-on-surface tracking-tight font-tabular-num">۱۸</span>
+<span class="font-label-md text-label-md text-on-surface-variant">فقره سند</span>
+</div>
+<div class="flex items-center gap-2 pt-2 mt-2 border-t border-outline-variant/50 text-label-sm font-label-sm flex-wrap">
+<span class="text-secondary font-medium">۱۲ تأییدشده</span>
+<span class="text-outline-variant">•</span>
+<span class="text-tertiary font-medium">۴ در حال بررسی</span>
+<span class="text-outline-variant">•</span>
+<span class="text-error font-medium">۲ رد درخواست</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2 mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant">تفکیک وضعیت فیزیکی کالا</span>
+<span class="p-1.5 rounded-md bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">warehouse</span>
+</span>
+</div>
+<div class="space-y-1.5 my-1">
+<div class="flex justify-between items-center text-label-md font-label-md">
+<span class="text-on-surface">بسته‌بندی سالم (انبار فروش)</span>
+<span class="font-tabular-num text-secondary">۶۲٪</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden flex">
+<div class="bg-secondary h-full" style="width: 62%"></div>
+<div class="bg-error h-full" style="width: 38%"></div>
+</div>
+<div class="flex justify-between items-center text-label-sm font-label-sm text-on-surface-variant">
+<span class="">ضایعات و معیوب: ۳۸٪</span>
+<span class="">انبار داغی</span>
+</div>
+</div>
+<div class="pt-2 mt-2 border-t border-outline-variant/50 text-label-sm font-label-sm text-on-surface-variant">
+          نرخ بازگشت به چرخه فروش: رضایت‌بخش
+        </div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2 mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant">مبالغ استرداد شده به مشتریان</span>
+<span class="p-1.5 rounded-md bg-surface-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</span>
+</div>
+<div class="space-y-1 my-1">
+<div class="flex items-center justify-between gap-1 flex-wrap min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant">واریز بانکی / پایا:</span>
+<span class="font-tabular-num font-title-md text-title-md text-on-surface">۵۵,۰۰۰,۰۰۰ تومان</span>
+</div>
+<div class="flex items-center justify-between gap-1 flex-wrap min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant">کیف پول تجاری:</span>
+<span class="font-tabular-num font-title-md text-title-md text-primary">۳۰,۰۰۰,۰۰۰ تومان</span>
+</div>
+</div>
+<div class="pt-2 mt-2 border-t border-outline-variant/50 flex justify-between items-center text-label-sm font-label-sm">
+<span class="text-on-surface-variant">کل تسویه:</span>
+<span class="font-tabular-num font-bold text-on-surface">۸۵,۰۰۰,۰۰۰ تومان</span>
+</div>
+</div>
+</section>
+<!-- 3. Invoice Lookup & Active Order Banner -->
+<section class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant dark:border-slate-800 shadow-sm space-y-4 [&amp;_input]:dark:bg-slate-800 [&amp;_input]:dark:text-slate-100 [&amp;_input]:dark:border-slate-700">
+<div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">receipt_long</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">فراخوانی و اعتبارسنجی فاکتور مرجع فروش</h2>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">اسناد دارای مجوز مرجوعی تا حداکثر ۱۰ روز پس از صدور</span>
+</div>
+<!-- Search Input Toolbar -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+<div class="lg:col-span-8 relative">
+<div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="w-full h-11 pr-10 pl-24 bg-surface rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-outline" placeholder="شماره فاکتور فروش (مانند INV-1403-...)، بارکدخوان یا نام و تلفن مشتری..." type="text" value="INV-1403-8842">
+<button class="absolute inset-y-1.5 left-1.5 px-3 bg-surface-container-high text-primary hover:bg-surface-container-highest rounded-md font-label-md text-label-md transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined">barcode_scanner</span>
+<span class="">اسکن بارکد</span>
+</button>
+</div>
+<div class="lg:col-span-4 flex items-center gap-2">
+<button class="flex-1 h-11 bg-primary text-on-primary rounded-lg font-title-md text-title-md hover:bg-primary-container transition-colors flex items-center justify-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined">sync</span>
+<span class="">فراخوانی سند و بررسی اقلام</span>
+</button>
+<button class="h-11 px-3 bg-surface rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container transition-colors flex items-center justify-center" title="فیلتر پیشرفته" type="button">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Loaded Invoice Meta Card -->
+<div class="bg-surface-container-low dark:bg-slate-800/70 rounded-lg p-4 border border-outline-variant/80 dark:border-slate-700/80 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 [&amp;_.text-on-surface]:dark:text-slate-100 [&amp;_.text-on-surface-variant]:dark:text-slate-400">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full xl:w-auto">
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">شماره فاکتور:</div>
+<div class="font-title-md text-title-md text-primary font-tabular-num font-bold">INV-1403-8842</div>
+</div>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">مشتری طرف حساب:</div>
+<div class="font-title-md text-title-md text-on-surface">کیوان پارسا (شرکت صنایع مفتول البرز)</div>
+</div>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">تاریخ صدور فاکتور:</div>
+<div class="font-body-md text-body-md text-on-surface font-tabular-num">۱۴۰۳/۰۸/۲۴ - ساعت ۱۱:۴۵</div>
+</div>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">مبلغ کل فاکتور:</div>
+<div class="font-title-md text-title-md text-on-surface font-tabular-num">۲۴,۸۵۰,۰۰۰ تومان</div>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full xl:w-auto justify-between xl:justify-end border-t xl:border-t-0 pt-3 xl:pt-0 border-outline-variant/60">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm border border-secondary/20">تسویه شده نقدی</span>
+<span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm border border-outline-variant">ارسال از انبار مرکزی تهران</span>
+</div>
+<button class="px-3 py-1.5 bg-surface-container-lowest text-primary hover:bg-surface-container rounded-lg border border-outline-variant font-label-md text-label-md flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined">open_in_new</span>
+<span class="">مشاهده فاکتور مرجع</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 4. Interactive Process Stepper -->
+<section class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 border border-outline-variant dark:border-slate-800 shadow-sm [&amp;_.bg-surface-container-lowest]:dark:bg-slate-900 [&amp;_.bg-surface-container-low]:dark:bg-slate-800/80 [&amp;_.text-on-surface]:dark:text-slate-100 [&amp;_.text-on-surface-variant]:dark:text-slate-400">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">linear_scale</span>
+<span class="">گردش کار سازمانی و ردیابی وضعیت مرجوعی</span>
+</h3>
+<span class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm border border-primary/20">
+          گام جاری: بررسی و کارشناسی فنی انبار
+        </span>
+</div>
+<div class="relative py-2">
+<!-- Connecting Line -->
+<div class="hidden md:block absolute top-1/2 -translate-y-1/2 right-10 left-10 h-0.5 bg-outline-variant -z-0"></div>
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative z-10">
+<!-- Step 1: Completed -->
+<div class="flex flex-col items-center text-center p-2 rounded-lg bg-surface-container-lowest">
+<div class="w-9 h-9 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold mb-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="font-title-md text-title-md text-on-surface">۱. ثبت درخواست</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-tabular-num">توسط اپراتور فروش</span>
+</div>
+<!-- Step 2: Active -->
+<div class="flex flex-col items-center text-center p-2 rounded-lg bg-surface-container-low border border-primary/30">
+<div class="w-9 h-9 rounded-full bg-primary text-on-primary ring-4 ring-primary/20 flex items-center justify-center font-bold mb-2 shadow-sm font-tabular-num">
+              ۲
+            </div>
+<span class="font-title-md text-title-md text-primary font-bold">۲. کارشناسی فنی انبار</span>
+<span class="font-label-sm text-label-sm text-primary font-tabular-num">در حال ارزیابی اقلام</span>
+</div>
+<!-- Step 3: Pending -->
+<div class="flex flex-col items-center text-center p-2 rounded-lg bg-surface-container-lowest opacity-75">
+<div class="w-9 h-9 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-bold mb-2 font-tabular-num">
+              ۳
+            </div>
+<span class="font-title-md text-title-md text-on-surface-variant">۳. تأیید مدیریت بازرگانی</span>
+<span class="font-label-sm text-label-sm text-outline">در انتظار مجوز</span>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex flex-col items-center text-center p-2 rounded-lg bg-surface-container-lowest opacity-75">
+<div class="w-9 h-9 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-bold mb-2 font-tabular-num">
+              ۴
+            </div>
+<span class="font-title-md text-title-md text-on-surface-variant">۴. استرداد و سند مالی</span>
+<span class="font-label-sm text-label-sm text-outline">صدور بستانکاری/پایا</span>
+</div>
+<!-- Step 5: Pending -->
+<div class="flex flex-col items-center text-center p-2 rounded-lg bg-surface-container-lowest opacity-75">
+<div class="w-9 h-9 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-bold mb-2 font-tabular-num">
+              ۵
+            </div>
+<span class="font-title-md text-title-md text-on-surface-variant">۵. بایگانی و بستن سند</span>
+<span class="font-label-sm text-label-sm text-outline">اصلاح موجودی انبار</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. Returnable Items Table -->
+<section class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant dark:border-slate-800 shadow-sm overflow-hidden [&amp;_.bg-surface-container-low]:dark:bg-slate-800/80 [&amp;_.bg-surface-container-low\/40]:dark:bg-slate-800/50 [&amp;_.bg-surface-container-low\/20]:dark:bg-slate-800/30 [&amp;_tr:hover]:dark:bg-slate-800/50 [&amp;_th]:dark:text-slate-300 [&amp;_th]:dark:border-slate-800 [&amp;_td]:dark:border-slate-800 [&amp;_.text-on-surface]:dark:text-slate-100 [&amp;_.text-on-surface-variant]:dark:text-slate-400 [&amp;_tbody]:dark:divide-slate-800">
+<!-- Table Header Bar -->
+<div class="p-4 border-b border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-surface-container-low/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">format_list_bulleted</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">اقلام مندرج در فاکتور فروش (انتخاب اقلام جهت استرداد)</h3>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 bg-surface-container-lowest rounded border border-outline-variant text-label-sm font-label-sm text-on-surface hover:bg-surface-container flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">select_all</span>
+<span class="">انتخاب همه اقلام</span>
+</button>
+<span class="text-outline-variant">|</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-tabular-num">۳ قلم یافت شد</span>
+</div>
+</div>
+<!-- Enterprise Responsive Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md border-b border-outline-variant select-none">
+<th class="p-3 w-12 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer" id="selectAllCheckbox" type="checkbox">
+</th>
+<th class="p-3 w-14 text-center">ردیف</th>
+<th class="p-3">
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface">
+<span class="">شرح کالا و بارکد</span>
+<span class="material-symbols-outlined text-[16px]">filter_alt</span>
+</div>
+</th>
+<th class="p-3">
+<div class="flex items-center gap-1 cursor-pointer hover:text-on-surface">
+<span class="">کد کالا (SKU)</span>
+<span class="material-symbols-outlined text-[16px]">sort</span>
+</div>
+</th>
+<th class="p-3 text-center">
+<div class="flex items-center justify-center gap-1 cursor-pointer hover:text-on-surface">
+<span class="">تعداد فاکتور</span>
+<span class="material-symbols-outlined text-[16px]">swap_vert</span>
+</div>
+</th>
+<th class="p-3 text-center">مرجوعی قبلی</th>
+<th class="p-3 text-center">قابل استرداد</th>
+<th class="p-3 text-center min-w-[140px]">تعداد مرجوعی انتخابی</th>
+<th class="p-3 text-left">قیمت واحد (تومان)</th>
+<th class="p-3 text-left">مالیات ارزش‌افزوده</th>
+<th class="p-3 text-left">مبلغ کل قابل استرداد (تومان)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/40 dark:divide-outline/30 text-body-md font-body-md">
+{% for sr in sret_returns %}
+<tr class="hover:bg-surface-container-low/60 dark:hover:bg-inverse-surface/70 transition-colors">
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface-variant dark:text-outline-variant text-body-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span>{{ sr.created_at|date:"Y/m/d H:i" }}</span>
+</div>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface dark:text-inverse-on-surface">
+{{ sr.invoice__invoice_no }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-on-surface dark:text-slate-400">
+{{ sr.reason }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface dark:text-inverse-on-surface font-bold">
+<span class="text-rose-600 dark:text-rose-400">- {{ sr.total|floatformat:"-0" }}</span>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300">
+<span class="material-symbols-outlined text-[14px]">receipt_long</span>
+{{ sr.total|floatformat:"-0" }}
+</span>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-center">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]" title="مشاهده فاکتور">
+<span class="material-symbols-outlined text-[18px]" data-icon="receipt_long">receipt_long</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]" title="چاپ">
+<span class="material-symbols-outlined text-[18px]" data-icon="print">print</span>
+</button>
+</div>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="7" class="text-center py-8 text-[#64748b] dark:text-[#94a3b8]">هیچ مرجوعی ثبت نشده است.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- Quick Summary Footnote -->
+<div class="p-3 bg-surface-container-low border-t border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between text-body-sm font-body-sm gap-2">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">info</span>
+          تعداد کل اقلام انتخابی جهت استرداد: <strong class="text-on-surface font-tabular-num">۲ قلم (مجموعاً ۷ واحد فیزیکی)</strong>
+</span>
+<span class="text-on-surface-variant">
+          مجموع قابل تسویه این مرحله: <strong class="text-primary font-tabular-num text-title-md">۶,۲۳۷,۰۰۰ تومان</strong>
+</span>
+</div>
+</section>
+<!-- 6 & 7. Bento Grid: Inspection Panel + Financial Summary -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- 6. Inspection & Return Configuration Form (8 Columns) -->
+<section class="lg:col-span-8 bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 md:p-6 border border-outline-variant dark:border-slate-800 shadow-sm space-y-5 [&amp;_select]:dark:bg-slate-800 [&amp;_select]:dark:text-slate-100 [&amp;_select]:dark:border-slate-700 [&amp;_textarea]:dark:bg-slate-800 [&amp;_textarea]:dark:text-slate-100 [&amp;_textarea]:dark:border-slate-700 [&amp;_.bg-surface]:dark:bg-slate-800/60 [&amp;_.bg-surface-container-low]:dark:bg-slate-800/70 [&amp;_.text-on-surface]:dark:text-slate-100 [&amp;_.text-on-surface-variant]:dark:text-slate-400 [&amp;_.border-outline-variant]:dark:border-slate-700">
+<div class="flex items-center gap-2 border-b border-outline-variant pb-3">
+<span class="material-symbols-outlined text-primary">fact_check</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">فرم کارشناسی فنی و تعیین تکلیف انبارداری</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Return Reason -->
+<div class="space-y-1.5">
+<label class="font-title-md text-title-md text-on-surface">علت اصلی درخواست مرجوعی <span class="text-error">*</span></label>
+<select class="w-full h-11 bg-surface rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface px-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+<option selected="" value="damage">آسیب‌دیدگی بسته‌بندی یا نشتی حین ترابری و حمل</option>
+<option value="mismatch">مغایرت کالا با پیش‌فاکتور (کد/طعم/مشخصات فنی)</option>
+<option value="quality">عدم تأیید کیفیت آزمون کنترل کیفی خریدار</option>
+<option value="guarantee">انصراف تجاری مشتری طبق ضمانت ۷ روزه برگشت</option>
+</select>
+</div>
+<!-- Physical Condition & Destination Warehouse -->
+<div class="space-y-1.5">
+<label class="font-title-md text-title-md text-on-surface">انبار مقصد و وضعیت فیزیکی کالا <span class="text-error">*</span></label>
+<select class="w-full h-11 bg-surface rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface px-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+<option selected="" value="split">تفکیک کارشناسی: ۳ بسته انبار فروش + ۴ بطری انبار ضایعات</option>
+<option value="scrap">تمام اقلام ضایعاتی (ورود به انبار داغی و امحا)</option>
+<option value="resellable">تمام اقلام سالم (بازگشت به قفسه قابل فروش انبار مرکزی)</option>
+</select>
+</div>
+</div>
+<!-- Refund Method Options -->
+<div class="space-y-2">
+<label class="font-title-md text-title-md text-on-surface">روش استرداد و تسویه مالی حساب مشتری</label>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<label class="border-2 border-primary bg-primary/5 rounded-lg p-3 cursor-pointer flex flex-col justify-between space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-primary font-bold">واریز نقدی (پایا / کارت)</span>
+<input checked="" class="text-primary focus:ring-primary" name="refundMethod" type="radio">
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">عودت به شماره شبا تأییدشده مشتری</span>
+</label>
+<label class="border border-outline-variant hover:border-primary/50 bg-surface rounded-lg p-3 cursor-pointer flex flex-col justify-between space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface">شارژ کیف پول تجاری</span>
+<input class="text-primary focus:ring-primary" name="refundMethod" type="radio">
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">افزایش موجودی بستانکاری حسابداری</span>
+</label>
+<label class="border border-outline-variant hover:border-primary/50 bg-surface rounded-lg p-3 cursor-pointer flex flex-col justify-between space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface">کد تخفیف / پیش‌فاکتور بعد</span>
+<input class="text-primary focus:ring-primary" name="refundMethod" type="radio">
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">اعمال خودکار روی سفارش بعدی</span>
+</label>
+</div>
+</div>
+<!-- Bank IBAN Meta Box -->
+<div class="bg-surface-container-low p-3.5 rounded-lg border border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+<div>
+<div class="font-body-md text-body-md text-on-surface">شماره شبای تایید شده مشتری: <strong class="font-tabular-num font-bold">IR56 0120 0000 0000 8923 1145 92</strong></div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">بانک تجارت - بنام شرکت صنایع مفتول البرز</div>
+</div>
+</div>
+<button class="text-primary hover:underline font-label-md text-label-md shrink-0" type="button">تغییر شماره حساب</button>
+</div>
+<!-- Inspector Note Textarea -->
+<div class="space-y-1.5">
+<label class="font-title-md text-title-md text-on-surface">توضیحات و گزارش تکمیلی کارشناس کنترل کیفیت (QC)</label>
+<textarea class="w-full bg-surface rounded-lg border border-outline-variant text-body-md font-body-md text-on-surface p-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-outline" placeholder="مشاهدات بالینی کارتن، وضعیت پلمپ، تصاویر شکستگی و نتیجه بررسی فنی اقلام مرجوعی را ثبت نمایید..." rows="3">۴ بطری روغن زیتون دچار نشتی شدید درز فویل حرارتی شده بودند که به انبار ضایعات فرستاده شد. ۳ بسته قهوه از نظر سلامت کاملاً تایید شد و پس از بازچسبانی بارکد وارد موجودی قابل فروش انبار مرکزی گردید.</textarea>
+</div>
+<!-- Attachments & Photo Upload Area -->
+<div class="space-y-1.5">
+<label class="font-title-md text-title-md text-on-surface">مستندات و تصاویر ارزیابی فیزیکی کالا</label>
+<div class="border-2 border-dashed border-outline-variant hover:border-primary/60 rounded-xl p-4 text-center bg-surface flex flex-col items-center justify-center cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[32px] text-primary mb-1">add_photo_alternate</span>
+<div class="font-title-md text-title-md text-on-surface">تصاویر بسته‌بندی یا برگه آزمایشگاه را اینجا بکشید یا کلیک کنید</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-1">فرمت‌های مجاز: JPG, PNG, PDF حداکثر ۵ مگابایت</div>
+<div class="flex items-center gap-2 mt-3">
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-on-surface font-label-sm text-label-sm flex items-center gap-1 border border-outline-variant">
+<span class="material-symbols-outlined text-[15px] text-secondary">check_circle</span>
+<span class="">تصویر_نشتی_بطری_روغن.jpg (۱.۲ MB)</span>
+</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-on-surface font-label-sm text-label-sm flex items-center gap-1 border border-outline-variant">
+<span class="material-symbols-outlined text-[15px] text-secondary">check_circle</span>
+<span class="">گزارش_تطبیق_رست_قهوه.pdf (۸۴۰ KB)</span>
+</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 7. Financial Adjustment Ledger & Final Action Panel (4 Columns) -->
+<section class="lg:col-span-4 bg-surface-container-lowest dark:bg-slate-900 rounded-xl p-5 md:p-6 border border-outline-variant dark:border-slate-800 shadow-sm space-y-5 sticky top-4 [&amp;_.bg-surface-container-low]:dark:bg-slate-800/70 [&amp;_.text-on-surface]:dark:text-slate-100 [&amp;_.text-on-surface-variant]:dark:text-slate-400 [&amp;_.border-outline-variant]:dark:border-slate-700 [&amp;_.bg-surface]:dark:bg-slate-800">
+<div class="flex items-center gap-2 border-b border-outline-variant pb-3">
+<span class="material-symbols-outlined text-primary">calculate</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">خلاصه مالی سند اصلاحی (بستانکاری)</h3>
+</div>
+<div class="space-y-3 font-body-md text-body-md">
+<div class="flex justify-between items-center text-on-surface">
+<span class="text-on-surface-variant">بهای ناخالص اقلام مرجوعی:</span>
+<span class="font-tabular-num font-semibold">۵,۶۷۰,۰۰۰ تومان</span>
+</div>
+<div class="flex justify-between items-center text-on-surface">
+<span class="text-on-surface-variant">تعدیل تخفیف متناسب فاکتور:</span>
+<span class="font-tabular-num text-error font-semibold">- ۰ تومان</span>
+</div>
+<div class="flex justify-between items-center text-on-surface">
+<span class="text-on-surface-variant">تعدیل ارزش‌افزوده قانون (۱۰٪):</span>
+<span class="font-tabular-num text-secondary font-semibold">+ ۵۶۷,۰۰۰ تومان</span>
+</div>
+<div class="flex justify-between items-center text-on-surface">
+<span class="text-on-surface-variant">هزینه عودت / پیک (بر عهده شرکت):</span>
+<span class="font-tabular-num text-on-surface-variant">رایگان</span>
+</div>
+<div class="border-t border-dashed border-outline-variant pt-3 flex justify-between items-baseline">
+<span class="font-title-lg text-title-lg text-on-surface">خالص بستانکاری مشتری:</span>
+<div class="text-left">
+<div class="font-headline-xl text-headline-xl text-primary font-bold font-tabular-num">۶,۲۳۷,۰۰۰</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">تومان ریالی</div>
+</div>
+</div>
+</div>
+<!-- Ledger Code Notice -->
+<div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/70 space-y-1 text-label-sm font-label-sm text-on-surface-variant">
+<div class="flex justify-between">
+<span class="">سند معین اصلاحی:</span>
+<span class="font-tabular-num text-on-surface font-semibold">کد ۱۰۳-۸۲ (مرجوعی از فروش)</span>
+</div>
+<div class="flex justify-between">
+<span class="">طرف بدهکار:</span>
+<span class="font-tabular-num text-on-surface font-semibold">حساب‌های دریافتنی تجاری</span>
+</div>
+<div class="flex justify-between">
+<span class="">طرف بستانکار:</span>
+<span class="font-tabular-num text-on-surface font-semibold">صندوق مرکزی / بانک</span>
+</div>
+</div>
+<!-- Primary Action Cluster -->
+<div class="space-y-2.5 pt-2">
+<button class="w-full h-12 bg-primary text-on-primary rounded-lg font-headline-md text-headline-md hover:bg-primary-container transition-all flex items-center justify-center gap-2 shadow-sm active:scale-[0.99]" type="button">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+<span class="">تأیید کارشناسی و صدور سند بستانکاری</span>
+</button>
+<div class="grid grid-cols-2 gap-2">
+<button class="h-10 rounded-lg border border-outline-variant bg-surface hover:bg-surface-container text-on-surface font-title-md text-title-md transition-colors flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span class="">ذخیره پیش‌نویس</span>
+</button>
+<button class="h-10 rounded-lg border border-error/30 bg-error-container/30 hover:bg-error-container text-error font-title-md text-title-md transition-colors flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[18px]">block</span>
+<span class="">رد مرجوعی</span>
+</button>
+</div>
+</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">lock</span>
+<span class="">کلیه تراکنش‌ها با استاندارد حسابداری مصوب تطبیق داده می‌شوند.</span>
+</div>
+</section>
+</div>
+</main>
+<!-- Inline Logic for Responsive Stepper Controller & Dark Mode Switcher -->
+<script>
+    // Dark mode handler
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const htmlRoot = document.documentElement;
+
+    // Check system or saved preference
+    if (localStorage.getItem('erp-theme') === 'dark' || (!localStorage.getItem('erp-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      htmlRoot.classList.add('dark');
+if (themeIcon) themeIcon.textContent = 'light_mode';
+    } else {
+      htmlRoot.classList.remove('dark');
+if (themeIcon) themeIcon.textContent = 'dark_mode';
+    }
+
+    if (themeToggleBtn) themeToggleBtn.addEventListener('click', () => {
+      if (htmlRoot.classList.contains('dark')) {
+        htmlRoot.classList.remove('dark');
+        localStorage.setItem('erp-theme', 'light');
+if (themeIcon) themeIcon.textContent = 'dark_mode';
+      } else {
+        htmlRoot.classList.add('dark');
+        localStorage.setItem('erp-theme', 'dark');
+if (themeIcon) themeIcon.textContent = 'light_mode';
+      }
+    });
+
+    // Quantity stepper micro-controller
+    function stepCount(btn, delta, max) {
+      const container = btn.closest('div');
+      const input = container.querySelector('input');
+      let val = parseInt(input.value, 10) || 0;
+      val += delta;
+      if (val < 0) val = 0;
+      if (val > max) val = max;
+      input.value = val;
+    }
+
+    // Select all items checkbox behavior
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+
+    selectAllCheckbox.addEventListener('change', (e) => {
+      itemCheckboxes.forEach(cb => {
+        cb.checked = e.target.checked;
+      });
+    });
+  </script>
+
+
+
+{% endblock %}

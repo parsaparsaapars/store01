@@ -1,0 +1,904 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Main Canvas Container -->
+<div class="] space-y-6">
+<!-- Top Canvas Utility: Quick Dark Mode Switcher & Enterprise Environment Indicator -->
+<div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-outline-variant/40 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-high dark:bg-[#1e293b] text-primary dark:text-inverse-primary border border-outline-variant/30 dark:border-slate-700">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+          پایگاه داده کالا و انبار برخط (ارتباط مستقیم انبار مرکزی)
+        </span>
+<span class="hidden sm:inline-block text-label-sm font-label-sm text-on-surface-variant dark:text-slate-400">
+          آخرین به‌روزرسانی موجودی: {% if pl_last_stock_update %}{{ pl_last_stock_update|date:"H:i" }} امروز{% else %}—{% endif %}
+        </span>
+</div>
+<!-- Quick Theme Switch Toggle for Testing -->
+<div class="flex items-center gap-2">
+
+</div>
+</div>
+<!-- 1. Content Header & Action Cluster (Section 8 Blueprint) -->
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+<div class="space-y-1">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant dark:text-slate-400">
+<span class="hover:text-primary dark:hover:text-inverse-primary cursor-pointer transition-colors">داشبورد سازمان</span>
+<span class="material-symbols-outlined text-xs">chevron_left</span>
+<span class="hover:text-primary dark:hover:text-inverse-primary cursor-pointer transition-colors">انبارداری و کالاها</span>
+<span class="material-symbols-outlined text-xs">chevron_left</span>
+<span class="text-primary dark:text-inverse-primary font-bold">کاتالوگ و مدیریت محصولات</span>
+</nav>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-xl font-headline-xl text-on-surface dark:text-white tracking-tight">مدیریت کالاها و خدمات</h1>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high dark:bg-slate-800 text-primary dark:text-inverse-primary font-tabular-num font-bold">
+            {{ pl_total_products }} قلم ثبت‌شده
+          </span>
+</div>
+</div>
+<!-- Action Button Group -->
+<div class="flex flex-wrap items-center gap-2.5">
+<!-- خروجی اکسل/PDF -->
+<div class="relative inline-block text-right">
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-lowest dark:bg-[#161f30] text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-700 hover:bg-surface-container-low dark:hover:bg-[#1e2a42] text-label-md font-label-md shadow-sm transition-all duration-150" type="button" onclick="exportProductsExcel()">
+<span class="material-symbols-outlined text-lg text-on-surface-variant dark:text-slate-400">file_download</span>
+<span>خروجی اکسل / PDF</span>
+</button>
+</div>
+<!-- قیمت‌گذاری دسته‌ای -->
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-lowest dark:bg-[#161f30] text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-700 hover:bg-surface-container-low dark:hover:bg-[#1e2a42] text-label-md font-label-md shadow-sm transition-all duration-150" type="button" onclick="location.href='/ui/pricing-discounts/'">
+<span class="material-symbols-outlined text-lg text-on-surface-variant dark:text-slate-400">price_change</span>
+<span>قیمت‌گذاری دسته‌ای</span>
+</button>
+<!-- ورود گروهی (اکسل) -->
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-lowest dark:bg-[#161f30] text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-700 hover:bg-surface-container-low dark:hover:bg-[#1e2a42] text-label-md font-label-md shadow-sm transition-all duration-150" type="button" onclick="showToast('ورود گروهی از اکسل در فاز قیمت‌گذاری فعال می‌شود', 'upload_file')">
+<span class="material-symbols-outlined text-lg text-on-surface-variant dark:text-slate-400">upload_file</span>
+<span>ورود گروهی (اکسل)</span>
+</button>
+<!-- کالای جدید (Primary) -->
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container hover:bg-primary text-white text-title-md font-title-md shadow-sm hover:shadow transition-all duration-150 active:scale-95" onclick="window.location.href='/ui/product-create/'" type="button">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+<span>تعریف کالای جدید</span>
+</button>
+</div>
+</div>
+<!-- 2. Bento KPI Metric Cards with Visual Sparkline Trends -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+<!-- Card 1: کل کالاها و خدمات -->
+<div class="p-5 rounded-xl bg-surface-container-lowest dark:bg-[#161f30] border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-slate-400">کل کالاها و خدمات ثبت‌شده</span>
+<div class="text-display-lg font-display-lg text-on-surface dark:text-white font-tabular-num">{{ pl_total_products }} <span class="text-body-sm font-body-sm font-normal text-on-surface-variant dark:text-slate-400">قلم</span></div>
+</div>
+<div class="w-11 h-11 rounded-lg bg-surface-container-high dark:bg-slate-800/80 text-primary dark:text-inverse-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">inventory_2</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-slate-800/60 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-secondary dark:text-emerald-400 font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+            +{{ pl_active_products }} کالای فعال
+          </span>
+<span class="text-on-surface-variant dark:text-slate-400">از مجموع ثبت‌شده</span>
+</div>
+</div>
+<!-- Card 2: کالاهای فعال و دارای گردش -->
+<div class="p-5 rounded-xl bg-surface-container-lowest dark:bg-[#161f30] border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-slate-400">کالاهای فعال و دارای گردش</span>
+<div class="text-display-lg font-display-lg text-on-surface dark:text-white font-tabular-num">{{ pl_active_products }} <span class="text-body-sm font-body-sm font-normal text-on-surface-variant dark:text-slate-400">قلم ({{ pl_active_products }}%)</span></div>
+</div>
+<div class="w-11 h-11 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">sync_saved_locally</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-slate-800/60 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+            فعال در پایگاه داده
+          </span>
+<span class="text-on-surface-variant dark:text-slate-400">{{ pl_total_products|add:pl_active_products|add:0 }} مجموع قلم</span>
+</div>
+</div>
+<!-- Card 3 (New): پیش‌نویس‌ها -->
+<div class="p-5 rounded-xl bg-surface-container-lowest dark:bg-[#161f30] border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between relative overflow-hidden group border-r-4 border-r-amber-500">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="text-label-md font-label-md text-amber-700 dark:text-amber-400 font-medium">پیش‌نویس‌های منتظر تأیید</span>
+<div class="text-display-lg font-display-lg text-amber-600 dark:text-amber-400 font-tabular-num">{{ pl_draft_products|default:0 }} <span class="text-body-sm font-body-sm font-normal text-on-surface-variant dark:text-slate-400">قلم پیش‌نویس</span></div>
+</div>
+<div class="w-11 h-11 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">drafts</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-slate-800/60 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">edit_note</span>
+            نیاز به بررسی و انتشار
+          </span>
+<button class="text-primary dark:text-inverse-primary hover:underline font-semibold" onclick="setStatusFilter('draft')">مشاهده پیش‌نویس‌ها</button>
+</div>
+</div>
+<!-- Card 4 (was 3): هشدار کم‌موجودی و نقطه سفارش -->
+<div class="p-5 rounded-xl bg-surface-container-lowest dark:bg-[#161f30] border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between relative overflow-hidden group border-r-4 border-r-amber-500">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="text-label-md font-label-md text-amber-700 dark:text-amber-400 font-medium">هشدار کم‌موجودی و نقطه سفارش</span>
+<div class="text-display-lg font-display-lg text-amber-600 dark:text-amber-400 font-tabular-num">{{ pl_low_products }} <span class="text-body-sm font-body-sm font-normal text-on-surface-variant dark:text-slate-400">قلم بحرانی</span></div>
+</div>
+<div class="w-11 h-11 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">warning</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-slate-800/60 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">priority_high</span>
+            نیاز فوری به ثبت پیش‌فاکتور خرید
+          </span>
+<button class="text-primary dark:text-inverse-primary hover:underline font-semibold" onclick="setStockStateFilter('critical')">فیلتر فوری</button>
+</div>
+</div>
+<!-- Card 4: کالاهای ناموجود / صفر -->
+<div class="p-5 rounded-xl bg-surface-container-lowest dark:bg-[#161f30] border border-outline-variant/50 dark:border-slate-800 shadow-sm flex flex-col justify-between relative overflow-hidden group border-r-4 border-r-error">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="text-label-md font-label-md text-error dark:text-red-400 font-medium">کالاهای ناموجود / موجودی صفر</span>
+<div class="text-display-lg font-display-lg text-error dark:text-red-400 font-tabular-num">{{ pl_out_products }} <span class="text-body-sm font-body-sm font-normal text-on-surface-variant dark:text-slate-400">قلم اتمام‌یافته</span></div>
+</div>
+<div class="w-11 h-11 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-error dark:text-red-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">production_quantity_limits</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/30 dark:border-slate-800/60 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-error dark:text-red-400 font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">block</span>
+            عدم امکان صدور فاکتور رسمی
+          </span>
+<button class="text-primary dark:text-inverse-primary hover:underline font-semibold" onclick="setStockStateFilter('out')">بررسی انبار</button>
+</div>
+</div>
+</div>
+<!-- 3. Advanced Sticky Search & Multi-criteria Filter Bar -->
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-[#161f30] border border-outline-variant/50 dark:border-slate-800 shadow-sm space-y-3">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+<!-- Smart Search Input (Spans 4 cols on desktop) -->
+<div class="lg:col-span-4 relative">
+<div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-on-surface-variant dark:text-slate-400">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="w-full pr-10 pl-16 py-2 rounded-lg bg-surface-container-low dark:bg-[#101726] border border-outline-variant/60 dark:border-slate-700 text-body-md font-body-md text-on-surface dark:text-slate-100 placeholder:text-on-surface-variant/70 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" id="plSearchInput" placeholder="جستجوی سریع نام کالا، کد SKU، بارکد یا شناسه فنی..." type="text"/>
+<div class="absolute inset-y-0 left-0 pl-2.5 flex items-center">
+<kbd class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container-highest dark:bg-slate-800 text-on-surface-variant dark:text-slate-400 rounded border border-outline-variant/40 dark:border-slate-700">Ctrl+K</kbd>
+</div>
+</div>
+<!-- Filter Dropdown 1: دسته‌بندی -->
+<div class="lg:col-span-2">
+<div class="relative">
+<select class="w-full appearance-none pr-3 pl-8 py-2 rounded-lg bg-surface-container-low dark:bg-[#101726] border border-outline-variant/60 dark:border-slate-700 text-body-sm font-body-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer" id="plCategoryFilter" onchange="applyProductListFilters()">
+<option value="">دسته‌بندی (همه دسته‌ها)</option>
+{% for c in pl_categories %}
+<option value="{{ c }}">{{ c }}</option>
+{% endfor %}
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 pointer-events-none text-on-surface-variant dark:text-slate-400 text-lg">expand_more</span>
+</div>
+</div>
+<!-- Filter Dropdown 2: برند -->
+<div class="lg:col-span-2">
+<div class="relative">
+<select class="w-full appearance-none pr-3 pl-8 py-2 rounded-lg bg-surface-container-low dark:bg-[#101726] border border-outline-variant/60 dark:border-slate-700 text-body-sm font-body-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer" id="plBrandFilter" onchange="applyProductListFilters()">
+<option value="">برند (همه برندها)</option>
+{% for b in pl_brands %}
+<option value="{{ b }}">{{ b }}</option>
+{% endfor %}
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 pointer-events-none text-on-surface-variant dark:text-slate-400 text-lg">category</span>
+</div>
+</div>
+<!-- Filter Dropdown (New): وضعیت کالا (فعال/پیش‌نویس/همه) -->
+<div class="lg:col-span-2">
+<div class="relative">
+<select class="w-full appearance-none pr-3 pl-8 py-2 rounded-lg bg-surface-container-low dark:bg-[#101726] border border-outline-variant/60 dark:border-slate-700 text-body-sm font-body-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer" id="plStatusFilter" onchange="onStatusFilterChange()">
+<option value="active" {% if pl_current_status == 'active' %}selected{% endif %}>فعال</option>
+<option value="draft" {% if pl_current_status == 'draft' %}selected{% endif %}>پیش‌نویس</option>
+<option value="all" {% if pl_current_status == 'all' %}selected{% endif %}>همه (فعال + پیش‌نویس)</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 pointer-events-none text-on-surface-variant dark:text-slate-400 text-lg">drafts</span>
+</div>
+</div>
+<!-- Filter Dropdown 3: وضعیت موجودی -->
+<div class="lg:col-span-2">
+<div class="relative">
+<select class="w-full appearance-none pr-3 pl-8 py-2 rounded-lg bg-surface-container-low dark:bg-[#101726] border border-outline-variant/60 dark:border-slate-700 text-body-sm font-body-sm text-on-surface dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer" id="plStockFilter" onchange="applyProductListFilters()">
+<option value="">وضعیت موجودی (همه)</option>
+<option value="in_stock">دارای موجودی کافی</option>
+<option value="critical">نقطه سفارش / کسری ({{ pl_low_products }})</option>
+<option value="out">ناموجود و صفر ({{ pl_out_products }})</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 pointer-events-none text-on-surface-variant dark:text-slate-400 text-lg">filter_alt</span>
+</div>
+</div>
+<!-- View Switcher & Column Customizer (Spans 2 cols) -->
+<div class="lg:col-span-2 flex items-center justify-end gap-1.5">
+<!-- Table/Grid Toggle -->
+<div class="flex items-center p-0.5 rounded-lg bg-surface-container-high dark:bg-[#101726] border border-outline-variant/50 dark:border-slate-700">
+<button class="p-1.5 rounded-md bg-surface-container-lowest dark:bg-[#161f30] text-primary dark:text-inverse-primary shadow-xs transition-colors" id="viewTableBtn" title="نمای جدولی" type="button">
+<span class="material-symbols-outlined text-lg">view_list</span>
+</button>
+<button class="p-1.5 rounded-md text-on-surface-variant dark:text-slate-400 hover:text-on-surface dark:hover:text-white transition-colors" id="viewGridBtn" title="نمای شبکه‌ای" type="button">
+<span class="material-symbols-outlined text-lg">grid_view</span>
+</button>
+</div>
+<!-- Column Picker Button -->
+<button class="p-2 rounded-lg bg-surface-container-low dark:bg-[#101726] border border-outline-variant/60 dark:border-slate-700 text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-high transition-colors" title="شخصی‌سازی ستون‌ها" type="button" onclick="showToast('شخصی‌سازی ستون‌ها به‌زودی', 'view_column')">
+<span class="material-symbols-outlined text-lg">view_column</span>
+</button>
+<!-- Reset Filter Button -->
+<button class="p-2 rounded-lg bg-surface-container-low dark:bg-[#101726] border border-outline-variant/60 dark:border-slate-700 text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-high transition-colors" title="پاک‌سازی فیلترها" type="button" onclick="resetProductListFilters()">
+<span class="material-symbols-outlined text-lg">restart_alt</span>
+</button>
+</div>
+</div>
+<!-- Active Filter Tags Row -->
+<div class="flex flex-wrap items-center gap-2 pt-2 border-t border-outline-variant/30 dark:border-slate-800 text-label-sm font-label-sm" id="plActiveFiltersRow">
+<span class="text-on-surface-variant dark:text-slate-400">فیلترهای فعال:</span>
+<span id="plActiveFiltersTags" class="contents"></span>
+<button class="text-primary dark:text-inverse-primary hover:underline mr-2 hidden" id="plClearAllFilters" onclick="resetProductListFilters()">حذف همه فیلترها</button>
+</div>
+</div>
+<!-- 4. Batch Operations Floating Strip (Shown when rows selected) -->
+<div class="hidden flex items-center justify-between px-4 py-2.5 rounded-lg bg-primary-fixed dark:bg-[#1e293b] border border-primary/20 dark:border-slate-700 shadow-md" id="batchActionStrip">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-xl">check_box</span>
+<span class="text-title-md font-title-md text-on-primary-fixed dark:text-white font-tabular-num">
+<span id="selectedCountText">۳</span> کالا انتخاب شده است
+        </span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-md bg-surface-container-lowest dark:bg-[#161f30] text-on-surface dark:text-white text-label-md font-label-md border border-outline-variant/60 dark:border-slate-700 hover:bg-surface-container transition-colors" onclick="showToast('انتقال کالا از ماژول انبار انجام می‌شود', 'warehouse')">
+          انتقال به انبار دیگر
+        </button>
+<button class="px-3 py-1.5 rounded-md bg-surface-container-lowest dark:bg-[#161f30] text-on-surface dark:text-white text-label-md font-label-md border border-outline-variant/60 dark:border-slate-700 hover:bg-surface-container transition-colors" onclick="location.href='/ui/pricing-discounts/'">
+          تغییر برچسب قیمت
+        </button>
+<button class="px-3 py-1.5 rounded-md bg-error-container text-on-error-container dark:bg-red-950/60 dark:text-red-300 text-label-md font-label-md hover:bg-error hover:text-white transition-colors" id="batchArchiveBtn" onclick="archiveSelectedProducts()">
+          آرشیو / غیرفعال‌سازی
+        </button>
+</div>
+</div>
+<!-- 5. DESKTOP VIEW: Rich Corporate Enterprise Data Table (Hidden on small mobile) -->
+<div class="hidden lg:block rounded-xl bg-surface-container-lowest dark:bg-[#161f30] border border-outline-variant/50 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<!-- Table Header -->
+<thead>
+<tr class="bg-surface-container-low dark:bg-[#101726] border-b border-outline-variant/50 dark:border-slate-800 text-on-surface-variant dark:text-slate-400 text-label-md font-label-md">
+<th class="p-3.5 pr-4 w-10 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer" id="selectAllCheckbox" type="checkbox"/>
+</th>
+<th class="py-3.5 px-3">کالا و مشخصات فنی</th>
+<th class="py-3.5 px-3">کد شناسه / بارکد</th>
+<th class="py-3.5 px-3">دسته‌بندی و انبار</th>
+<th class="py-3.5 px-3 text-center">موجودی کل</th>
+<th class="py-3.5 px-3 text-center">قابل فروش / تعهد</th>
+<th class="py-3.5 px-3 text-center">حداقل (حد سفارش)</th>
+<th class="py-3.5 px-3 text-left">قیمت خرید</th>
+<th class="py-3.5 px-3 text-left">قیمت فروش</th>
+<th class="py-3.5 px-3 text-center">حاشیه سود</th>
+<th class="py-3.5 px-3 text-center">وضعیت</th>
+<th class="py-3.5 px-4 text-center w-28">عملیات</th>
+</tr>
+</thead>
+<!-- Table Body with realistic corporate inventory data -->
+<tbody class="divide-y divide-outline-variant/30 dark:divide-slate-800 text-body-md font-body-md text-on-surface dark:text-slate-200" id="plTableBody">
+{% for product in pl_products %}
+<tr class="pl-product-row {% if not product.is_active %}bg-amber-50/30 dark:bg-amber-950/20{% endif %} hover:bg-surface-container-low/70 dark:hover:bg-[#1c273d] transition-colors group" data-search="{{ product.name }} {{ product.sku }} {{ product.barcode }} {{ product.category }} {{ product.brand }}" data-category="{{ product.category }}" data-brand="{{ product.brand }}" data-stock-state="{{ product.stock_state }}" data-is-active="{{ product.is_active|yesno:'true,false' }}">
+<td class="p-3.5 pr-4 text-center">
+<input class="row-checkbox rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox" value="{{ product.id }}"/>
+</td>
+<td class="py-3.5 px-3">
+<div class="flex items-center gap-3">
+<img class="w-11 h-11 rounded-lg object-cover bg-surface-container dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 flex-shrink-0" src="{% if product.image_url %}{{ product.image_url }}{% else %}/static/ui/product-list/assets/fcd0703f9e98.jpg{% endif %}"/>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface dark:text-white group-hover:text-primary dark:group-hover:text-inverse-primary transition-colors">{{ product.name }}</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-slate-400">{{ product.description|truncatechars:40 }}</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 font-mono text-xs">
+<div class="font-semibold text-on-surface dark:text-slate-300">{{ product.sku }}</div>
+<div class="text-on-surface-variant dark:text-slate-500 font-tabular-num">{{ product.barcode }}</div>
+</td>
+<td class="py-3.5 px-3">
+<div class="text-label-md font-label-md text-on-surface dark:text-slate-300">{% if product.category %}{{ product.category }}{% else %}-{% endif %}</div>
+<div class="text-xs text-on-surface-variant dark:text-slate-400">{% if product.brand %}{{ product.brand }}{% endif %}</div>
+</td>
+<td class="py-3.5 px-3 text-center font-tabular-num"><span class="font-bold {% if product.stock_state == 'out' %}text-error dark:text-red-400{% elif product.stock_state == 'critical' %}text-amber-600 dark:text-amber-400{% else %}text-on-surface dark:text-white{% endif %}">{{ product.qty|floatformat:"-3" }}</span></td>
+<td class="py-3.5 px-3 text-center font-tabular-num"><div class="font-semibold text-secondary dark:text-emerald-400">{{ product.available|floatformat:"-3" }}{% if product.reserved > 0 %} <span class="text-xs text-amber-600 dark:text-amber-400">({{ product.reserved|floatformat:"-3" }} تعهد)</span>{% endif %}</div></td>
+<td class="py-3.5 px-3 text-center font-tabular-num text-on-surface-variant dark:text-slate-400">{{ product.min_stock|floatformat:"-3" }}</td>
+<td class="py-3.5 px-3 text-left font-tabular-num">{{ product.cost_price|floatformat:"-0" }} <span class="text-xs text-on-surface-variant dark:text-slate-400">تومان</span></td>
+<td class="py-3.5 px-3 text-left font-tabular-num font-bold text-on-surface dark:text-white">{{ product.sale_price|floatformat:"-0" }} <span class="text-xs font-normal text-on-surface-variant dark:text-slate-400">تومان</span></td>
+<td class="py-3.5 px-3 text-center font-tabular-num">{% if product.margin is not None %}<span class="px-2 py-0.5 rounded-full text-xs font-bold {% if product.margin >= 20 %}bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300{% elif product.margin >= 10 %}bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300{% else %}bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300{% endif %}">+{{ product.margin }}٪</span>{% else %}<span class="text-on-surface-variant dark:text-slate-500">—</span>{% endif %}</td>
+<td class="py-3.5 px-3 text-center">{% if product.is_active %}<span class="px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-700">فعال</span>{% else %}<span class="px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-700 border border-amber-300 flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">drafts</span> پیش‌نویس</span>{% endif %}</td>
+<td class="py-3.5 px-4 text-center w-28">
+<a href="/ui/product-form/?id={{ product.id }}" class="text-blue-600 hover:underline text-xs">ویرایش</a>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="12" class="text-center py-6 text-slate-500">داده‌ای یافت نشد</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- Enterprise Table Footer with Modular Pagination & Page Sizes -->
+<div class="px-4 py-3.5 border-t border-outline-variant/40 dark:border-slate-800 bg-surface-container-low/50 dark:bg-[#101726]/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-body-sm font-body-sm">
+<div class="flex items-center gap-3 text-on-surface-variant dark:text-slate-400">
+<span id="plRangeText">نمایش ردیف ۱ تا {{ pl_total_products }} از مجموع <strong class="text-on-surface dark:text-white font-tabular-num">{{ pl_total_products }}</strong> کالا</span>
+</div>
+<!-- Pagination Controls -->
+<div class="flex items-center gap-1" id="plPagination">
+<button class="px-2.5 py-1.5 rounded-lg border border-outline-variant/50 dark:border-slate-700 hover:bg-surface-container-high dark:hover:bg-slate-800 text-on-surface-variant dark:text-slate-400 disabled:opacity-40" disabled="" id="plPrevBtn" onclick="plGoPage(-1)">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+<span class="px-2 text-on-surface dark:text-white font-bold text-xs font-tabular-num" id="plPageInfo">۱ / ۱</span>
+<button class="px-2.5 py-1.5 rounded-lg border border-outline-variant/50 dark:border-slate-700 hover:bg-surface-container-high dark:hover:bg-slate-800 text-on-surface-variant dark:text-slate-400 disabled:opacity-40" id="plNextBtn" onclick="plGoPage(1)">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 6. MOBILE & TABLET RESPONSIVE CARDS VIEW (Displayed seamlessly under 1024px) -->
+<div class="lg:hidden space-y-3" id="plMobileCards">
+{% for product in pl_products %}
+<div class="pl-product-row p-4 rounded-xl {% if not product.is_active %}bg-amber-50/30 dark:bg-amber-950/20{% endif %} bg-surface-container-lowest dark:bg-[#161f30] {% if product.stock_state == 'critical' %}border-r-4 border-r-amber-500{% elif product.stock_state == 'out' %}border-r-4 border-r-error{% endif %} border border-outline-variant/50 dark:border-slate-800 shadow-sm space-y-3" data-search="{{ product.name }} {{ product.sku }} {{ product.barcode }} {{ product.category }} {{ product.brand }}" data-category="{{ product.category }}" data-brand="{{ product.brand }}" data-stock-state="{{ product.stock_state }}" data-is-active="{{ product.is_active|yesno:'true,false' }}">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-center gap-3">
+<img class="w-14 h-14 rounded-lg object-cover bg-surface-container dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 flex-shrink-0" src="{% if product.image_url %}{{ product.image_url }}{% else %}/static/ui/product-list/assets/fcd0703f9e98.jpg{% endif %}"/>
+<div>
+<h3 class="font-bold text-title-md font-title-md text-on-surface dark:text-white">{{ product.name }}</h3>
+<p class="text-xs text-on-surface-variant dark:text-slate-400">کد: {{ product.sku }}{% if product.barcode %} | بارکد: {{ product.barcode }}{% endif %}</p>
+<div class="flex items-center gap-2 mt-1">
+{% if not product.is_active %}
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300">
+<span class="material-symbols-outlined text-[10px]">drafts</span>
+پیش‌نویس
+</span>
+{% elif product.stock_state == 'in_stock' %}
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+موجود در انبار
+</span>
+{% elif product.stock_state == 'critical' %}
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+نقطه سفارش (کسری)
+</span>
+{% else %}
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300">
+<span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+اتمام موجودی (صفر)
+</span>
+{% endif %}
+{% if product.category %}
+<span class="text-[11px] text-on-surface-variant dark:text-slate-400">{{ product.category }}</span>
+{% endif %}
+</div>
+</div>
+</div>
+<button class="p-1 rounded text-on-surface-variant dark:text-slate-400">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-2 border-t border-outline-variant/30 dark:border-slate-800 text-xs">
+<div>
+<span class="text-on-surface-variant dark:text-slate-400">موجودی کل / آزاد:</span>
+<div class="font-bold {% if product.stock_state == 'out' %}text-error dark:text-red-400{% else %}text-on-surface dark:text-white{% endif %} font-tabular-num">{{ product.qty|floatformat:"-3" }} {% if product.unit %}{{ product.unit }}{% else %}عدد{% endif %} <span class="text-secondary dark:text-emerald-400">({{ product.available|floatformat:"-3" }} آزاد)</span></div>
+</div>
+{% if product.margin is not None %}
+<div>
+<span class="text-on-surface-variant dark:text-slate-400">حاشیه سود ناخالص:</span>
+<div class="font-bold text-emerald-600 dark:text-emerald-400 font-tabular-num">+{{ product.margin }}٪</div>
+</div>
+{% else %}
+<div>
+<span class="text-on-surface-variant dark:text-slate-400">حاشیه سود ناخالص:</span>
+<div class="font-bold text-on-surface-variant dark:text-slate-500 font-tabular-num">—</div>
+</div>
+{% endif %}
+<div>
+<span class="text-on-surface-variant dark:text-slate-400">قیمت فروش:</span>
+<div class="font-bold text-primary dark:text-inverse-primary font-tabular-num">{{ product.sale_price|floatformat:"-0" }} تومان</div>
+</div>
+<div>
+<span class="text-on-surface-variant dark:text-slate-400">قیمت خرید:</span>
+<div class="font-medium text-on-surface dark:text-slate-300 font-tabular-num">{{ product.cost_price|floatformat:"-0" }} تومان</div>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-outline-variant/20 dark:border-slate-800">
+<button class="flex-1 py-1.5 rounded-lg {% if not product.is_active %}opacity-50 pointer-events-none{% endif %} bg-surface-container-high dark:bg-slate-800 text-primary dark:text-inverse-primary font-semibold text-xs flex items-center justify-center gap-1" onclick="{% if product.is_active %}location.href='/ui/stock-movement/?product={{ product.id }}'{% endif %}">
+<span class="material-symbols-outlined text-sm">receipt_long</span>
+            کاردکس
+          </button>
+<button class="flex-1 py-1.5 rounded-lg bg-surface-container-high dark:bg-slate-800 text-on-surface dark:text-slate-200 font-semibold text-xs flex items-center justify-center gap-1" onclick="location.href='/ui/product-form/?id={{ product.id }}'">
+<span class="material-symbols-outlined text-sm">edit</span>
+            ویرایش
+          </button>
+{% if product.is_active and product.stock_state != 'in_stock' %}
+<button class="flex-1 py-1.5 rounded-lg {% if product.stock_state == 'out' %}bg-primary-container{% else %}bg-amber-500{% endif %} text-white font-semibold text-xs flex items-center justify-center gap-1 shadow-sm" onclick="location.href='/ui/purchase-management/?product={{ product.id }}'">
+<span class="material-symbols-outlined text-sm">shopping_cart_checkout</span>
+            ثبت سفارش خرید
+          </button>
+{% endif %}
+</div>
+</div>
+{% empty %}
+<div class="p-4 rounded-xl bg-surface-container-lowest dark:bg-[#161f30] border border-outline-variant/50 dark:border-slate-800 text-center py-8 text-on-surface-variant dark:text-slate-400">
+محصولی یافت نشد. از دکمهٔ «تعریف کالای جدید» استفاده کنید.
+</div>
+{% endfor %}
+</div>
+<!-- 7. Interactive Drawer / Modal for New Item Definition -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center p-4" id="newProductModal">
+  <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onclick="closeNewProductModal()"></div>
+  <div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 rounded-2xl backdrop-blur-xl bg-slate-900/95 border border-white/10 shadow-2xl">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-white">تعریف کالای جدید</h2>
+      <button onclick="closeNewProductModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-xl">close</span>
+      </button>
+    </div>
+    <form onsubmit="event.preventDefault(); submitNewProduct();" class="space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1.5">نام کالا <span class="text-red-400">*</span></label>
+          <input type="text" id="npName" required class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" placeholder="نام کالا">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1.5">کد SKU <span class="text-red-400">*</span></label>
+          <input type="text" id="npSku" required class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" placeholder="مثال: PRD-001">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1.5">بارکد</label>
+          <input type="text" id="npBarcode" class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" placeholder="بارکد کالا">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1.5">دسته‌بندی</label>
+          <select id="npCategory" class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+            <option value="">انتخاب دسته‌بندی</option>
+            {% for c in pl_categories %}
+            <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1.5">برند</label>
+          <select id="npBrand" class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+            <option value="">انتخاب برند</option>
+            {% for b in pl_brands %}
+            <option value="{{ b }}">{{ b }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1.5">واحد</label>
+          <select id="npUnit" class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+            <option value="">انتخاب واحد</option>
+            {% for u in pl_units %}
+            <option value="{{ u }}">{{ u }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1.5">قیمت خرید (تومان)</label>
+          <input type="number" id="npCostPrice" min="0" step="1000" class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" placeholder="0" value="0">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1.5">قیمت فروش (تومان)</label>
+          <input type="number" id="npSalePrice" min="0" step="1000" class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" placeholder="0" value="0">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-200 mb-1.5">حداقل موجودی</label>
+          <input type="number" id="npMinStock" min="0" step="0.001" class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" placeholder="0" value="0">
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-200 mb-1.5">توضیحات</label>
+        <textarea id="npDescription" rows="3" class="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 text-white rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" placeholder="توضیحات کالا"></textarea>
+      </div>
+      <div id="npResult" class="hidden px-4 py-3 rounded-xl text-sm"></div>
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+        <button type="button" onclick="closeNewProductModal()" class="px-4 py-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-300 text-sm font-medium transition-all">انصراف</button>
+        <button type="submit" id="npSubmitBtn" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition-all flex items-center gap-2">
+          <span>ذخیره و ثبت کاتالوگ</span>
+          <span class="material-symbols-outlined text-xl">save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+    // ==================== 0. Theme toggle (بدون crash اگر المان نبود) ====================
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const htmlEl = document.documentElement;
+        if (htmlEl.classList.contains('dark')) {
+          htmlEl.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+        } else {
+          htmlEl.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+        }
+      });
+    }
+
+    // ==================== Modal: New Product ====================
+    function openNewProductModal() {
+      var modal = document.getElementById('newProductModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        var form = modal.querySelector('form');
+        if (form) form.reset();
+        var res = document.getElementById('npResult');
+        if (res) { res.classList.add('hidden'); res.textContent = ''; }
+      }
+    }
+    function closeNewProductModal() {
+      var modal = document.getElementById('newProductModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    // ==================== 1. فیلتر و جستجوی زنده ====================
+    function getPlFilters() {
+      return {
+        q: (document.getElementById('plSearchInput') || {}).value || '',
+        category: (document.getElementById('plCategoryFilter') || {}).value || '',
+        brand: (document.getElementById('plBrandFilter') || {}).value || '',
+        stock: (document.getElementById('plStockFilter') || {}).value || '',
+        status: (document.getElementById('plStatusFilter') || {}).value || 'active'
+      };
+    }
+
+    function applyProductListFilters() {
+      var f = getPlFilters();
+      var q = f.q.trim().toLowerCase();
+      var visible = 0;
+      document.querySelectorAll('.pl-product-row').forEach(function(row) {
+        var search = (row.getAttribute('data-search') || '').toLowerCase();
+        var ok = (!q || search.indexOf(q) !== -1);
+        if (ok && f.category) ok = row.getAttribute('data-category') === f.category;
+        if (ok && f.brand) ok = row.getAttribute('data-brand') === f.brand;
+        if (ok && f.stock) ok = row.getAttribute('data-stock-state') === f.stock;
+        if (ok && f.status) ok = row.getAttribute('data-is-active') === (f.status === 'draft' ? 'false' : 'true');
+        row.style.display = ok ? '' : 'none';
+        if (ok) visible++;
+      });
+      renderPlActiveTags(f, visible);
+      plPage = 1;
+      plPaginate();
+      var range = document.getElementById('plRangeText');
+      if (range) range.textContent = 'نمایش ' + visible + ' کالا از مجموع ' + '{{ pl_total_products }}' + ' کالا';
+    }
+
+    // ==================== Status Filter (Server-side reload) ====================
+    function onStatusFilterChange() {
+      var status = (document.getElementById('plStatusFilter') || {}).value || 'active';
+      var url = new URL(window.location.href);
+      if (status === 'active') {
+        url.searchParams.delete('status');
+      } else {
+        url.searchParams.set('status', status);
+      }
+      // Preserve other filters in URL if needed
+      window.location.href = url.toString();
+    }
+
+    function setStatusFilter(status) {
+      var sel = document.getElementById('plStatusFilter');
+      if (sel) { sel.value = status; onStatusFilterChange(); }
+    }
+
+    function setStockStateFilter(state) {
+      var sel = document.getElementById('plStockFilter');
+      if (sel) { sel.value = state; applyProductListFilters(); }
+    }
+
+    function renderPlActiveTags(f, visible) {
+      var box = document.getElementById('plActiveFiltersTags');
+      var clearBtn = document.getElementById('plClearAllFilters');
+      if (!box) return;
+      box.innerHTML = '';
+      var has = false;
+      var labels = { 'q': 'جستجو: ', 'category': 'دسته: ', 'brand': 'برند: ', 'stock': 'وضعیت موجودی: ', 'status': 'وضعیت کالا: ' };
+      var states = { 'in_stock': 'کافی', 'critical': 'کسری', 'out': 'ناموجود' };
+      var statusLabels = { 'active': 'فعال', 'draft': 'پیش‌نویس', 'all': 'همه' };
+      Object.keys(f).forEach(function(k) {
+        if (f[k]) {
+          has = true;
+          var val = (k === 'stock') ? (states[f[k]] || f[k]) : (k === 'status') ? (statusLabels[f[k]] || f[k]) : f[k];
+          var chip = document.createElement('span');
+          chip.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high dark:bg-slate-800 text-on-surface dark:text-slate-200';
+          chip.innerHTML = labels[k] + val +
+            ' <button class="hover:text-error transition-colors" onclick="clearPlFilter(\'' + k + '\')"><span class="material-symbols-outlined text-sm">close</span></button>';
+          box.appendChild(chip);
+        }
+      });
+      if (clearBtn) clearBtn.classList.toggle('hidden', !has);
+    }
+
+    function clearPlFilter(key) {
+      var map = { 'q': 'plSearchInput', 'category': 'plCategoryFilter', 'brand': 'plBrandFilter', 'stock': 'plStockFilter', 'status': 'plStatusFilter' };
+      var el = document.getElementById(map[key]);
+      if (el) el.value = '';
+      if (key === 'status') {
+        onStatusFilterChange();
+      } else {
+        applyProductListFilters();
+      }
+    }
+
+    function resetProductListFilters() {
+      ['plSearchInput', 'plCategoryFilter', 'plBrandFilter', 'plStockFilter', 'plStatusFilter'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      // Reset status to active (default)
+      var statusEl = document.getElementById('plStatusFilter');
+      if (statusEl) statusEl.value = 'active';
+      onStatusFilterChange();
+    }
+
+    // جستجو با تایپ + Ctrl+K
+    (function() {
+      var input = document.getElementById('plSearchInput');
+      if (input) input.addEventListener('input', function() { applyProductListFilters(); });
+      document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          var i = document.getElementById('plSearchInput');
+          if (i) { i.focus(); i.select(); }
+        }
+      });
+    })();
+
+    // ==================== 2. صفحه‌بندی client-side ====================
+    var plPage = 1;
+    var plPageSize = 25;
+    function plPaginate() {
+      var rows = Array.prototype.slice.call(document.querySelectorAll('.pl-product-row')).filter(function(r){ return r.style.display !== 'none'; });
+      var total = rows.length;
+      var pages = Math.max(1, Math.ceil(total / plPageSize));
+      if (plPage > pages) plPage = pages;
+      var start = (plPage - 1) * plPageSize;
+      rows.forEach(function(r, i) {
+        r.style.display = (i >= start && i < start + plPageSize) ? '' : 'none';
+      });
+      var info = document.getElementById('plPageInfo');
+      if (info) info.textContent = plPage + ' / ' + pages;
+      var prev = document.getElementById('plPrevBtn');
+      var next = document.getElementById('plNextBtn');
+      if (prev) prev.disabled = (plPage <= 1);
+      if (next) next.disabled = (plPage >= pages);
+      // ردیف‌های موبایل هم صفحه‌بندی شوند
+      var mRows = Array.prototype.slice.call(document.querySelectorAll('#plMobileCards .pl-product-row')).filter(function(r){ return r.style.display !== 'none'; });
+    }
+    function plGoPage(delta) {
+      plPage += delta;
+      plPaginate();
+      if (typeof showToast === 'function') showToast('صفحه ' + plPage, 'page_info');
+    }
+
+    // ==================== 3. ثبت کالای جدید (POST واقعی) ====================
+    function _plCsrf() {
+      var m = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'));
+      return m ? decodeURIComponent(m[2]) : '';
+    }
+
+    async function submitNewProduct() {
+      var name = (document.getElementById('npName') || {}).value || '';
+      var sku = (document.getElementById('npSku') || {}).value || '';
+      var res = document.getElementById('npResult');
+      if (!name.trim() || !sku.trim()) {
+        if (res) { res.className = 'px-4 py-3 rounded-xl bg-red-600/20 border border-red-500 text-red-200 text-sm'; res.textContent = 'نام کالا و کد SKU الزامی است.'; }
+        return;
+      }
+      var btn = document.getElementById('npSubmitBtn');
+      if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-base">progress_activity</span> در حال ثبت...'; }
+
+      // شناسه‌های دسته/برند/واحد از نام
+      var catName = (document.getElementById('npCategory') || {}).value || '';
+      var brandName = (document.getElementById('npBrand') || {}).value || '';
+      var unitName = (document.getElementById('npUnit') || {}).value || '';
+      var payload = {
+        name: name.trim(), sku: sku.trim(),
+        barcode: (document.getElementById('npBarcode') || {}).value || '',
+        cost_price: (document.getElementById('npCostPrice') || {}).value || 0,
+        sale_price: (document.getElementById('npSalePrice') || {}).value || 0,
+        min_stock: (document.getElementById('npMinStock') || {}).value || 0,
+        description: (document.getElementById('npDescription') || {}).value || '',
+        is_active: true
+      };
+      // دسته/برند/واحد: اگر نام انتخاب شد، id واقعی را بگیر
+      try {
+        var [cats, brands, units] = await Promise.all([
+          fetch('/api/products/categories/', { credentials: 'same-origin' }).then(function(r){ return r.json(); }),
+          fetch('/api/products/brands/', { credentials: 'same-origin' }).then(function(r){ return r.json(); }),
+          fetch('/api/products/units/', { credentials: 'same-origin' }).then(function(r){ return r.json(); })
+        ]);
+        var arr = function(d){ return Array.isArray(d) ? d : (d.results || []); };
+        var findId = function(list, nameVal) {
+          if (!nameVal) return null;
+          var found = arr(list).find(function(x){ return x.name === nameVal; });
+          return found ? found.id : null;
+        };
+        var catId = findId(cats, catName);
+        var brandId = findId(brands, brandName);
+        var unitId = findId(units, unitName);
+        if (catId) payload.category = catId;
+        if (brandId) payload.brand = brandId;
+        if (unitId) payload.unit = unitId;
+      } catch (e) { /* بدون دسته هم ثبت می‌شود */ }
+
+      try {
+        var response = await fetch('/api/products/products/', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': _plCsrf() },
+          body: JSON.stringify(payload)
+        });
+        var data = await response.json().catch(function(){ return {}; });
+        if (btn) { btn.disabled = false; btn.textContent = 'ذخیره و ثبت کاتالوگ'; }
+        if (response.ok) {
+          if (res) { res.className = 'px-4 py-3 rounded-xl bg-emerald-600/20 border border-emerald-500 text-emerald-200 text-sm'; res.textContent = 'کالای «' + name + '» با موفقیت ثبت شد. در حال بازخوانی...'; }
+          if (typeof showToast === 'function') showToast('کالای «' + name + '» ثبت شد', 'check_circle');
+          setTimeout(function() { location.reload(); }, 900);
+        } else {
+          var errMsg = '';
+          if (data) {
+            if (typeof data === 'object') {
+              Object.keys(data).forEach(function(k) {
+                errMsg += k + ': ' + (Array.isArray(data[k]) ? data[k].join('، ') : data[k]) + ' ';
+              });
+            }
+          }
+          if (res) { res.className = 'px-4 py-3 rounded-xl bg-red-600/20 border border-red-500 text-red-200 text-sm'; res.textContent = 'خطا در ثبت: ' + (errMsg || 'دوباره تلاش کنید'); }
+        }
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = 'ذخیره و ثبت کاتالوگ'; }
+        if (res) { res.className = 'px-4 py-3 rounded-xl bg-red-600/20 border border-red-500 text-red-200 text-sm'; res.textContent = 'ارتباط با سرور برقرار نشد.'; }
+      }
+    }
+
+    // ==================== 4. خروجی اکسل (SheetJS از static) ====================
+    function exportProductsExcel() {
+      var rows = Array.prototype.slice.call(document.querySelectorAll('.pl-product-row')).filter(function(r){ return r.style.display !== 'none'; });
+      if (rows.length === 0) { if (typeof showToast === 'function') showToast('ردیفی برای خروجی نیست', 'warning'); return; }
+      function loadScript(src, cb) {
+        if (window.XLSX) { cb(); return; }
+        var s = document.createElement('script');
+        s.src = src; s.onload = cb;
+        document.head.appendChild(s);
+      }
+      loadScript('/static/xlsx.full.min.js', function() {
+        if (!window.XLSX) { if (typeof showToast === 'function') showToast('کتابخانهٔ اکسل بارگذاری نشد', 'error'); return; }
+        var data = [['ردیف', 'نام کالا', 'SKU', 'بارکد', 'دسته', 'برند', 'موجودی کل', 'آزاد', 'تعهد', 'حداقل', 'قیمت خرید', 'قیمت فروش', 'حاشیه سود ٪', 'وضعیت']];
+        var rowsArr = Array.prototype.slice.call(document.querySelectorAll('#plTableBody tr.pl-product-row')).filter(function(r){ return r.style.display !== 'none'; });
+        rowsArr.forEach(function(r, idx) {
+          var cells = r.querySelectorAll('td');
+          if (cells.length < 11) return;
+          data.push([
+            idx + 1,
+            (cells[1].querySelector('.font-bold') || {}).textContent || '',
+            (cells[2].querySelector('.font-semibold') || {}).textContent || '',
+            (cells[2].querySelectorAll('div')[1] || {}).textContent || '',
+            (cells[3].querySelector('.text-label-md') || {}).textContent || '',
+            (cells[3].querySelector('.text-xs') || {}).textContent || '',
+            parseFloat((cells[4].textContent || '0').replace(/[^\d.-]/g, '')) || 0,
+            (cells[5].textContent || '').trim(),
+            (cells[6].textContent || '').trim(),
+            (cells[7].textContent || '').replace(/[^\d.-]/g, ''),
+            (cells[8].textContent || '').replace(/[^\d.-]/g, ''),
+            (cells[9].textContent || '').replace(/[^\d.-]/g, ''),
+            (cells[10].textContent || '').replace(/[^\d.-]/g, ''),
+            (cells[11].textContent || '').trim()
+          ]);
+        });
+        var ws = XLSX.utils.aoa_to_sheet(data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'کالاها');
+        XLSX.writeFile(wb, 'products-' + new Date().toISOString().slice(0, 10) + '.xlsx');
+        if (typeof showToast === 'function') showToast('فایل اکسل کالاها دانلود شد', 'file_download');
+      });
+    }
+
+    // ==================== 5. عملیات گروهی: آرشیو واقعی ====================
+    async function archiveSelectedProducts() {
+      var checked = document.querySelectorAll('.row-checkbox:checked');
+      if (checked.length === 0) return;
+      var btn = document.getElementById('batchArchiveBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'در حال آرشیو...'; }
+      var ids = Array.prototype.map.call(checked, function(cb){ return parseInt(cb.value, 10); });
+      var okCount = 0;
+      for (var i = 0; i < ids.length; i++) {
+        try {
+          var res = await fetch('/api/products/products/' + ids[i] + '/', {
+            method: 'PATCH', credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': _plCsrf() },
+            body: JSON.stringify({ is_active: false })
+          });
+          if (res.ok) okCount++;
+        } catch (e) {}
+      }
+      if (btn) { btn.disabled = false; btn.textContent = 'آرشیو / غیرفعال‌سازی'; }
+      if (typeof showToast === 'function') showToast(okCount + ' کالا آرشیو شد', 'archive');
+      setTimeout(function() { location.reload(); }, 800);
+    }
+
+    // ==================== 6. Select All + Batch strip ====================
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const batchStrip = document.getElementById('batchActionStrip');
+    const selectedCountText = document.getElementById('selectedCountText');
+
+    function updateBatchStrip() {
+      const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+      if (checkedCount > 0) {
+        batchStrip.classList.remove('hidden');
+        selectedCountText.textContent = checkedCount;
+      } else {
+        batchStrip.classList.add('hidden');
+      }
+    }
+
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', (e) => {
+        rowCheckboxes.forEach(cb => cb.checked = e.target.checked);
+        updateBatchStrip();
+      });
+    }
+
+    rowCheckboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const allChecked = Array.from(rowCheckboxes).every(c => c.checked);
+        if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
+        updateBatchStrip();
+      });
+    });
+
+    // ==================== 7. Table/Grid view switcher ====================
+    const viewTableBtn = document.getElementById('viewTableBtn');
+    const viewGridBtn = document.getElementById('viewGridBtn');
+    const tableView = document.querySelector('.hidden.lg\\:block');
+    const cardsView = document.getElementById('plMobileCards');
+
+    if (viewTableBtn && viewGridBtn) {
+      viewGridBtn.addEventListener('click', () => {
+        viewGridBtn.classList.add('bg-surface-container-lowest', 'dark:bg-[#161f30]', 'text-primary', 'dark:text-inverse-primary');
+        viewGridBtn.classList.remove('text-on-surface-variant', 'dark:text-slate-400');
+        viewTableBtn.classList.remove('bg-surface-container-lowest', 'dark:bg-[#161f30]', 'text-primary', 'dark:text-inverse-primary');
+        viewTableBtn.classList.add('text-on-surface-variant', 'dark:text-slate-400');
+        if (cardsView) { cardsView.classList.remove('lg:hidden'); cardsView.classList.add('lg:block'); }
+        if (tableView) { tableView.classList.add('hidden'); tableView.classList.remove('lg:block'); }
+      });
+
+      viewTableBtn.addEventListener('click', () => {
+        viewTableBtn.classList.add('bg-surface-container-lowest', 'dark:bg-[#161f30]', 'text-primary', 'dark:text-inverse-primary');
+        viewTableBtn.classList.remove('text-on-surface-variant', 'dark:text-slate-400');
+        viewGridBtn.classList.remove('bg-surface-container-lowest', 'dark:bg-[#161f30]', 'text-primary', 'dark:text-inverse-primary');
+        viewGridBtn.classList.add('text-on-surface-variant', 'dark:text-slate-400');
+        if (cardsView) { cardsView.classList.add('lg:hidden'); cardsView.classList.remove('lg:block'); }
+        if (tableView) { tableView.classList.remove('hidden'); tableView.classList.add('lg:block'); }
+      });
+    }
+
+    // init
+    applyProductListFilters();
+  </script>
+
+{% endblock %}
