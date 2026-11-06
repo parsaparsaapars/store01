@@ -1,0 +1,1092 @@
+<!DOCTYPE html><html class="dark" dir="rtl" lang="fa" style=""><head>
+<script>
+(function() {
+  try {
+    var t = localStorage.getItem('theme');
+    if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (t === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  } catch(e) {}
+})();
+</script>
+
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>سامانه جامع سازمانی | صندوق فروش سریع (POS)</title>
+<!-- Google Fonts: Vazirmatn -->
+
+
+<link href="/static/ui/pos/assets/5c15e6be3230.css" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="/static/ui/pos/assets/85b88de6c127.css" rel="stylesheet">
+<!-- Tailwind CSS CDN -->
+<script src="/static/ui/pos/assets/5bff49eb5fe8.js"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-tint": "#0053db",
+            "on-surface-variant": "#434655",
+            "on-secondary-fixed-variant": "#005320",
+            "error-container": "#ffdad6",
+            "on-secondary-container": "#007230",
+            "outline-variant": "#c3c6d7",
+            "primary": "#004ac6",
+            "surface-container-low": "#f1f3ff",
+            "on-tertiary": "#ffffff",
+            "surface-container-high": "#e1e8ff",
+            "secondary-container": "#7cf994",
+            "error": "#ba1a1a",
+            "tertiary-container": "#996100",
+            "surface-bright": "#f9f9ff",
+            "surface": "#f9f9ff",
+            "on-tertiary-fixed": "#2a1700",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed-variant": "#653e00",
+            "background": "#f9f9ff",
+            "on-primary": "#ffffff",
+            "on-error-container": "#93000a",
+            "tertiary-fixed-dim": "#ffb95f",
+            "on-primary-fixed": "#00174b",
+            "tertiary-fixed": "#ffddb8",
+            "on-primary-fixed-variant": "#003ea8",
+            "surface-container-highest": "#d9e2fc",
+            "surface-dim": "#d1daf4",
+            "on-error": "#ffffff",
+            "on-background": "#121b2e",
+            "outline": "#737686",
+            "inverse-on-surface": "#edf0ff",
+            "secondary-fixed-dim": "#62df7d",
+            "surface-container": "#e9edff",
+            "surface-variant": "#d9e2fc",
+            "on-secondary-fixed": "#002109",
+            "inverse-primary": "#b4c5ff",
+            "primary-fixed-dim": "#b4c5ff",
+            "on-primary-container": "#eeefff",
+            "inverse-surface": "#273044",
+            "secondary": "#006e2d",
+            "primary-fixed": "#dbe1ff",
+            "tertiary": "#784b00",
+            "secondary-fixed": "#7ffc97",
+            "on-secondary": "#ffffff",
+            "primary-container": "#2563eb",
+            "on-tertiary-container": "#ffeedd",
+            "on-surface": "#121b2e"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "gutter": "1.5rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "margin": "2rem",
+            "gutter-mobile": "0.75rem",
+            "margin-mobile": "1rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Vazirmatn"],
+            "title-lg": ["Vazirmatn"],
+            "label-md": ["Vazirmatn"],
+            "body-md": ["Vazirmatn"],
+            "display-lg-mobile": ["Vazirmatn"],
+            "headline-md": ["Vazirmatn"],
+            "display-lg": ["Vazirmatn"],
+            "body-sm": ["Vazirmatn"],
+            "body-lg": ["Vazirmatn"],
+            "headline-lg": ["Vazirmatn"],
+            "tabular-num": ["Vazirmatn"],
+            "title-md": ["Vazirmatn"],
+            "headline-xl": ["Vazirmatn"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "16px", "fontWeight": "600" }],
+            "title-lg": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "display-lg-mobile": ["26px", { "lineHeight": "36px", "fontWeight": "800" }],
+            "headline-md": ["18px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "44px", "fontWeight": "800" }],
+            "body-sm": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-lg": ["20px", { "lineHeight": "30px", "fontWeight": "700" }],
+            "tabular-num": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+            "title-md": ["15px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "headline-xl": ["24px", { "lineHeight": "34px", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 4px;
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #334155;
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: #475569;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased overflow-x-hidden min-h-screen flex flex-col lg:h-screen lg:overflow-hidden dark:bg-[#0b0f19] dark:text-slate-100 transition-colors duration-200">
+<!-- ==================== SIDEBAR BACKDROP (MOBILE / TABLET) ==================== -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden transition-opacity duration-300 opacity-0 hidden" id="sidebarBackdrop" onclick="closeSidebarMobile()"></div>
+<!-- ==================== SIDEBAR (RESPONSIVE: DRAWER ON MOBILE, FIXED ON DESKTOP) ==================== -->
+<aside class="fixed top-0 right-0 h-screen z-50 bg-surface-container-lowest dark:bg-[#0f172a] border-l border-outline-variant dark:border-slate-800 shadow-xl lg:shadow-sm flex flex-col justify-between p-4 rtl transition-transform lg:transition-all duration-300 transform lg:translate-x-0 w-64 translate-x-full" id="mainSidebar">
+<!-- Header / Brand -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between px-2 pt-1">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-blue-600 dark:bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 flex-shrink-0">
+<span class="material-symbols-outlined text-2xl" data-icon="storefront">storefront</span>
+</div>
+<div class="flex flex-col sidebar-text-item">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-blue-400 leading-tight">سامانه جامع سازمانی</span>
+<span class="font-label-md text-label-md text-on-surface-variant dark:text-slate-400">مدیریت فروش و انبارداری</span>
+</div>
+</div>
+<!-- Collapse toggle on Desktop / Close on Mobile -->
+<button class="p-1.5 rounded-lg text-outline dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors hidden lg:block" onclick="toggleSidebarCollapse()" title="جمع‌کردن سایدبار">
+<span class="material-symbols-outlined text-xl" data-icon="chevron_right" id="collapseIcon">chevron_right</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline dark:text-slate-400 hover:bg-surface-container-low dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors lg:hidden" onclick="closeSidebarMobile()" title="بستن منو">
+<span class="material-symbols-outlined text-xl" data-icon="close">close</span>
+</button>
+</div>
+<!-- Quick Action CTA -->
+<button onclick="window.location.href='/ui/pos/'" class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white py-2.5 px-4 rounded-xl font-title-md text-title-md font-bold shadow-md shadow-blue-600/25 transition-all duration-150 active:scale-[0.99] sidebar-cta-btn">
+<span class="material-symbols-outlined text-lg" data-icon="add_circle">add_circle</span>
+<span class="sidebar-text-item">ثبت فاکتور سریع</span>
+</button>
+<!-- Main Navigation Menu -->
+<nav class="flex flex-col gap-1 mt-2 overflow-y-auto max-h-[calc(100vh-270px)] custom-scrollbar pr-0.5" id="sidebarNav">
+  <!-- داشبورد -->
+  <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/dashboard/" data-sidebar-active="dashboard" title="داشبورد">
+    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+    <span class="sidebar-text-item">داشبورد</span>
+  </a>
+
+  <!-- فروش (collapsible) -->
+  <div class="sidebar-group" data-group="sales">
+    <button type="button" onclick="toggleSidebarGroup('sales')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" aria-expanded="false">
+      <span class="material-symbols-outlined" data-icon="point_of_sale">point_of_sale</span>
+      <span class="sidebar-text-item flex-1 text-right">فروش</span>
+      <span class="material-symbols-outlined text-base sidebar-text-item sidebar-group-chevron transition-transform duration-200" data-icon="expand_more">expand_more</span>
+    </button>
+    <div class="sidebar-group-children hidden flex flex-col gap-0.5 mr-3 pr-2 border-r border-outline-variant/40 dark:border-slate-700/60 mt-0.5">
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/pos/" data-sidebar-active="pos">
+        <span class="material-symbols-outlined text-lg" data-icon="point_of_sale">point_of_sale</span>
+        <span class="sidebar-text-item">صندوق فروش سریع</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/sales-report/" data-sidebar-active="sales-report">
+        <span class="material-symbols-outlined text-lg" data-icon="receipt_long">receipt_long</span>
+        <span class="sidebar-text-item">گزارش فروش</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/sales-return/" data-sidebar-active="sales-return">
+        <span class="material-symbols-outlined text-lg" data-icon="assignment_return">assignment_return</span>
+        <span class="sidebar-text-item">مرجوعی فروش</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/cashbox-payments/" data-sidebar-active="cashbox-payments">
+        <span class="material-symbols-outlined text-lg" data-icon="account_balance_wallet">account_balance_wallet</span>
+        <span class="sidebar-text-item">صندوق و دریافت/پرداخت</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- مشتریان -->
+  <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/customer-management/" data-sidebar-active="customer-management" title="مشتریان">
+    <span class="material-symbols-outlined" data-icon="group">group</span>
+    <span class="sidebar-text-item">مشتریان</span>
+  </a>
+
+  <!-- کالا و انبار (collapsible) -->
+  <div class="sidebar-group" data-group="inventory">
+    <button type="button" onclick="toggleSidebarGroup('inventory')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" aria-expanded="false">
+      <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+      <span class="sidebar-text-item flex-1 text-right">کالا و انبار</span>
+      <span class="material-symbols-outlined text-base sidebar-text-item sidebar-group-chevron transition-transform duration-200" data-icon="expand_more">expand_more</span>
+    </button>
+    <div class="sidebar-group-children hidden flex flex-col gap-0.5 mr-3 pr-2 border-r border-outline-variant/40 dark:border-slate-700/60 mt-0.5">
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/product-list/" data-sidebar-active="product-list">
+        <span class="material-symbols-outlined text-lg" data-icon="inventory_2">inventory_2</span>
+        <span class="sidebar-text-item">فهرست کالاها</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/inventory-dashboard/" data-sidebar-active="inventory-dashboard">
+        <span class="material-symbols-outlined text-lg" data-icon="dashboard">dashboard</span>
+        <span class="sidebar-text-item">کنترل موجودی</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/warehouse-management/" data-sidebar-active="warehouse-management">
+        <span class="material-symbols-outlined text-lg" data-icon="warehouse">warehouse</span>
+        <span class="sidebar-text-item">مدیریت انبارها</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/stock-movement/" data-sidebar-active="stock-movement">
+        <span class="material-symbols-outlined text-lg" data-icon="swap_horiz">swap_horiz</span>
+        <span class="sidebar-text-item">گردش کالا</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/pricing-discounts/" data-sidebar-active="pricing-discounts">
+        <span class="material-symbols-outlined text-lg" data-icon="sell">sell</span>
+        <span class="sidebar-text-item">قیمت‌گذاری و تخفیف</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- خرید (collapsible) -->
+  <div class="sidebar-group" data-group="purchases">
+    <button type="button" onclick="toggleSidebarGroup('purchases')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" aria-expanded="false">
+      <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+      <span class="sidebar-text-item flex-1 text-right">خرید</span>
+      <span class="material-symbols-outlined text-base sidebar-text-item sidebar-group-chevron transition-transform duration-200" data-icon="expand_more">expand_more</span>
+    </button>
+    <div class="sidebar-group-children hidden flex flex-col gap-0.5 mr-3 pr-2 border-r border-outline-variant/40 dark:border-slate-700/60 mt-0.5">
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/purchase-management/" data-sidebar-active="purchase-management">
+        <span class="material-symbols-outlined text-lg" data-icon="shopping_cart">shopping_cart</span>
+        <span class="sidebar-text-item">مدیریت خرید</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/supplier-management/" data-sidebar-active="supplier-management">
+        <span class="material-symbols-outlined text-lg" data-icon="local_shipping">local_shipping</span>
+        <span class="sidebar-text-item">تأمین‌کنندگان</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- مالی (collapsible) -->
+  <div class="sidebar-group" data-group="finance">
+    <button type="button" onclick="toggleSidebarGroup('finance')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" aria-expanded="false">
+      <span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+      <span class="sidebar-text-item flex-1 text-right">مالی</span>
+      <span class="material-symbols-outlined text-base sidebar-text-item sidebar-group-chevron transition-transform duration-200" data-icon="expand_more">expand_more</span>
+    </button>
+    <div class="sidebar-group-children hidden flex flex-col gap-0.5 mr-3 pr-2 border-r border-outline-variant/40 dark:border-slate-700/60 mt-0.5">
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/finance-center/" data-sidebar-active="finance-center">
+        <span class="material-symbols-outlined text-lg" data-icon="account_balance">account_balance</span>
+        <span class="sidebar-text-item">مرکز مالی</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/profit-loss-report/" data-sidebar-active="profit-loss-report">
+        <span class="material-symbols-outlined text-lg" data-icon="bar_chart">bar_chart</span>
+        <span class="sidebar-text-item">سود و زیان</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- تنظیمات (collapsible) -->
+  <div class="sidebar-group" data-group="settings">
+    <button type="button" onclick="toggleSidebarGroup('settings')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" aria-expanded="false">
+      <span class="material-symbols-outlined" data-icon="settings">settings</span>
+      <span class="sidebar-text-item flex-1 text-right">تنظیمات</span>
+      <span class="material-symbols-outlined text-base sidebar-text-item sidebar-group-chevron transition-transform duration-200" data-icon="expand_more">expand_more</span>
+    </button>
+    <div class="sidebar-group-children hidden flex flex-col gap-0.5 mr-3 pr-2 border-r border-outline-variant/40 dark:border-slate-700/60 mt-0.5">
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/settings/" data-sidebar-active="settings">
+        <span class="material-symbols-outlined text-lg" data-icon="settings">settings</span>
+        <span class="sidebar-text-item">تنظیمات سیستم</span>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-100 font-body-md text-body-md hover:bg-surface-container-low dark:hover:bg-slate-800/80 transition-colors" href="/ui/user-management/" data-sidebar-active="user-management">
+        <span class="material-symbols-outlined text-lg" data-icon="group">group</span>
+        <span class="sidebar-text-item">کاربران و نقش‌ها</span>
+      </a>
+    </div>
+  </div>
+</nav>
+<!-- Flyout panel for collapsed sidebar (shown on hover) -->
+<div id="sidebarFlyout" class="hidden fixed z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-2 min-w-[200px] max-w-[260px] w-auto" style="top:0;left:0;"></div>
+</div>
+<!-- Footer Support Links -->
+<div class="pt-3 border-t border-outline-variant dark:border-slate-800 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-200 hover:bg-surface-container-low dark:hover:bg-slate-800/60 transition-colors font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="support_agent">support_agent</span>
+<span class="sidebar-text-item">پشتیبانی آنلاین</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-slate-400 dark:hover:text-slate-200 hover:bg-surface-container-low dark:hover:bg-slate-800/60 transition-colors font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="help_center">help_center</span>
+<span class="sidebar-text-item">راهنمای کاربری</span>
+</a>
+</div>
+</aside>
+<!-- ==================== MAIN WRAPPER (RESPONSIVE MARGIN & FLEX) ==================== -->
+<div class="w-full flex flex-col min-h-screen lg:h-screen lg:overflow-auto transition-all duration-300 lg:mr-64 lg:w-[calc(100%-16rem)] pb-36 lg:pb-9" id="mainContentWrapper">
+<!-- ==================== TOP BAR (DESKTOP VERSION) ==================== -->
+<header class="hidden lg:flex sticky top-0 z-30 h-16 min-h-16 w-full bg-surface-container-lowest dark:bg-[#0f172a] border-b border-outline-variant dark:border-slate-800 shadow-sm items-center justify-end px-4 xl:px-6 select-none overflow-visible min-w-0 transition-colors duration-200">
+<!-- Left Side: Customer Select, Quick Actions, Dark Mode, Profile -->
+<div class="flex items-center gap-2 xl:gap-3 shrink min-w-0 justify-end">
+<!-- System Alerts / Notifications -->
+<button class="relative p-1.5 rounded-lg text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors shrink-0" title="اعلان‌ها">
+<span class="material-symbols-outlined text-xl" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<!-- Keyboard Shortcuts Help -->
+<button class="p-1.5 rounded-lg text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors shrink-0 hidden xl:flex items-center justify-center" title="راهنمای کلیدها">
+<span class="material-symbols-outlined text-xl" data-icon="keyboard">keyboard</span>
+</button>
+<!-- Dark / Light Mode Switcher -->
+<button class="p-1.5 rounded-lg text-on-surface-variant dark:text-amber-400 hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors shrink-0 flex items-center justify-center border border-transparent dark:border-slate-700/60" onclick="toggleDarkMode()" title="حالت تیره / روشن">
+<span class="material-symbols-outlined text-xl themeIcon" data-icon="light_mode">light_mode</span>
+</button>
+<!-- User Profile Avatar -->
+<div class="relative flex items-center gap-1.5 pr-1.5 border-r border-outline-variant dark:border-slate-800 shrink-0">
+<button id="avatarBtn" onclick="toggleAvatarMenu()" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-blue-500/30 hover:ring-blue-400 transition">
+          ع‌م
+        </button>
+<div id="avatarMenu" class="hidden fixed w-44 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 py-1 z-[100] opacity-0 -translate-y-2 transition-all duration-200">
+<a href="/accounts/profile/" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">پروفایل کاربری</a>
+<a href="/settings/" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">تنظیمات</a>
+<a href="/accounts/logout/" class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">خروج از سامانه</a>
+</div>
+</div>
+</div>
+</header>
+<!-- ==================== MOBILE COMPACT HEADER (BELOW lg) ==================== -->
+<header class="sticky top-0 z-30 lg:hidden bg-surface-container-lowest/95 dark:bg-[#0f172a]/95 backdrop-blur-md px-4 pt-3 pb-2.5 border-b border-outline-variant/40 dark:border-slate-800 flex flex-col gap-2 shadow-xs transition-colors duration-200">
+<!-- Top Row: Drawer Menu, Teller Info, POS Status & Dark Toggle -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<!-- Hamburger Menu Button -->
+<button class="w-9 h-9 rounded-xl bg-surface-container-low dark:bg-slate-800 border border-transparent dark:border-slate-700 flex items-center justify-center text-on-surface dark:text-slate-100 active:scale-95 transition-transform" onclick="openSidebarMobile()" title="منوی اصلی">
+<span class="material-symbols-outlined text-[22px]">menu</span>
+</button>
+<!-- Teller Info -->
+<div class="flex items-center gap-2">
+<div class="relative w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+            ع‌م
+            <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-[#0f172a]"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-bold leading-tight dark:text-slate-100">علی مرادی</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400">صندوق ۰۲ • شیفت صبح</span>
+</div>
+</div>
+</div>
+<!-- Right Actions: POS Status & Theme Switcher -->
+<div class="flex items-center gap-1.5">
+<div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-low dark:bg-emerald-950/60 border border-outline-variant/40 dark:border-emerald-800/60" title="دستگاه پوز متصل است">
+<span class="w-2 h-2 rounded-full bg-secondary dark:bg-emerald-400 animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-secondary dark:text-emerald-400 font-bold">پوز متصل</span>
+<span class="material-symbols-outlined text-[15px] text-secondary dark:text-emerald-400">credit_card</span>
+</div>
+<button aria-label="تغییر تم" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant dark:text-amber-400 hover:bg-surface-container-low dark:hover:bg-slate-800 border border-transparent dark:border-slate-700/60 transition-colors" onclick="toggleDarkMode()" type="button">
+<span class="material-symbols-outlined text-[20px] themeIcon">light_mode</span>
+</button>
+</div>
+</div>
+<!-- Mobile Customer Bar -->
+<div class="flex items-center justify-between bg-surface-container-low/70 dark:bg-slate-800/80 px-3 py-1.5 rounded-lg border border-outline-variant/30 dark:border-slate-700/70">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-blue-400 text-[18px]">account_circle</span>
+<span class="font-label-md text-label-md text-on-surface-variant dark:text-slate-400">طرف حساب:</span>
+<span class="font-title-md text-title-md text-primary dark:text-blue-300 font-bold">مشتری عمومی (نقدی)</span>
+</div>
+<button class="flex items-center gap-0.5 text-primary dark:text-blue-400 text-label-md font-label-md hover:underline active:scale-95 transition-transform" type="button">
+<span class="">تغییر</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+</header>
+<!-- ==================== POS WORKSPACE (CATALOG & CART) ==================== -->
+{% block content %}{% endblock %}
+
+{% if 'pos' in request.path %}
+<!-- ==================== DESKTOP BOTTOM SHORTCUT KEYS STRIP ==================== -->
+<footer class="fixed bottom-0 inset-x-0 lg:mr-64 flex h-9 bg-surface-container-lowest dark:bg-[#0f172a] border-t border-outline-variant dark:border-slate-800 items-center justify-between px-6 select-none text-xs font-label-md transition-colors duration-200">
+<div class="flex items-center gap-4 text-on-surface-variant dark:text-slate-400">
+<div class="flex items-center gap-1.5">
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container dark:bg-slate-800 border border-outline-variant dark:border-slate-700 font-mono font-bold text-on-surface dark:text-slate-200 text-[10px]">F2</kbd>
+<span class="">جستجوی بارکد / کالا</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-outline-variant dark:bg-slate-700"></div>
+<div class="flex items-center gap-1.5">
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container dark:bg-slate-800 border border-outline-variant dark:border-slate-700 font-mono font-bold text-on-surface dark:text-slate-200 text-[10px]">F4</kbd>
+<span class="">ارسال به پوز بانکی</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-outline-variant dark:bg-slate-700"></div>
+<div class="flex items-center gap-1.5">
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container dark:bg-slate-800 border border-outline-variant dark:border-slate-700 font-mono font-bold text-on-surface dark:text-slate-200 text-[10px]">F8</kbd>
+<span class="">تخفیف فاکتور</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-outline-variant dark:bg-slate-700"></div>
+<div class="flex items-center gap-1.5">
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container dark:bg-slate-800 border border-outline-variant dark:border-slate-700 font-mono font-bold text-on-surface dark:text-slate-200 text-[10px]">Esc</kbd>
+<span class="">لغو و پاک‌کردن سبد</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-outline-variant dark:bg-slate-700"></div>
+<div class="flex items-center gap-1.5">
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container dark:bg-slate-800 border border-outline-variant dark:border-slate-700 font-mono font-bold text-on-surface dark:text-slate-200 text-[10px]">Ctrl+Enter</kbd>
+<span class="">ثبت نهایی و خروج</span>
+</div>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant dark:text-slate-400 font-label-sm">
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary dark:bg-emerald-400"></span>
+<span class="">وضعیت سرور: همگام‌سازی ابری آنلاین</span>
+</span>
+<span class="">نسخه سامانه: ۴.۸.۲ (SaaS)</span>
+</div>
+</footer>
+{% endif %}
+</div>
+<!-- ==================== MOBILE FLOATING CART BAR ==================== -->
+<div id="mobileCartBar" style="display:none" class="fixed bottom-16 inset-x-0 mx-auto max-w-md px-3 z-30 pointer-events-none lg:hidden">
+<div class="pointer-events-auto bg-[#1e293b] text-white rounded-2xl p-3 shadow-2xl flex items-center justify-between border border-slate-700 active:scale-[0.99] cursor-pointer transition-all duration-200" onclick="toggleCartModal()">
+<!-- Badge & Count -->
+<div class="flex items-center gap-3">
+<div class="relative w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
+<span class="material-symbols-outlined text-[22px]">shopping_cart</span>
+<span id="mobileCartBadge" class="absolute -top-2 -right-1 min-w-[20px] h-5 px-1.5 rounded-full bg-rose-500 text-white text-[10px] leading-none flex items-center justify-center font-bold font-tabular-num border-2 border-[#1e293b] itemCountBadge z-10">
+          ۳
+        </span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md font-bold">سبد خرید زنده</span>
+<span class="font-label-sm text-label-sm text-slate-300" id="mobileCartCount">۰ قلم</span>
+</div>
+<div class="flex items-center gap-1 font-tabular-num">
+<span class="font-headline-md text-headline-md font-extrabold text-emerald-400 finalTotalDisplay">۱,۱۲۸,۰۰۰</span>
+<span class="font-label-sm text-label-sm text-slate-300">تومان</span>
+</div>
+</div>
+</div>
+<!-- Action Indicator -->
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md font-bold text-blue-200 bg-white/10 px-2.5 py-1.5 rounded-lg flex items-center gap-1">
+<span class="">تسویه</span>
+<span class="material-symbols-outlined text-[16px]">expand_less</span>
+</span>
+</div>
+</div>
+</div>
+<!-- ==================== MOBILE BOTTOM NAVIGATION BAR ==================== -->
+<nav class="fixed bottom-0 inset-x-0 z-40 bg-surface-container-lowest dark:bg-[#0f172a] border-t border-outline-variant/30 dark:border-slate-800 h-16 px-2 flex items-center justify-around select-none lg:hidden transition-colors duration-200">
+<!-- Tab 1: صندوق فروش (POS) - ACTIVE -->
+<button class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-primary dark:text-blue-400" type="button">
+<div class="w-10 h-7 rounded-full bg-primary-container/15 dark:bg-blue-600/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px] material-symbols-fill text-primary dark:text-blue-400">point_of_sale</span>
+</div>
+<span class="font-label-sm text-label-sm font-bold">صندوق POS</span>
+</button>
+<!-- Tab 2: فاکتورها -->
+<button class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-slate-200 transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">receipt_long</span>
+<span class="font-label-sm text-label-sm">فاکتورها</span>
+</button>
+<!-- Tab 3: انبار و موجودی -->
+<button class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-slate-200 transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">inventory_2</span>
+<span class="font-label-sm text-label-sm">موجودی</span>
+</button>
+<!-- Tab 4: گزارش و شیفت -->
+<button class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-slate-200 transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">bar_chart</span>
+<span class="font-label-sm text-label-sm">گزارش روزانه</span>
+</button>
+<!-- Tab 5: تنظیمات -->
+<button class="flex flex-col items-center justify-center gap-1 flex-1 py-1 text-on-surface-variant dark:text-slate-400 hover:text-primary dark:hover:text-slate-200 transition-colors" onclick="openSidebarMobile()" type="button">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="font-label-sm text-label-sm">تنظیمات</span>
+</button>
+</nav>
+<!-- ==================== MOBILE CART BOTTOM SHEET (DRAWER) ==================== -->
+<div class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-300 lg:hidden opacity-0 hidden" id="cartModalBackdrop">
+<div class="absolute bottom-0 inset-x-0 mx-auto max-w-lg bg-surface-container-lowest dark:bg-[#0f172a] rounded-t-3xl max-h-[88vh] flex flex-col shadow-2xl border-t border-outline-variant/40 dark:border-slate-800 transform transition-transform duration-300 translate-y-full" id="cartSheetPanel">
+<!-- Sheet Handle & Header -->
+<div class="px-5 pt-3 pb-3 border-b border-outline-variant/30 dark:border-slate-800 flex flex-col">
+<div class="w-12 h-1.5 bg-outline-variant/60 dark:bg-slate-700 rounded-full mx-auto mb-2"></div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-blue-400 text-[24px]">receipt</span>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-slate-100">اقلام سبد فروش #۱۰۸۹</h2>
+</div>
+<button aria-label="بستن سبد" class="w-8 h-8 rounded-full bg-surface-container-low dark:bg-slate-800 border border-transparent dark:border-slate-700 flex items-center justify-center text-on-surface-variant dark:text-slate-300" onclick="toggleCartModal()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Cart Itemized List -->
+<div class="px-5 py-3 overflow-y-auto max-h-60 flex flex-col gap-3 divide-y divide-outline-variant/20 dark:divide-slate-800" id="mobileCartItemsList"></div>
+<!-- Calculations & Tax Summary Box -->
+<div class="px-5 py-3 bg-surface-container-low/60 dark:bg-slate-900/90 border-t border-b border-outline-variant/30 dark:border-slate-800 flex flex-col gap-1.5 font-tabular-num">
+<div class="flex justify-between items-center text-body-sm font-body-sm text-on-surface-variant dark:text-slate-400">
+<span class="" id="mobileSheetCount">جمع ناخالص اقلام (۰ عدد):</span>
+<span class="dark:text-slate-200" id="mobileSheetSubtotal">۰ تومان</span>
+</div>
+<div class="flex justify-between items-center text-body-sm font-body-sm text-secondary dark:text-emerald-400 font-bold">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">local_offer</span>
+          تخفیف ویژه صندوق:
+        </span>
+<span class="" id="mobileSheetDiscount">۰- تومان</span>
+</div>
+<div class="flex justify-between items-center text-body-sm font-body-sm text-on-surface-variant dark:text-slate-400">
+<span class="">مالیات بر ارزش افزوده:</span>
+<span class="dark:text-slate-200" id="mobileSheetTax">۰+ تومان</span>
+</div>
+<div class="pt-2 border-t border-outline-variant/30 dark:border-slate-800 flex justify-between items-center">
+<span class="font-title-lg text-title-lg font-bold text-on-surface dark:text-slate-100">مبلغ نهایی قابل پرداخت:</span>
+<span class="font-headline-xl text-headline-xl font-black text-primary dark:text-blue-400"><span class="finalTotalDisplay">۱,۱۲۸,۰۰۰</span> <span class="text-label-md font-label-md font-normal">تومان</span></span>
+</div>
+</div>
+<!-- Quick Payment Buttons -->
+<div class="p-4 bg-surface-container-lowest dark:bg-[#0f172a] flex flex-col gap-2.5">
+<div class="grid grid-cols-2 gap-2.5">
+<button class="h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center gap-2 font-title-md text-title-md font-bold shadow-md shadow-blue-600/30 active:scale-95 transition-transform" onclick="triggerPaymentPOS()" type="button">
+<span class="material-symbols-outlined text-[22px]">contactless</span>
+<span class="">کارت‌خوان (پوز)</span>
+</button>
+<button class="h-12 rounded-xl bg-secondary dark:bg-emerald-600 text-on-secondary dark:text-white flex items-center justify-center gap-2 font-title-md text-title-md font-bold shadow-md shadow-emerald-600/25 active:scale-95 transition-transform" onclick="triggerCashPayment()" type="button">
+<span class="material-symbols-outlined text-[22px]">payments</span>
+<span class="">دریافت نقدی</span>
+</button>
+</div>
+<button class="h-10 rounded-xl bg-surface-container-low dark:bg-slate-800 text-on-surface dark:text-slate-200 border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center gap-1.5 font-label-md text-label-md font-bold hover:bg-surface-container dark:hover:bg-slate-700 transition-colors" onclick="triggerCreditPayment()" type="button">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+<span class="">پرداخت ترکیبی یا حساب دفتری (نسیه)</span>
+</button>
+<button class="h-10 rounded-xl bg-surface-container-low dark:bg-slate-800 text-on-surface dark:text-slate-200 border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center gap-1.5 font-label-md text-label-md font-bold hover:bg-surface-container dark:hover:bg-slate-700 transition-colors" onclick="printInvoice()" type="button">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span class="">چاپ پیش‌فاکتور رسمی</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
+<div class="fixed top-5 inset-x-0 mx-auto max-w-[340px] z-50 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl border border-slate-700/80 flex items-center gap-2.5 transition-all duration-300 transform opacity-0 -translate-y-4 pointer-events-none" id="toastNotification">
+<span class="material-symbols-outlined text-emerald-400 text-[20px]" id="toastIcon">contactless</span>
+<span class="font-body-md text-body-md font-medium text-slate-100 flex-1" id="toastMessage">مبلغ ۱,۱۲۸,۰۰۰ تومان به دستگاه کارت‌خوان پوز (سامان کیش) ارسال شد</span>
+</div>
+<!-- ==================== LOGIC & INTERACTIONS SCRIPT ==================== -->
+<script>
+  // Theme Switching (Dark / Light)
+  function applyTheme(theme) {
+    const htmlEl = document.documentElement;
+    const icons = document.querySelectorAll('.themeIcon');
+    if (theme === 'dark') {
+      htmlEl.classList.add('dark');
+      icons.forEach(i => i.innerText = 'light_mode');
+    } else {
+      htmlEl.classList.remove('dark');
+      icons.forEach(i => i.innerText = 'dark_mode');
+    }
+  }
+  function toggleDarkMode() {
+    const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  }
+  // apply saved theme on load
+  (function() {
+    const saved = localStorage.getItem('theme');
+    if (saved) applyTheme(saved);
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
+  })();
+
+  // Sidebar Collapse / Expand on Desktop
+  let isCollapsed = false;
+  function toggleSidebarCollapse() {
+    const sidebar = document.getElementById('mainSidebar');
+    const collapseIcon = document.getElementById('collapseIcon');
+    const wrapper = document.getElementById('mainContentWrapper');
+    const textItems = document.querySelectorAll('.sidebar-text-item');
+
+    if (!isCollapsed) {
+      sidebar.classList.remove('w-64');
+      sidebar.classList.add('w-24', 'sidebar-collapsed');
+      wrapper.classList.remove('lg:mr-64', 'lg:w-[calc(100%-16rem)]');
+      wrapper.classList.add('lg:mr-24', 'lg:w-[calc(100%-6rem)]');
+      collapseIcon.innerText = 'chevron_left';
+      textItems.forEach(el => el.classList.add('hidden'));
+      isCollapsed = true;
+    } else {
+      sidebar.classList.remove('w-24', 'sidebar-collapsed');
+      sidebar.classList.add('w-64');
+      wrapper.classList.remove('lg:mr-24', 'lg:w-[calc(100%-6rem)]');
+      wrapper.classList.add('lg:mr-64', 'lg:w-[calc(100%-16rem)]');
+      collapseIcon.innerText = 'chevron_right';
+      textItems.forEach(el => el.classList.remove('hidden'));
+      isCollapsed = false;
+    }
+  }
+
+  // Sidebar Mobile Drawer Controls
+  const sidebarEl = document.getElementById('mainSidebar');
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+  function openSidebarMobile() {
+    sidebarEl.classList.remove('translate-x-full');
+    sidebarBackdrop.classList.remove('hidden');
+    setTimeout(() => {
+      sidebarBackdrop.classList.remove('opacity-0');
+    }, 10);
+  }
+
+  function closeSidebarMobile() {
+    sidebarEl.classList.add('translate-x-full');
+    sidebarBackdrop.classList.add('opacity-0');
+    setTimeout(() => {
+      sidebarBackdrop.classList.add('hidden');
+    }, 300);
+  }
+
+  // Mobile Bottom Sheet Modal Controls
+  const cartModalBackdrop = document.getElementById('cartModalBackdrop');
+  const cartSheetPanel = document.getElementById('cartSheetPanel');
+
+  function toggleCartModal() {
+    const isHidden = cartModalBackdrop.classList.contains('hidden');
+    if (isHidden) {
+      cartModalBackdrop.classList.remove('hidden');
+      setTimeout(() => {
+        cartModalBackdrop.classList.remove('opacity-0');
+        cartSheetPanel.classList.remove('translate-y-full');
+      }, 10);
+    } else {
+      cartSheetPanel.classList.add('translate-y-full');
+      cartModalBackdrop.classList.add('opacity-0');
+      setTimeout(() => {
+        cartModalBackdrop.classList.add('hidden');
+      }, 300);
+    }
+  }
+
+  cartModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === cartModalBackdrop) {
+      toggleCartModal();
+    }
+  });
+
+  // Toast Notification
+  function showToast(message, icon = 'check_circle') {
+    const toast = document.getElementById('toastNotification');
+    const toastMsg = document.getElementById('toastMessage');
+    const toastIco = document.getElementById('toastIcon');
+
+    toastMsg.textContent = message;
+    toastIco.textContent = icon;
+    
+    toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+    toast.classList.add('translate-y-0');
+
+    setTimeout(() => {
+      toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+      toast.classList.remove('translate-y-0');
+    }, 2200);
+  }
+
+  // ==================== UNIFIED CART ENGINE (shared POS cart) ====================
+  // The page (POS) may define its own richer engine (cart array + updateCartUI).
+  // This base fallback keeps other pages (product-list etc.) working with the SAME cart.
+  window.posCart = window.posCart || [];
+  window.posCartHooks = window.posCartHooks || {};
+
+  function _baseCartPersist() {
+    try { localStorage.setItem('posCart', JSON.stringify(window.posCart)); } catch (e) {}
+  }
+  function _baseCartRestore() {
+    try {
+      var raw = localStorage.getItem('posCart');
+      if (raw) { var parsed = JSON.parse(raw); if (Array.isArray(parsed)) window.posCart = parsed; }
+    } catch (e) { window.posCart = []; }
+  }
+
+  function addToCart(title, price, barcode, productId, stockQty) {
+    if (window.posCartHooks.add) { window.posCartHooks.add(title, price, barcode, productId, stockQty); return; }
+    _baseCartRestore();
+    var existing = window.posCart.find(function(i){ return i.barcode === barcode; });
+    // جلوگیری از فروش بیش از موجودی (فقط وقتی موجودی معلوم است)
+    if (typeof stockQty === 'number' && existing && existing.qty + 1 > stockQty) {
+      showToast('موجودی «' + title + '» کافی نیست', 'error');
+      return;
+    }
+    if (existing) { existing.qty += 1; }
+    else { window.posCart.push({ title: title, price: price, barcode: barcode, product: productId || null, qty: 1 }); }
+    _baseCartPersist();
+    showToast('«' + title + '» به سبد خرید اضافه شد');
+    if (window.posCartHooks.update) window.posCartHooks.update();
+  }
+
+  function changeQty(barcode, delta) {
+    if (window.posCartHooks.changeQty) { window.posCartHooks.changeQty(barcode, delta); return; }
+    _baseCartRestore();
+    var item = window.posCart.find(function(i){ return i.barcode === barcode; });
+    if (item) {
+      item.qty += delta;
+      if (item.qty <= 0) { window.posCart = window.posCart.filter(function(i){ return i.barcode !== barcode; }); }
+      _baseCartPersist();
+    }
+    if (window.posCartHooks.update) window.posCartHooks.update();
+  }
+
+  function removeCartItem(barcode) {
+    if (window.posCartHooks.remove) { window.posCartHooks.remove(barcode); return; }
+    _baseCartRestore();
+    window.posCart = window.posCart.filter(function(i){ return i.barcode !== barcode; });
+    _baseCartPersist();
+    if (window.posCartHooks.update) window.posCartHooks.update();
+  }
+
+  function clearCart() {
+    if (window.posCartHooks.clear) { window.posCartHooks.clear(); return; }
+    window.posCart = [];
+    _baseCartPersist();
+    document.querySelectorAll('.finalTotalDisplay').forEach(function(el){ el.innerText = '۰'; });
+    document.querySelectorAll('.itemCountBadge').forEach(function(el){ el.innerText = '۰'; });
+    showToast('سبد خرید خالی شد', 'delete_sweep');
+  }
+
+  function checkCartCount() {
+    // badge feedback is handled by update hooks
+  }
+
+  // ==================== PAYMENTS — REAL BACKEND CHECKOUT ====================
+  function getCookie(name) {
+    const m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return m ? decodeURIComponent(m[2]) : '';
+  }
+
+  // وضعیت تخفیف/مالیات فعال (صفحهٔ POS آن را به‌روز نگه می‌دارد)
+  window.posSaleState = window.posSaleState || { discountType: 'percent', discountValue: 0, taxType: 'percent', taxValue: 10, warehouse: null, customer: null };
+
+  function _getCartForCheckout() {
+    if (window.posCartHooks.getCart) return window.posCartHooks.getCart();
+    _baseCartRestore();
+    return window.posCart;
+  }
+
+  async function registerSale(method) {
+    const cart = _getCartForCheckout();
+    if (!cart || cart.length === 0) {
+      showToast('سبد خرید خالی است', 'error');
+      return null;
+    }
+    const st = window.posSaleState || {};
+    const items = cart.map(function(it) {
+      return {
+        product: it.product || null,
+        barcode: String(it.barcode),
+        title: it.title,
+        quantity: it.qty,
+        unit_price: it.price,
+        discount: 0,
+        tax: 0
+      };
+    }).filter(function(it){ return it.product !== null; });
+    if (items.length === 0) {
+      // fallback: product ids را از API بگیر (barcode → id)
+      showToast('در حال همگام‌سازی اطلاعات محصولات...', 'sync');
+      try {
+        const res = await fetch('/api/products/products/', { credentials: 'same-origin' });
+        const data = await res.json();
+        const products = Array.isArray(data) ? data : (data.results || []);
+        const map = {};
+        products.forEach(function(p){ if (p.barcode) map[String(p.barcode)] = p.id; });
+        let mapped = 0;
+        cart.forEach(function(it){
+          var pid = map[String(it.barcode)];
+          if (pid) { it.product = pid; mapped++; }
+        });
+        const retry = cart.filter(function(it){ return it.product; }).map(function(it){
+          return { product: it.product, quantity: it.qty, unit_price: it.price, discount: 0, tax: 0 };
+        });
+        if (retry.length === 0) { showToast('محصولات در سیستم یافت نشدند', 'error'); return null; }
+        items.length = 0; items.push.apply(items, retry);
+      } catch (e) {
+        showToast('خطا در همگام‌سازی محصولات', 'error');
+        return null;
+      }
+    }
+
+    const subtotal = cart.reduce(function(s, it){ return s + it.price * it.qty; }, 0);
+    const csrf = getCookie('csrftoken');
+    const payload = {
+      items: items,
+      warehouse: st.warehouse,
+      customer: st.customer,
+      method: method,
+      discount_mode: st.discountType || 'amount',
+      discount_input: st.discountValue || 0,
+      tax_mode: st.taxType || 'amount',
+      tax_input: st.taxValue || 0,
+      shipping: 0,
+      note: ''
+    };
+    try {
+      const res = await fetch('/api/sales/pos-checkout/', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(function(){ return {}; });
+      if (res.ok && data.ok) {
+        showToast(data.message || ('فاکتور ' + data.invoice_no + ' ثبت شد'), 'check_circle');
+        if (window.posCartHooks.afterSale) window.posCartHooks.afterSale(data);
+        else clearCart();
+        return data;
+      } else {
+        showToast((data && data.message) || 'ثبت فاکتور ناموفق بود', 'error');
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('خطا در ارتباط با سرور', 'error');
+      return null;
+    }
+  }
+
+  async function triggerPaymentPOS() {
+    showToast('در حال ارسال مبلغ به دستگاه کارت‌خوان...', 'contactless');
+    const result = await registerSale('pos');
+    if (result) showToast('پرداخت با کارت‌خوان (پوز) انجام شد — فاکتور ' + result.invoice_no, 'contactless');
+  }
+
+  async function triggerCashPayment() {
+    showToast('در حال صدور رسید نقدی...', 'payments');
+    const result = await registerSale('cash');
+    if (result) showToast('رسید نقدی صادر شد — فاکتور ' + result.invoice_no, 'payments');
+  }
+
+  async function triggerCreditPayment() {
+    const result = await registerSale('credit');
+    if (result) showToast('سند تسویه دفتری / نسیه ثبت شد — فاکتور ' + result.invoice_no, 'account_balance_wallet');
+  }
+
+  function triggerBarcodeCamera() {
+    showToast('دوربین اسکن بارکد فعال شد (آماده قرائت)', 'barcode_scanner');
+  }
+
+  // Keyboard Shortcuts (F2, F4, Esc, etc.)
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'F2') {
+      e.preventDefault();
+      const input = document.getElementById('barcodeSearchInput');
+      if (input) input.focus();
+    } else if (e.key === 'F4') {
+      e.preventDefault();
+      triggerPaymentPOS();
+    } else if (e.key === 'Escape') {
+      const isModalOpen = !cartModalBackdrop.classList.contains('hidden');
+      if (isModalOpen) {
+        toggleCartModal();
+      } else {
+        clearCart();
+      }
+    }
+  });
+</script>
+
+
+<script id="dragToScrollScript">
+  (function() {
+    const slider = document.getElementById('categoryTabsCarousel');
+    if (!slider) return;
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    let dragged = false;
+
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      dragged = false;
+      slider.style.cursor = 'grabbing';
+      slider.style.userSelect = 'none';
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('mouseleave', () => {
+      if (!isDown) return;
+      isDown = false;
+      slider.style.cursor = 'grab';
+    });
+
+    slider.addEventListener('mouseup', () => {
+      if (!isDown) return;
+      isDown = false;
+      slider.style.cursor = 'grab';
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 1.5; // multiplier for smooth momentum
+      if (Math.abs(walk) > 5) {
+        dragged = true;
+      }
+      slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // Prevent accidental click triggers when dragging
+    slider.querySelectorAll('button').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        if (dragged) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+        }
+      }, true);
+    });
+
+    // Enable horizontal scrolling with mouse wheel
+    slider.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0 && !e.shiftKey) {
+        slider.scrollLeft += e.deltaY * 0.8;
+      }
+    }, { passive: true });
+  })();
+</script>
+<script>
+function toggleAvatarMenu() {
+  const btn = document.getElementById('avatarBtn');
+  const menu = document.getElementById('avatarMenu');
+  if (!menu || !btn) return;
+  const r = btn.getBoundingClientRect();
+  menu.style.top = (r.bottom + 8) + 'px';
+  menu.style.left = (r.left) + 'px';
+  const isOpen = !menu.classList.contains('hidden');
+  if (isOpen) {
+    menu.classList.add('opacity-0','-translate-y-2');
+    setTimeout(() => menu.classList.add('hidden'), 150);
+  } else {
+    menu.classList.remove('hidden');
+    requestAnimationFrame(() => menu.classList.remove('opacity-0','-translate-y-2'));
+  }
+}
+document.addEventListener('click', (e) => {
+  const btn = document.getElementById('avatarBtn');
+  const menu = document.getElementById('avatarMenu');
+  if (!btn || !menu) return;
+  if (!btn.contains(e.target) && !menu.contains(e.target)) {
+    if (!menu.classList.contains('hidden')) {
+      menu.classList.add('opacity-0','-translate-y-2');
+      setTimeout(() => menu.classList.add('hidden'), 150);
+    }
+  }
+});
+  // Sidebar collapsible groups
+  function toggleSidebarGroup(name) {
+    var group = document.querySelector('.sidebar-group[data-group="' + name + '"]');
+    if (!group) return;
+    var children = group.querySelector('.sidebar-group-children');
+    var chevron = group.querySelector('.sidebar-group-chevron');
+    var btn = group.querySelector('button');
+    var isOpen = children && !children.classList.contains('hidden');
+    if (isOpen) {
+      children.classList.add('hidden');
+      if (chevron) chevron.style.transform = '';
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    } else {
+      children.classList.remove('hidden');
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+      if (btn) btn.setAttribute('aria-expanded', 'true');
+    }
+    try {
+      var state = JSON.parse(localStorage.getItem('sidebarGroups') || '{}');
+      state[name] = !isOpen;
+      localStorage.setItem('sidebarGroups', JSON.stringify(state));
+    } catch(e) {}
+  }
+  function initSidebarGroups() {
+    var parts = (window.location.pathname || '').split('/').filter(Boolean);
+    var slug = parts.length ? parts[parts.length - 1] : '';
+    document.querySelectorAll('.sidebar-group').forEach(function(g){
+      var hasActive = g.querySelector('[data-sidebar-active="' + slug + '"]');
+      var children = g.querySelector('.sidebar-group-children');
+      var chevron = g.querySelector('.sidebar-group-chevron');
+      var btn = g.querySelector('button');
+      var shouldOpen = !!hasActive;
+      try {
+        var state = JSON.parse(localStorage.getItem('sidebarGroups') || '{}');
+        if (state[g.dataset.group] !== undefined) shouldOpen = state[g.dataset.group];
+        if (hasActive) shouldOpen = true;
+      } catch(e) {}
+      if (shouldOpen && children) {
+        children.classList.remove('hidden');
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+    document.querySelectorAll('[data-sidebar-active]').forEach(function(a){
+      if (a.getAttribute('data-sidebar-active') === slug) {
+        a.classList.add('bg-surface-container-high','dark:bg-slate-800','text-primary','dark:text-blue-400','font-bold');
+        a.classList.remove('text-on-surface-variant','dark:text-slate-400');
+      }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSidebarGroups);
+  else initSidebarGroups();
+  // Flyout for collapsed sidebar
+  (function() {
+    var flyout = document.getElementById('sidebarFlyout');
+    if (!flyout) return;
+    var hideTimer = null;
+    function showFlyout(btn, group) {
+      if (!document.getElementById('mainSidebar').classList.contains('sidebar-collapsed')) return;
+      var children = group.querySelector('.sidebar-group-children');
+      if (!children) return;
+      var links = children.querySelectorAll('a');
+      var title = group.querySelector('button span.sidebar-text-item') ? group.querySelector('button span.sidebar-text-item').textContent : '';
+      var html = '<div class="px-3 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 mb-1">' + title + '</div>';
+      links.forEach(function(a){
+        var icon = a.querySelector('.material-symbols-outlined');
+        var label = a.querySelector('.sidebar-text-item');
+        html += '<a href="' + a.getAttribute('href') + '" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-on-surface dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">' +
+          (icon ? icon.outerHTML.replace('text-lg','text-xl') : '') +
+          '<span class="whitespace-nowrap">' + (label ? label.textContent : '') + '</span></a>';
+      });
+      flyout.innerHTML = html;
+      var rect = btn.getBoundingClientRect();
+      flyout.style.top = rect.top + 'px';
+      flyout.style.left = (rect.right + 8) + 'px';
+      flyout.classList.remove('hidden');
+      clearTimeout(hideTimer);
+    }
+    function hideFlyout() {
+      hideTimer = setTimeout(function(){ flyout.classList.add('hidden'); }, 200);
+    }
+    document.querySelectorAll('.sidebar-group').forEach(function(g){
+      var btn = g.querySelector('button');
+      if (!btn) return;
+      btn.addEventListener('mouseenter', function(){ showFlyout(btn, g); });
+      btn.addEventListener('mouseleave', hideFlyout);
+      g.addEventListener('mouseenter', function(){ clearTimeout(hideTimer); });
+      g.addEventListener('mouseleave', hideFlyout);
+    });
+    flyout.addEventListener('mouseenter', function(){ clearTimeout(hideTimer); });
+    flyout.addEventListener('mouseleave', hideFlyout);
+  })();
+</script>
+{% block extra_js %}{% endblock %}
+</body></html>

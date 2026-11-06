@@ -1,0 +1,5 @@
+Contains:
+backend/static
+backend/templates/base.html
+backend/templates/core
+backend/templates/ui

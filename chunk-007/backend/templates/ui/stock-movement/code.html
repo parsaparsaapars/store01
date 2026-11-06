@@ -1,0 +1,742 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Top Utilities Bar: Page Breadcrumb + Theme Toggle + Fast Print Actions -->
+<header class="bg-surface-container-lowest dark:bg-slate-900 border-b border-outline-variant/40 dark:border-slate-800 sticky top-0 z-30 px-4 sm:px-8 py-3.5 transition-colors">
+<div class="flex items-center justify-between gap-4 flex-wrap">
+<!-- Breadcrumb & Header Title -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container/10 dark:bg-blue-500/20 text-primary dark:text-inverse-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[24px]">inventory_2</span>
+</div>
+<div>
+<div class="flex items-center gap-2 text-on-surface-variant dark:text-slate-400 font-label-md text-label-md">
+<span>انبارداری و لجستیک</span>
+<span class="material-symbols-outlined text-[14px]">chevron_left</span>
+<span>گزارشات و کاردکس ریالی</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface dark:text-white font-bold flex items-center gap-2">
+            گردش کالا و کاردکس انبار
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 dark:bg-primary/20 text-primary dark:text-inverse-primary border border-primary/20 font-normal">بند ۱۱ استاندارد حسابداری انبار</span>
+</h1>
+</div>
+</div>
+<!-- Quick Actions & Theme Switcher Button -->
+<div class="flex items-center gap-2.5">
+<!-- Live Dark/Light Mode Switcher -->
+
+<!-- Quick Print Kardex -->
+<button class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container-low dark:hover:bg-slate-700 font-title-md text-title-md transition-all shadow-sm active:scale-95" onclick="window.print()">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span>چاپ کاردکس</span>
+</button>
+<!-- Export Dropdown / Action -->
+<button class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-container text-white hover:bg-blue-700 font-title-md text-title-md shadow-sm transition-all active:scale-95" onclick="showToast('گزارش اکسل استاندارد کاردکس با موفقیت تولید شد.')">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>خروجی اکسل</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Canvas Container -->
+<main class="max-w-7xl mx-auto px-4 sm:px-8 py-6 space-y-6">
+<!-- 1. Product Identity Card & Multi-Warehouse Stock Breakdown -->
+<section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/50 dark:border-slate-800 p-5 sm:p-6 shadow-sm transition-colors">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+<!-- Product Thumbnail & Identity Meta -->
+<div class="lg:col-span-7 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5">
+<div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-outline-variant/60 dark:border-slate-700 bg-surface-container-low dark:bg-slate-800 flex-shrink-0 shadow-inner group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A professional close-up macro studio photograph of industrial ribbed rebar steel rod bundles stacked cleanly in a modern corporate warehouse. Crisp focused lighting with cool metallic blue reflections and warm industrial accents, ultra high detail corporate product photography." src="/static/ui/stock-movement/assets/e409435d9b03.jpg"/>
+<span class="absolute bottom-1 right-1 bg-black/70 backdrop-blur-md text-white text-[10px] font-tabular-num px-1.5 py-0.5 rounded">A3</span>
+</div>
+<div class="space-y-2 flex-1">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 font-label-sm text-label-sm">
+                کالای فعال در چرخه تولید
+              </span>
+<span class="text-on-surface-variant dark:text-slate-400 font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">category</span>
+                دسته: فلزات و مقاطع ساختمانی
+              </span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface dark:text-white font-extrabold tracking-tight">
+              میلگرد آجدار سایز ۱۶ (A3 اصفهان)
+            </h2>
+<div class="flex items-center gap-3 sm:gap-6 flex-wrap text-on-surface-variant dark:text-slate-300 font-body-sm text-body-sm">
+<div class="flex items-center gap-1.5 bg-surface-container-low dark:bg-slate-800/80 px-2.5 py-1 rounded-md border border-outline-variant/40 dark:border-slate-700">
+<span class="text-on-surface-variant/80 dark:text-slate-400 font-label-sm text-label-sm">شناسه SKU:</span>
+<span class="font-mono font-bold text-primary dark:text-inverse-primary select-all">STL-16-IR</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-low dark:bg-slate-800/80 px-2.5 py-1 rounded-md border border-outline-variant/40 dark:border-slate-700">
+<span class="material-symbols-outlined text-[16px] text-slate-500">barcode_scanner</span>
+<span class="font-mono text-on-surface dark:text-slate-200 select-all font-tabular-num text-tabular-num">6268800293110</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="text-on-surface-variant/80 dark:text-slate-400 font-label-sm text-label-sm">واحد سنجش:</span>
+<span class="font-bold text-on-surface dark:text-white">کیلوگرم (شاخه ۱۲ متری)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Multi-Warehouse Stock Breakdown (Side widget) -->
+<div class="lg:col-span-5 bg-surface-container-low/70 dark:bg-slate-800/60 rounded-xl p-3.5 sm:p-4 border border-outline-variant/40 dark:border-slate-700/80 space-y-2.5">
+<div class="flex items-center justify-between pb-1 border-b border-outline-variant/30 dark:border-slate-700">
+<span class="font-title-md text-title-md text-on-surface dark:text-slate-200 font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary dark:text-inverse-primary">warehouse</span>
+              موجودی تفکیکی در انبارها
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400 font-tabular-num">۳ انبار فعال</span>
+</div>
+<div class="space-y-2">
+<!-- Warehouse breakdown (داینامیک از دیتابیس) -->
+{% for wh_id, wh_data in sm_stock_by_wh.items %}
+<div class="flex items-center justify-between text-body-sm text-body-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="text-on-surface dark:text-slate-200">{{ wh_data.name }}</span>
+</div>
+<span class="font-tabular-num text-tabular-num font-bold text-on-surface dark:text-white">
+            {{ wh_data.qty|floatformat:"-3" }} <span class="font-normal text-xs text-on-surface-variant dark:text-slate-400">کیلوگرم</span>
+</span>
+</div>
+{% empty %}
+<div class="text-center text-on-surface-variant text-xs py-2">هیچ انباری یافت نشد.</div>
+{% endfor %}
+</div>
+</div>
+</div>
+</section>
+<!-- 2. 4 Key Performance Indicators (KPI Cards with Sparklines & Deltas) -->
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+<!-- KPI 1: Current Total Stock -->
+<div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-outline-variant/50 dark:border-slate-800 p-4 sm:p-5 shadow-sm transition-all hover:border-primary-container/40">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400 mb-2">
+<span class="font-label-md text-label-md">کل موجودی فیزیکی</span>
+<div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-primary dark:text-inverse-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">inventory</span>
+</div>
+</div>
+<div class="flex items-baseline gap-1.5 my-1">
+<span class="font-headline-xl text-headline-xl sm:font-display-lg sm:text-display-lg text-on-surface dark:text-white font-black font-tabular-num">
+            ۴۱,۸۰۰
+          </span>
+<span class="text-xs sm:text-sm text-on-surface-variant dark:text-slate-400">کیلوگرم</span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/30 dark:border-slate-800/80">
+<span class="inline-flex items-center gap-0.5 text-emerald-600 dark:text-emerald-400 text-xs font-tabular-num font-bold">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+            +۸.۴٪ رشد ماهانه
+          </span>
+<span class="text-[11px] text-on-surface-variant/70 dark:text-slate-400">۲,۶۴۵ شاخه</span>
+</div>
+</div>
+
+<!-- ثبت движение جدید (ORM + API) -->
+<div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-outline-variant/50 dark:border-slate-800 p-4 sm:p-6 shadow-sm transition-colors">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-title-md text-title-md text-on-surface dark:text-white flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary">add_circle</span>
+ثبت سند حرکت انبار جدید
+</h3>
+<span class="text-xs text-on-surface-variant/60">ثبت رسید، خروج، انتقال، تعدیل و برگشت</span>
+</div>
+{% csrf_token %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+<div>
+<label class="block text-xs sm:text-sm font-bold text-on-surface-variant dark:text-slate-300 mb-1">کالا</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md focus:border-primary-container" id="smProductSelect">
+<option value="">انتخاب کالا...</option>
+{% for p in sm_products %}
+<option value="{{ p.id }}">{{ p.name }} ({{ p.sku }})</option>
+{% endfor %}
+</select>
+</div>
+<div>
+<label class="block text-xs sm:text-sm font-bold text-on-surface-variant dark:text-slate-300 mb-1">انبار</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md focus:border-primary-container" id="smWhSelect">
+<option value="">انتخاب انبار...</option>
+{% for w in sm_warehouses %}
+<option value="{{ w.id }}">{{ w.name }}</option>
+{% endfor %}
+</select>
+</div>
+<div>
+<label class="block text-xs sm:text-sm font-bold text-on-surface-variant dark:text-slate-300 mb-1">نوع حرکت</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md focus:border-primary-container" id="smTypeSelect">
+<option value="in">رسید (ورود)</option>
+<option value="out">خروج (فروش)</option>
+<option value="transfer">انتقال بین انبارها</option>
+<option value="adjustment">تعدیل موجودی</option>
+<option value="return">برگشت از مشتری</option>
+</select>
+</div>
+<div class="flex items-end">
+<button class="w-full h-10 px-4 rounded-lg bg-primary-container text-white font-title-md text-title-md hover:bg-blue-700 shadow-sm transition-colors" onclick="submitNewMovement()">
+ثبت حرکت
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+<div>
+<label class="block text-xs sm:text-sm font-bold text-on-surface-variant dark:text-slate-300 mb-1">مقدار</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md focus:border-primary-container" id="smQtyInput" type="number" step="0.001" placeholder="۰"/>
+</div>
+<div>
+<label class="block text-xs sm:text-sm font-bold text-on-surface-variant dark:text-slate-300 mb-1">مرجع / سند</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-md focus:border-primary-container" id="smRefInput" type="text" placeholder="شماره فاکتور یا سند"/>
+</div>
+</div>
+<div class="mt-3">
+<label class="block text-xs sm:text-sm font-bold text-on-surface-variant dark:text-slate-300 mb-1">توضیحات</label>
+<textarea class="w-full h-20 px-3 py-2 rounded-lg border border-outline-variant dark:border-dark-border bg-white dark:bg-dark-hover text-on-surface dark:text-white text-body-sm focus:border-primary-container" id="smNoteInput" rows="2" placeholder="توضیحات تکمیلیwegung..."></textarea>
+</div>
+</div>
+<script>
+function _smCsrf() {
+  var m = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'));
+  return m ? decodeURIComponent(m[2]) : '';
+}
+async function submitNewMovement() {
+  var pid = document.getElementById('smProductSelect').value;
+  var wid = document.getElementById('smWhSelect').value;
+  var mtype = document.getElementById('smTypeSelect').value;
+  var qty = document.getElementById('smQtyInput').value;
+  var ref = document.getElementById('smRefInput').value;
+  var note = document.getElementById('smNoteInput').value;
+  if (!pid || !wid || !qty) { showToast('انتخاب کالا، انبار و مقدار الزامی است'); return; }
+  var btn = event.currentTarget;
+  btn.disabled = true; btn.textContent = 'در حال ثبت...';
+  try {
+    var res = await fetch('/api/inventory/movements/', {
+      method: 'POST', credentials: 'same-origin',
+      headers: {'Content-Type':'application/json', 'X-CSRFToken': _smCsrf()},
+      body: JSON.stringify({
+        product: parseInt(pid), warehouse: parseInt(wid),
+        movement_type: mtype, quantity: parseFloat(qty),
+        reference: ref, note: note
+      })
+    });
+    btn.disabled = false; btn.textContent = 'ثبت حرکت';
+    if (res.ok) {
+      showToast('سند حرکت انبار با موفقیت ثبت شد', 'check_circle');
+      setTimeout(() => location.reload(), 700);
+    } else {
+      var txt = await res.text().catch(()=>'');
+      showToast('خطا: ' + (txt || res.status));
+    }
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'ثبت حرکت';
+    showToast('ارتباط با سرور برقرار نشد.');
+  }
+}
+</script>
+
+<!-- KPI 2: Available Stock -->
+<div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-outline-variant/50 dark:border-slate-800 p-4 sm:p-5 shadow-sm transition-all hover:border-emerald-500/40">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400 mb-2">
+<span class="font-label-md text-label-md">موجودی آزاد و قابل فروش</span>
+<div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+</div>
+<div class="flex items-baseline gap-1.5 my-1">
+<span class="font-headline-xl text-headline-xl sm:font-display-lg sm:text-display-lg text-emerald-600 dark:text-emerald-400 font-black font-tabular-num">
+            ۳۴,۳۰۰
+          </span>
+<span class="text-xs sm:text-sm text-on-surface-variant dark:text-slate-400">کیلوگرم</span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/30 dark:border-slate-800/80">
+<span class="text-[11px] text-on-surface-variant dark:text-slate-400">آماده حواله خروج فوری</span>
+<span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 font-tabular-num">۸۲٪ از کل</span>
+</div>
+</div>
+<!-- KPI 3: Reserved Stock -->
+<div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-outline-variant/50 dark:border-slate-800 p-4 sm:p-5 shadow-sm transition-all hover:border-amber-500/40">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400 mb-2">
+<span class="font-label-md text-label-md">موجودی رزرو قراردادها</span>
+<div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">lock_clock</span>
+</div>
+</div>
+<div class="flex items-baseline gap-1.5 my-1">
+<span class="font-headline-xl text-headline-xl sm:font-display-lg sm:text-display-lg text-amber-600 dark:text-amber-400 font-black font-tabular-num">
+            ۷,۵۰۰
+          </span>
+<span class="text-xs sm:text-sm text-on-surface-variant dark:text-slate-400">کیلوگرم</span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/30 dark:border-slate-800/80">
+<span class="text-[11px] text-on-surface-variant dark:text-slate-400">در تعهد ۳ پیش‌فاکتور</span>
+<span class="text-xs text-amber-600 dark:text-amber-400 font-tabular-num font-bold">۱۸٪ در انتظار تسویه</span>
+</div>
+</div>
+<!-- KPI 4: Total Monetary Valuation -->
+<div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-outline-variant/50 dark:border-slate-800 p-4 sm:p-5 shadow-sm transition-all hover:border-blue-500/40">
+<div class="flex items-center justify-between text-on-surface-variant dark:text-slate-400 mb-2">
+<span class="font-label-md text-label-md">ارزش ریالی موجودی (FIFO)</span>
+<div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+</div>
+</div>
+<div class="flex items-baseline gap-1.5 my-1">
+<span class="font-headline-xl text-headline-xl sm:font-display-lg sm:text-display-lg text-on-surface dark:text-white font-black font-tabular-num">
+            ۱,۱۶۶,۲۲۰
+          </span>
+<span class="text-xs sm:text-sm text-on-surface-variant dark:text-slate-400">هزار تومان</span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/30 dark:border-slate-800/80">
+<span class="text-[11px] text-on-surface-variant dark:text-slate-400">میانگین فی هر کیلو:</span>
+<span class="text-xs font-bold font-tabular-num text-primary dark:text-inverse-primary">۲۷,۹۰۰ تومان</span>
+</div>
+</div>
+</section>
+<!-- 3. Advanced Filtering & Transaction Control Toolbar -->
+<section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/50 dark:border-slate-800 p-4 shadow-sm transition-colors space-y-3.5">
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+<!-- Live Search by Reference / Invoice No -->
+<div class="relative flex-1 min-w-[240px]">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px] pointer-events-none">search</span>
+<input class="w-full h-10 pr-10 pl-4 bg-surface-container-low dark:bg-slate-800/90 text-on-surface dark:text-slate-100 placeholder:text-on-surface-variant/60 dark:placeholder:text-slate-500 rounded-xl border border-outline-variant/60 dark:border-slate-700 text-body-md font-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all outline-none" id="kardexSearchInput" placeholder="جستجو بر اساس شماره سند، فاکتور، حواله یا طرف حساب..." type="text"/>
+</div>
+<!-- Filters Strip -->
+<div class="flex items-center gap-2 flex-wrap">
+<!-- Operation Type Filter -->
+<div class="flex items-center">
+<select class="h-10 px-3 bg-surface-container-low dark:bg-slate-800 text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-700 rounded-xl text-body-sm font-body-sm focus:border-primary-container outline-none cursor-pointer" id="operationFilter" onchange="filterTable()">
+<option value="all">همه انواع عملیات</option>
+<option value="inflow">ورود / رسید خرید (+)</option>
+<option value="outflow">خروج / حواله فروش (-)</option>
+<option value="transfer">انتقال بین انبارها</option>
+<option value="adjustment">تعدیل و انبارگردانی</option>
+<option value="return">برگشت از فروش</option>
+</select>
+</div>
+<!-- Warehouse Location Filter -->
+<div class="flex items-center">
+<select class="h-10 px-3 bg-surface-container-low dark:bg-slate-800 text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-700 rounded-xl text-body-sm font-body-sm focus:border-primary-container outline-none cursor-pointer" id="warehouseFilter" onchange="filterTable()">
+<option value="all">همه انبارها</option>
+<option value="central">انبار مرکزی (شورآباد)</option>
+<option value="steel">انبار آهن‌آلات اصفهان</option>
+<option value="transit">انبار بندرعباس</option>
+</select>
+</div>
+<!-- Date Range Selector -->
+<button class="h-10 px-3.5 bg-surface-container-low dark:bg-slate-800 text-on-surface dark:text-slate-200 border border-outline-variant/60 dark:border-slate-700 rounded-xl text-body-sm font-body-sm flex items-center gap-1.5 hover:bg-surface-container-high dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-[18px] text-slate-500">calendar_today</span>
+<span>از: ۱۴۰۳/۰۸/۰۱ تا: امروز</span>
+</button>
+<!-- Reset Filter Button -->
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface-variant dark:text-slate-400 hover:text-red-500 hover:border-red-400 transition-colors" onclick="resetFilters()" title="بازنشانی فیلترها">
+<span class="material-symbols-outlined text-[20px]">filter_alt_off</span>
+</button>
+</div>
+</div>
+<!-- Quick Summary Pills / Fast Tag Filters -->
+<div class="flex items-center gap-2 pt-2 border-t border-outline-variant/30 dark:border-slate-800 text-xs overflow-x-auto pb-1 custom-scrollbar">
+<span class="text-on-surface-variant dark:text-slate-400 font-label-sm whitespace-nowrap">فیلترهای سریع:</span>
+<button class="px-3 py-1 rounded-full bg-primary-container text-white font-label-sm whitespace-nowrap shadow-xs" onclick="setFastFilter('all')">همه سوابق (۱۲۸ تراکنش)</button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-300 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 hover:text-emerald-700 dark:hover:text-emerald-400 border border-outline-variant/40 dark:border-slate-700 font-label-sm whitespace-nowrap transition-colors" onclick="setFastFilter('inflow')">فقط رسیدهای خرید (۴۲)</button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-300 hover:bg-blue-100 dark:hover:bg-blue-950/50 hover:text-blue-700 dark:hover:text-blue-400 border border-outline-variant/40 dark:border-slate-700 font-label-sm whitespace-nowrap transition-colors" onclick="setFastFilter('outflow')">فقط حواله‌های فروش (۶۹)</button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-300 hover:bg-amber-100 dark:hover:bg-amber-950/50 hover:text-amber-700 dark:hover:text-amber-400 border border-outline-variant/40 dark:border-slate-700 font-label-sm whitespace-nowrap transition-colors" onclick="setFastFilter('adjustment')">مغایرت و انبارگردانی (۴)</button>
+</div>
+</section>
+<!-- 4. Kardex Ledger Data Table & Movement Timeline -->
+<section class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/50 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+<!-- Table Header Bar -->
+<div class="p-4 sm:p-5 flex items-center justify-between border-b border-outline-variant/40 dark:border-slate-800 flex-wrap gap-3">
+<div class="flex items-center gap-2.5">
+<span class="w-3 h-3 rounded-full bg-primary-container animate-pulse"></span>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-white font-bold">
+            دفتر کاردکس مقداری و ریالی کالا
+          </h3>
+<span class="text-xs px-2.5 py-0.5 rounded-md bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-400 border border-outline-variant/40 dark:border-slate-700 font-tabular-num">
+            نمایش ۶ ردیف اخیر از ۱۲۸ گردش
+          </span>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-body-sm font-body-sm bg-surface-container-low dark:bg-slate-800 text-on-surface dark:text-slate-200 border border-outline-variant/40 dark:border-slate-700 hover:bg-surface-container-high transition-colors" onclick="sortKardex()">
+<span class="material-symbols-outlined text-[16px]">swap_vert</span>
+<span>مرتب‌سازی: جدیدترین تراکنش</span>
+</button>
+</div>
+</div>
+<!-- Responsive Table Wrapper with Horizontal Scroll -->
+<div class="overflow-x-auto custom-scrollbar w-full">
+<table class="w-full text-right border-collapse min-w-[1080px]">
+<thead>
+<tr class="bg-surface-container-low/70 dark:bg-slate-800/80 border-b border-outline-variant/40 dark:border-slate-700/80 text-on-surface-variant dark:text-slate-300 font-label-md text-label-md whitespace-nowrap">
+<th class="py-3.5 px-4 font-bold">ردیف</th>
+<th class="py-3.5 px-4 font-bold">تاریخ و زمان</th>
+<th class="py-3.5 px-4 font-bold">نوع عملیات</th>
+<th class="py-3.5 px-4 font-bold">سند مرجع / فاکتور</th>
+<th class="py-3.5 px-4 font-bold text-emerald-600 dark:text-emerald-400">وارده (+)</th>
+<th class="py-3.5 px-4 font-bold text-rose-600 dark:text-rose-400">صادره (-)</th>
+<th class="py-3.5 px-4 font-bold bg-surface-container-high/40 dark:bg-slate-700/40 text-primary dark:text-inverse-primary">موجودی پس از تراکنش</th>
+<th class="py-3.5 px-4 font-bold">فی واحد (تومان)</th>
+<th class="py-3.5 px-4 font-bold">موقعیت و انبار</th>
+<th class="py-3.5 px-4 font-bold">کاربر ثبت‌کننده</th>
+<th class="py-3.5 px-4 font-bold text-center">مشاهده سند</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 dark:divide-slate-800 text-body-sm font-body-sm" id="kardexTableBody">
+{% for move in sm_recent_moves %}
+<tr class="hover:bg-surface-container-low/60 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer">
+<td class="py-4 px-4 font-tabular-num text-on-surface-variant dark:text-slate-400">{{ forloop.counter }}</td>
+<td class="py-4 px-4 whitespace-nowrap">
+<div class="font-tabular-num font-bold text-on-surface dark:text-white">{{ move.created_at|date:"Y/m/d" }}</div>
+<div class="text-[11px] text-on-surface-variant dark:text-slate-400 font-tabular-num">{{ move.created_at|time:"H:i" }}</div>
+</td>
+<td class="py-4 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold">
+<span class="material-symbols-outlined text-[14px]">inventory_2</span>
+{{ move.note|default:"رکورد کاردكس" }}
+</span>
+</td>
+<td class="py-4 px-4 whitespace-nowrap">
+<div class="font-bold text-primary dark:text-inverse-primary font-mono">{{ move.reference|default:"-" }}</div>
+<div class="text-xs text-on-surface-variant dark:text-slate-400">{{ move.product_name|default:"-" }}</div>
+</td>
+<td class="py-4 px-4 font-tabular-num text-slate-400 dark:text-slate-600">-</td>
+<td class="py-4 px-4 font-tabular-num font-bold text-base">{{ move.quantity|floatformat:"-3" }}</td>
+<td class="py-4 px-4 font-tabular-num font-extrabold text-on-surface dark:text-white bg-surface-container-high/20 dark:bg-slate-700/20 text-base">-</td>
+<td class="py-4 px-4 font-tabular-num text-on-surface dark:text-slate-200">-</td>
+<td class="py-4 px-4 whitespace-nowrap">
+<div class="text-on-surface dark:text-slate-200">{{ move.warehouse_name|default:"-" }}</div>
+<div class="text-[11px] text-on-surface-variant dark:text-slate-400">-</div>
+</td>
+<td class="py-4 px-4 whitespace-nowrap text-on-surface-variant dark:text-slate-300">-</td>
+<td class="py-4 px-4 text-center">
+<button class="w-8 h-8 rounded-lg inline-flex items-center justify-center bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="10" class="text-center py-4 text-on-surface-variant">هیچ رکورد کاردكس ثبت نشده است.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- Pagination and Table Ledger Footer -->
+<div class="p-4 bg-surface-container-low/50 dark:bg-slate-800/40 border-t border-outline-variant/40 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3">
+<div class="text-body-sm text-body-sm text-on-surface-variant dark:text-slate-400">
+          نمایش ردیف ۱ تا ۶ از ۱۲۸ رکورد ثبتی کاردکس
+        </div>
+<div class="flex items-center gap-1.5 font-tabular-num">
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-high disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary-container text-white font-bold flex items-center justify-center text-sm shadow-xs">
+            ۱
+          </button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center text-on-surface dark:text-slate-200 hover:bg-surface-container-high text-sm">
+            ۲
+          </button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center text-on-surface dark:text-slate-200 hover:bg-surface-container-high text-sm">
+            ۳
+          </button>
+<span class="px-1 text-slate-400">...</span>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center text-on-surface dark:text-slate-200 hover:bg-surface-container-high text-sm">
+            ۲۲
+          </button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/40 dark:border-slate-700 flex items-center justify-center text-on-surface-variant dark:text-slate-300 hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 5. Audit Trail & Warehouse Activity Timeline (Bento Secondary Card) -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+<!-- Visual Flow & Turnover Diagnostics -->
+<div class="lg:col-span-2 bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/50 dark:border-slate-800 p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between border-b border-outline-variant/30 dark:border-slate-800 pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-[22px]">ssid_chart</span>
+<h4 class="font-title-lg text-title-lg text-on-surface dark:text-white font-bold">گردش ماهانه و شاخص‌های کنترلی انبارداری</h4>
+</div>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 font-label-sm">دوره ۹۰ روزه</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+<!-- Metric A -->
+<div class="p-3.5 rounded-xl bg-surface-container-low dark:bg-slate-800/70 border border-outline-variant/30 dark:border-slate-700">
+<span class="text-xs text-on-surface-variant dark:text-slate-400 font-label-sm block mb-1">دفعات گردش کالا (Inventory Turnover)</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg font-black font-tabular-num text-on-surface dark:text-white">۴.۸</span>
+<span class="text-xs text-slate-500">بار در سال</span>
+</div>
+<span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-tabular-num font-bold mt-1 inline-block">وضعیت مطلوب و تندگردش</span>
+</div>
+<!-- Metric B -->
+<div class="p-3.5 rounded-xl bg-surface-container-low dark:bg-slate-800/70 border border-outline-variant/30 dark:border-slate-700">
+<span class="text-xs text-on-surface-variant dark:text-slate-400 font-label-sm block mb-1">دوره ماندگاری در انبار (DSI)</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg font-black font-tabular-num text-on-surface dark:text-white">۱۸</span>
+<span class="text-xs text-slate-500">روز میانگین</span>
+</div>
+<span class="text-[11px] text-blue-600 dark:text-blue-400 font-tabular-num font-bold mt-1 inline-block">تطابق با حد سفارش اقتصادی (EOQ)</span>
+</div>
+<!-- Metric C -->
+<div class="p-3.5 rounded-xl bg-surface-container-low dark:bg-slate-800/70 border border-outline-variant/30 dark:border-slate-700">
+<span class="text-xs text-on-surface-variant dark:text-slate-400 font-label-sm block mb-1">نقطه سفارش مجدد (ROP)</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg font-black font-tabular-num text-amber-600 dark:text-amber-400">۱۰,۰۰۰</span>
+<span class="text-xs text-slate-500">کیلوگرم</span>
+</div>
+<span class="text-[11px] text-on-surface-variant dark:text-slate-400 font-tabular-num mt-1 inline-block">موجودی فعلی بالاتر از سطح بحرانی</span>
+</div>
+</div>
+<div class="p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 flex items-start gap-3">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-[20px] mt-0.5">verified_user</span>
+<div class="text-body-sm text-body-sm text-slate-700 dark:text-slate-300">
+<strong>تاییدیه تطبیق کاردکس با تراز مالی:</strong>
+            تمامی آرتیکل‌های ثبتی این کاردکس تا ساعت ۲۴:۰۰ مورخ ۱۴۰۳/۰۸/۲۴ با حساب «کالای در جریان انبار (کد ۱۱۰-۲۲)» در سیستم حسابداری مالی همگام‌سازی و مغایرت آن صفر می‌باشد.
+          </div>
+</div>
+</div>
+<!-- Quick Document Verification / Signature Panel -->
+<div class="bg-surface-container-lowest dark:bg-slate-900 rounded-2xl border border-outline-variant/50 dark:border-slate-800 p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between border-b border-outline-variant/30 dark:border-slate-800 pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-[22px]">draw</span>
+<h4 class="font-title-lg text-title-lg text-on-surface dark:text-white font-bold">امضاکنندگان و مجوزهای سند</h4>
+</div>
+</div>
+<div class="space-y-3">
+<!-- Signee 1 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low/70 dark:bg-slate-800/60">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
+                اح
+              </div>
+<div>
+<div class="font-bold text-sm text-on-surface dark:text-white">علیرضا حسینی</div>
+<div class="text-[11px] text-on-surface-variant dark:text-slate-400">انباردار ارشد مرکزی</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-[20px]" title="امضای الکترونیکی ثبت شده">check_circle</span>
+</div>
+<!-- Signee 2 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low/70 dark:bg-slate-800/60">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-xs">
+                مه
+              </div>
+<div>
+<div class="font-bold text-sm text-on-surface dark:text-white">مهرداد اخوان</div>
+<div class="text-[11px] text-on-surface-variant dark:text-slate-400">مدیر لجستیک و زنجیره تأمین</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-[20px]" title="امضای الکترونیکی ثبت شده">check_circle</span>
+</div>
+<!-- Signee 3 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low/70 dark:bg-slate-800/60">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center font-bold text-xs">
+                سب
+              </div>
+<div>
+<div class="font-bold text-sm text-on-surface dark:text-white">سهراب بختیاری</div>
+<div class="text-[11px] text-on-surface-variant dark:text-slate-400">حسابدار صنعتی و اموال</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-[20px]" title="امضای الکترونیکی ثبت شده">check_circle</span>
+</div>
+</div>
+<button class="w-full py-2 px-3 rounded-xl border border-outline-variant dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container-high dark:hover:bg-slate-800 text-body-sm font-body-sm text-center transition-colors" onclick="showToast('درخواست صدور گزارش جامع ممیزی به انباردار ارشد ارسال گردید.')">
+          ارسال گزارش تأییدیه به مدیریت مالی
+        </button>
+</div>
+</section>
+</main>
+<!-- Interactive Document Detail Drawer / Modal -->
+<div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200" id="docModalBackdrop">
+<div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 w-full max-w-xl rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform duration-200 space-y-5" id="docModalContainer">
+<!-- Modal Header -->
+<div class="flex items-center justify-between pb-3.5 border-b border-outline-variant/40 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container/10 dark:bg-blue-500/20 text-primary dark:text-inverse-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">receipt_long</span>
+</div>
+<div>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 font-label-sm" id="modalDocNumber">سند مرجع شماره</span>
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-white" id="modalDocTitle">جزئیات سند انبار</h3>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors" onclick="closeDocModal()">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<!-- Modal Body Details -->
+<div class="space-y-3.5 text-body-sm font-body-sm">
+<div class="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-surface-container-low dark:bg-slate-800/80 border border-outline-variant/30 dark:border-slate-700">
+<div>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 block mb-0.5">طرف حساب / ذینفع:</span>
+<span class="font-bold text-on-surface dark:text-white" id="modalDocParty">-</span>
+</div>
+<div>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 block mb-0.5">زمان ثبت در دفتر:</span>
+<span class="font-bold font-tabular-num text-on-surface dark:text-white" id="modalDocTime">-</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-surface-container-low dark:bg-slate-800/80 border border-outline-variant/30 dark:border-slate-700">
+<div>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 block mb-0.5">مقدار گردش سند:</span>
+<span class="font-bold font-tabular-num text-primary dark:text-inverse-primary" id="modalDocQty">-</span>
+</div>
+<div>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 block mb-0.5">نرخ واحد کاردکس:</span>
+<span class="font-bold font-tabular-num text-on-surface dark:text-white" id="modalDocPrice">-</span>
+</div>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-low dark:bg-slate-800/80 border border-outline-variant/30 dark:border-slate-700 space-y-1">
+<span class="text-xs text-on-surface-variant dark:text-slate-400 block">موقعیت انبار و انباردار مسئول:</span>
+<div class="flex items-center justify-between">
+<span class="font-bold text-on-surface dark:text-white" id="modalDocLoc">-</span>
+<span class="text-xs text-on-surface-variant dark:text-slate-400" id="modalDocUser">-</span>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="flex items-center justify-end gap-2.5 pt-3 border-t border-outline-variant/40 dark:border-slate-800">
+<button class="px-4 py-2 rounded-xl bg-surface-container-low dark:bg-slate-800 text-on-surface dark:text-slate-200 border border-outline-variant/40 dark:border-slate-700 font-title-md text-title-md hover:bg-surface-container-high transition-colors" onclick="closeDocModal()">
+          بستن پنجره
+        </button>
+<button class="px-5 py-2 rounded-xl bg-primary-container text-white font-title-md text-title-md hover:bg-blue-700 shadow-sm transition-colors flex items-center gap-1.5" onclick="showToast('سند فاکتور آماده چاپ با سربرگ رسمی گردید.')">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span>چاپ رسمی سند</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Lightweight Toast Notification -->
+<div class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5 border border-slate-700 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300" id="toastNotification">
+<span class="material-symbols-outlined text-emerald-400 text-[20px]">check_circle</span>
+<span class="text-sm font-medium" id="toastMessage">پیام عملیات</span>
+</div>
+<!-- Interactive Logic: Theme Switch, Modals & Table Filters -->
+<script>
+    // 1. Theme Switcher Logic (Bidirectional Light/Dark mode)
+    function toggleTheme() {
+      const htmlEl = document.documentElement;
+      const isDark = htmlEl.classList.toggle('dark');
+      const themeText = document.getElementById('themeText');
+      const themeIcon = document.getElementById('themeIcon');
+      
+      if (isDark) {
+        localStorage.setItem('theme', 'dark');
+        themeText.innerText = 'حالت روز';
+        themeIcon.innerText = 'light_mode';
+        themeIcon.classList.remove('text-amber-500');
+        themeIcon.classList.add('text-yellow-400');
+      } else {
+        localStorage.setItem('theme', 'light');
+        themeText.innerText = 'حالت شب';
+        themeIcon.innerText = 'dark_mode';
+        themeIcon.classList.remove('text-yellow-400');
+        themeIcon.classList.add('text-amber-500');
+      }
+    }
+
+    // Initialize Theme on Load based on system or localStorage
+    (function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        const themeText = document.getElementById('themeText');
+        const themeIcon = document.getElementById('themeIcon');
+        if (themeText && themeIcon) {
+          themeText.innerText = 'حالت روز';
+          themeIcon.innerText = 'light_mode';
+          themeIcon.classList.remove('text-amber-500');
+          themeIcon.classList.add('text-yellow-400');
+        }
+      }
+    })();
+
+    // 2. Document Details Modal
+    function openDocModal(docNo, title, party, time, qty, price, loc, user) {
+      document.getElementById('modalDocNumber').innerText = 'سند مرجع: ' + docNo;
+      document.getElementById('modalDocTitle').innerText = title;
+      document.getElementById('modalDocParty').innerText = party;
+      document.getElementById('modalDocTime').innerText = time;
+      document.getElementById('modalDocQty').innerText = qty;
+      document.getElementById('modalDocPrice').innerText = price;
+      document.getElementById('modalDocLoc').innerText = loc;
+      document.getElementById('modalDocUser').innerText = user;
+
+      const backdrop = document.getElementById('docModalBackdrop');
+      const container = document.getElementById('docModalContainer');
+      backdrop.classList.remove('opacity-0', 'pointer-events-none');
+      backdrop.classList.add('opacity-100');
+      container.classList.remove('scale-95');
+      container.classList.add('scale-100');
+    }
+
+    function closeDocModal() {
+      const backdrop = document.getElementById('docModalBackdrop');
+      const container = document.getElementById('docModalContainer');
+      backdrop.classList.add('opacity-0', 'pointer-events-none');
+      backdrop.classList.remove('opacity-100');
+      container.classList.add('scale-95');
+      container.classList.remove('scale-100');
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('docModalBackdrop').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeDocModal();
+      }
+    });
+
+    // 3. Search and Filtering interactions
+    const searchInput = document.getElementById('kardexSearchInput');
+    searchInput.addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      const rows = document.querySelectorAll('#kardexTableBody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+
+    function filterTable() {
+      const opValue = document.getElementById('operationFilter').value;
+      const whValue = document.getElementById('warehouseFilter').value;
+      showToast('فیلترها اعمال شدند: ' + (opValue !== 'all' ? opValue : 'تمامی عملیات'));
+    }
+
+    function resetFilters() {
+      document.getElementById('kardexSearchInput').value = '';
+      document.getElementById('operationFilter').value = 'all';
+      document.getElementById('warehouseFilter').value = 'all';
+      const rows = document.querySelectorAll('#kardexTableBody tr');
+      rows.forEach(row => row.style.display = '');
+      showToast('تمامی فیلترها بازنشانی شدند.');
+    }
+
+    function setFastFilter(type) {
+      showToast('فیلتر سریع فعال شد: ' + type);
+    }
+
+    function sortKardex() {
+      showToast('ترتیب نمایش رکوردهای کاردکس معکوس شد.');
+    }
+
+    // 4. Lightweight Toast Feedback
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      const msgEl = document.getElementById('toastMessage');
+      msgEl.innerText = msg;
+      
+      clearTimeout(toastTimer);
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3200);
+    }
+  </script>
+
+{% endblock %}

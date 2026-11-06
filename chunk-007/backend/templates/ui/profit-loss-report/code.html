@@ -1,0 +1,948 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Main Canvas Container (Designed to sit inside Master Page without global side/top duplicates) -->
+<main class="w-full ] p-4 md:p-6 lg:p-8 space-y-6">
+<!-- 1. HEADER & STICKY FILTER BAR -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/40 dark:border-outline/30 rounded-xl p-5 md:p-6 shadow-sm">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-outline-variant/30 dark:border-outline/20">
+<!-- Title & Subtitle -->
+<div class="space-y-1">
+<div class="flex items-center gap-3">
+<span class="p-2 rounded-lg bg-primary-fixed dark:bg-primary/20 text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined">query_stats</span>
+</span>
+<h1 class="text-headline-xl font-headline-xl text-on-surface dark:text-inverse-on-surface">
+              ۱۸. گزارش سود و زیان و تحلیل موجودی
+            </h1>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-label-md text-label-md">
+              نسخه ۳.۴ ابری
+            </span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant dark:text-outline-variant mr-11">
+            صورت سود و زیان دوره‌ای، بهای تمام‌شده کالای فروش‌رفته (COGS)، گردش و ارزیابی موجودی انبارها
+          </p>
+</div>
+<!-- Utility Buttons (Theme switch, Export, Print) -->
+<div class="flex items-center flex-wrap gap-2.5 self-start lg:self-center">
+<!-- Dark Mode Toggle Button -->
+
+<!-- Export Excel/PDF Dropdown -->
+<div class="relative inline-block text-right">
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-outline-variant/60 dark:border-outline text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface/80 transition-all text-body-sm font-body-sm shadow-sm" onclick="toggleDropdown('exportDropdown')">
+<span class="material-symbols-outlined text-[18px] text-secondary">file_download</span>
+<span>خروجی رسمی (اکسل / PDF)</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<div class="hidden absolute left-0 mt-1 w-44 rounded-lg bg-surface-container-lowest dark:bg-inverse-surface shadow-lg border border-outline-variant/40 dark:border-outline/30 py-1.5 z-50" id="exportDropdown">
+<a class="flex items-center gap-2 px-3 py-2 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container" href="javascript:void(0)" onclick="simulateToast('دریافت فایل اکسل تراز در حال آماده‌سازی است')">
+<span class="material-symbols-outlined text-secondary text-[18px]">table_view</span>
+                خروجی Excel (.xlsx)
+              </a>
+<a class="flex items-center gap-2 px-3 py-2 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container" href="javascript:void(0)" onclick="simulateToast('پیش‌نویس سند PDF ایجاد شد')">
+<span class="material-symbols-outlined text-error text-[18px]">picture_as_pdf</span>
+                خروجی گزارش استاندارد PDF
+              </a>
+</div>
+</div>
+<!-- Official Print -->
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all text-body-sm font-body-sm shadow-sm" onclick="window.print()">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span>چاپ رسمی تراز سود و زیان</span>
+</button>
+</div>
+</div>
+<!-- Filters & Period Bar -->
+<div class="pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 items-end">
+<!-- Period Selection -->
+<div class="space-y-1">
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">دوره مالی و بازه زمانی:</label>
+<div class="relative">
+<select class="w-full h-10 px-3.5 pl-8 rounded-lg bg-surface-container-low dark:bg-inverse-surface border border-outline-variant/50 dark:border-outline text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+<option selected="" value="autumn-1403">پاییز ۱۴۰۳ (۳ ماهه منتهی به ۳۰ آذر)</option>
+<option value="aban-1403">آبان ۱۴۰۳ (یک ماهه جاری)</option>
+<option value="h1-1403">۶ ماهه اول ۱۴۰۳</option>
+<option value="y-1402">سال مالی کامل ۱۴۰۲ (مقایسه‌ای)</option>
+<option value="custom">بازه سفارشی تاریخ شمسی...</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 pointer-events-none text-on-surface-variant text-[18px]">calendar_month</span>
+</div>
+</div>
+<!-- Branch Selection -->
+<div class="space-y-1">
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">شعبه و مرکز هزینه:</label>
+<div class="relative">
+<select class="w-full h-10 px-3.5 pl-8 rounded-lg bg-surface-container-low dark:bg-inverse-surface border border-outline-variant/50 dark:border-outline text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+<option selected="" value="all">تمامی شعب سازمانی (تلفیقی)</option>
+<option value="tehran-central">شعبه مرکزی - تهران</option>
+<option value="isfahan">شعبه منطقه آزاد و انبار اصفهان</option>
+<option value="mashhad">شعبه شرق کشور - مشهد</option>
+<option value="shiraz">شعبه جنوب - شیراز</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 pointer-events-none text-on-surface-variant text-[18px]">storefront</span>
+</div>
+</div>
+<!-- Costing Method (COGS Method) -->
+<div class="space-y-1">
+<label class="block text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">روش محاسبه بهای تمام‌شده (COGS):</label>
+<div class="relative">
+<select class="w-full h-10 px-3.5 pl-8 rounded-lg bg-surface-container-low dark:bg-inverse-surface border border-outline-variant/50 dark:border-outline text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+<option selected="" value="weighted-avg">میانگین موزون متحرک (استاندارد ۱۶)</option>
+<option value="fifo">اولین صادره از اولین وارده (FIFO)</option>
+<option value="lifo">آخرین صادره از اولین وارده (LIFO - مدیریتی)</option>
+<option value="standard">بهای تمام‌شده استاندارد برآوردی</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 pointer-events-none text-on-surface-variant text-[18px]">calculate</span>
+</div>
+</div>
+<!-- Filter Apply Action -->
+<div class="flex items-center gap-2">
+<button class="flex-1 h-10 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all flex items-center justify-center gap-1.5 text-body-sm font-body-sm shadow-sm" onclick="simulateToast('گزارش با آخرین متغیرهای دوره‌ای به‌روزرسانی شد')">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+            اعمال و بازخوانی تراز
+          </button>
+<button class="h-10 w-10 flex items-center justify-center rounded-lg border border-outline-variant/50 dark:border-outline text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-inverse-surface transition-all" onclick="simulateToast('تنظیمات فیلتر به حالت پیش‌فرض بازگشت')" title="بازنشانی فیلترها">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+</button>
+</div>
+</div>
+</header>
+<!-- 2. KPI METRIC CARDS (Bento Grid Style, Zero Text Clipping) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+<!-- Card 1: Revenue -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-4 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">درآمد ناخالص فروش</span>
+<span class="p-1.5 rounded-lg bg-surface-container text-primary">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</span>
+</div>
+<div class="my-2.5">
+<div class="text-title-lg font-headline-md font-bold text-on-surface dark:text-inverse-on-surface truncate">
+            ۵,۴۲۰,۰۰۰,۰۰۰
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="inline-flex items-center text-secondary font-semibold">
+<span class="material-symbols-outlined text-[15px]">trending_up</span>
+            +۱۶.۴٪ دوره قبل
+          </span>
+<span class="text-on-surface-variant dark:text-outline-variant">۱۰۰٪ فروش کل</span>
+</div>
+</div>
+<!-- Card 2: COGS -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-4 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">بهای تمام‌شده (COGS)</span>
+<span class="p-1.5 rounded-lg bg-error-container/40 text-error">
+<span class="material-symbols-outlined text-[18px]">inventory</span>
+</span>
+</div>
+<div class="my-2.5">
+<div class="text-title-lg font-headline-md font-bold text-on-surface dark:text-inverse-on-surface truncate">
+            ۳,۵۳۰,۰۰۰,۰۰۰
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-error font-medium">
+            ۶۵.۱٪ از کل فروش
+          </span>
+<span class="text-on-surface-variant dark:text-outline-variant">+۲.۱٪ تغییر هزینه</span>
+</div>
+</div>
+<!-- Card 3: Gross Profit -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-4 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">سود ناخالص عملیاتی</span>
+<span class="p-1.5 rounded-lg bg-secondary-container/40 text-secondary">
+<span class="material-symbols-outlined text-[18px]">price_check</span>
+</span>
+</div>
+<div class="my-2.5">
+<div class="text-title-lg font-headline-md font-bold text-secondary font-headline-md truncate">
+            ۱,۸۹۰,۰۰۰,۰۰۰
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-secondary-container/40 text-secondary font-semibold">
+            حاشیه: ۳۴.۹٪
+          </span>
+<span class="text-secondary font-medium">+۸.۲٪ بهبود</span>
+</div>
+</div>
+<!-- Card 4: SG&A Expenses -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-4 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">هزینه‌های عمومی و توزیع</span>
+<span class="p-1.5 rounded-lg bg-surface-container text-tertiary">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+</span>
+</div>
+<div class="my-2.5">
+<div class="text-title-lg font-headline-md font-bold text-on-surface dark:text-inverse-on-surface truncate">
+            ۴۸۰,۰۰۰,۰۰۰
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-secondary font-medium inline-flex items-center">
+<span class="material-symbols-outlined text-[15px]">trending_down</span>
+            -۴.۱٪ کنترل موثر
+          </span>
+<span class="text-on-surface-variant dark:text-outline-variant">۸.۸٪ از فروش</span>
+</div>
+</div>
+<!-- Card 5: Net Profit -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-4 rounded-xl border-2 border-primary/20 dark:border-primary/40 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-label-md font-label-md text-primary dark:text-inverse-primary font-bold">سود خالص دوره (EBITDA)</span>
+<span class="p-1.5 rounded-lg bg-primary-fixed dark:bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-[18px]">monitoring</span>
+</span>
+</div>
+<div class="my-2.5">
+<div class="text-title-lg font-headline-md font-bold text-primary dark:text-inverse-primary truncate">
+            ۱,۴۱۰,۰۰۰,۰۰۰
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/40 text-secondary font-bold">
+            ۲۶.۰٪ بازده نهایی
+          </span>
+<span class="text-secondary font-semibold">+۱۹.۱٪ رشد سالانه</span>
+</div>
+</div>
+<!-- Card 6: Total Inventory Value -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-4 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">ارزش ریالی موجودی</span>
+<span class="p-1.5 rounded-lg bg-surface-container text-tertiary">
+<span class="material-symbols-outlined text-[18px]">warehouse</span>
+</span>
+</div>
+<div class="my-2.5">
+<div class="text-title-lg font-headline-md font-bold text-on-surface dark:text-inverse-on-surface truncate">
+            ۴,۲۵۰,۰۰۰,۰۰۰
+            <span class="text-label-sm font-label-sm font-normal text-on-surface-variant dark:text-outline-variant">تومان</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-on-surface-variant dark:text-outline-variant font-medium">گردش کالا:</span>
+<span class="font-bold text-primary dark:text-inverse-primary">۴.۸ مرتبه در سال</span>
+</div>
+</div>
+</section>
+<!-- 3. MULTI-STEP EXPANDABLE INCOME STATEMENT TABLE (P&L) -->
+<section class="bg-surface-container-lowest dark:bg-inverse-surface rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm overflow-hidden">
+<!-- Table Header Bar -->
+<div class="p-4 md:p-5 border-b border-outline-variant/30 dark:border-outline/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-low/40 dark:bg-surface/50">
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface dark:text-inverse-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">format_list_bulleted</span>
+            صورت سود و زیان جامع چند مرحله‌ای (P&amp;L Statement)
+          </h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant mt-0.5">
+            بر اساس استاندارد حسابداری شماره ۱ ایران با قابلیت باز و بسته کردن سرفصل‌های معین و تفصیلی
+          </p>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1.5 rounded-md border border-outline-variant/60 dark:border-outline text-label-md font-label-md text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container transition-all" onclick="toggleAllStatementRows(true)">
+            باز کردن همه
+          </button>
+<button class="px-2.5 py-1.5 rounded-md border border-outline-variant/60 dark:border-outline text-label-md font-label-md text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container transition-all" onclick="toggleAllStatementRows(false)">
+            بستن سرفصل‌ها
+          </button>
+</div>
+</div>
+<!-- Financial Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant text-label-md font-label-md border-b border-outline-variant/40 dark:border-outline/30">
+<th class="py-3 px-4 w-2/5">شرح سرفصل حسابداری / اقلام مالی</th>
+<th class="py-3 px-4 text-left w-1/5">مبلغ دوره جاری (تومان)</th>
+<th class="py-3 px-4 text-center w-24">درصد از فروش</th>
+<th class="py-3 px-4 text-left w-1/5">دوره مشابه سال قبل</th>
+<th class="py-3 px-4 text-center w-24">درصد تغییرات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 dark:divide-outline/10 text-body-sm font-body-sm">
+<!-- SECTION 1: REVENUE (Parent) -->
+<tr class="bg-surface-container-low/60 dark:bg-surface/30 font-semibold cursor-pointer hover:bg-surface-container-low transition-colors" onclick="toggleStatementRow('group-revenue')">
+<td class="py-3.5 px-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary transition-transform" id="icon-group-revenue">expand_more</span>
+<span class="text-on-surface dark:text-inverse-on-surface font-title-md text-title-md">۱. درآمد حاصل از فروش و خدمات</span>
+</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-tabular-num text-on-surface dark:text-inverse-on-surface">۵,۳۸۰,۰۰۰,۰۰۰</td>
+<td class="py-3.5 px-4 text-center font-tabular-num text-label-md text-on-surface-variant">۱۰۰.۰٪</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-on-surface-variant">۴,۶۲۰,۰۰۰,۰۰۰</td>
+<td class="py-3.5 px-4 text-center text-secondary font-semibold">+۱۶.۴٪</td>
+</tr>
+<!-- Sub items: Revenue -->
+<tr class="group-revenue-child bg-surface-container-lowest dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant">
+<td class="py-2.5 px-8 pr-12">درآمد ناخالص فروش کالا</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">۵,۴۲۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">۱۰۰.۷٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">۴,۶۸۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center text-secondary">+۱۵.۸٪</td>
+</tr>
+<tr class="group-revenue-child bg-surface-container-lowest dark:bg-inverse-surface text-error">
+<td class="py-2.5 px-8 pr-12 flex items-center gap-1">
+<span>کسر می‌شود: تخفیفات اعطایی فروش</span>
+</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۲۵,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">-۰.۵٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۳۸,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center text-secondary">-۳۴.۲٪</td>
+</tr>
+<tr class="group-revenue-child bg-surface-container-lowest dark:bg-inverse-surface text-error">
+<td class="py-2.5 px-8 pr-12">کسر می‌شود: برگشت از فروش و مرجوعی انبارها</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۱۵,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">-۰.۲٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۲۲,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center text-secondary">-۳۱.۸٪</td>
+</tr>
+<tr class="group-revenue-child bg-surface-container-low/30 dark:bg-surface/20 font-medium">
+<td class="py-2.5 px-8 pr-12 text-primary font-semibold">فروش خالص دوره</td>
+<td class="py-2.5 px-4 text-left font-tabular-num text-primary font-semibold">۵,۳۸۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center font-tabular-num text-primary">۱۰۰.۰٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">۴,۶۲۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center text-secondary">+۱۶.۴٪</td>
+</tr>
+<!-- SECTION 2: COGS (Parent) -->
+<tr class="bg-surface-container-low/60 dark:bg-surface/30 font-semibold cursor-pointer hover:bg-surface-container-low transition-colors" onclick="toggleStatementRow('group-cogs')">
+<td class="py-3.5 px-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary transition-transform" id="icon-group-cogs">expand_more</span>
+<span class="text-on-surface dark:text-inverse-on-surface font-title-md text-title-md">۲. بهای تمام‌شده کالای فروش‌رفته (COGS)</span>
+</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-error font-semibold">(۳,۵۳۰,۰۰۰,۰۰۰)</td>
+<td class="py-3.5 px-4 text-center font-tabular-num text-label-md text-error">۶۵.۶٪</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-on-surface-variant">(۳,۱۵۰,۰۰۰,۰۰۰)</td>
+<td class="py-3.5 px-4 text-center text-error">+۱۲.۰٪</td>
+</tr>
+<!-- Sub items: COGS breakdown -->
+<tr class="group-cogs-child bg-surface-container-lowest dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant">
+<td class="py-2.5 px-8 pr-12">موجودی کالا در ابتدای دوره</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">۳,۸۰۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">۷۰.۶٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">۳,۲۰۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center text-on-surface-variant">+۱۸.۷٪</td>
+</tr>
+<tr class="group-cogs-child bg-surface-container-lowest dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant">
+<td class="py-2.5 px-8 pr-12">خرید خالص کالا طی دوره</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">۳,۶۵۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">۶۷.۸٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">۳,۳۴۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center text-on-surface-variant">+۹.۲٪</td>
+</tr>
+<tr class="group-cogs-child bg-surface-container-lowest dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant">
+<td class="py-2.5 px-8 pr-12">هزینه‌های مستقیم حمل، باربری و انبارداری وارده</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">۳۳۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">۶.۱٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">۴۱۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center text-secondary">-۱۹.۵٪</td>
+</tr>
+<tr class="group-cogs-child bg-surface-container-lowest dark:bg-inverse-surface text-secondary">
+<td class="py-2.5 px-8 pr-12">کسر می‌شود: موجودی کالا در پایان دوره (انبارگردانی)</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۴,۲۵۰,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">-۷۸.۹٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۳,۸۰۰,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center text-secondary">+۱۱.۸٪</td>
+</tr>
+<!-- SECTION 3: GROSS PROFIT (Highlight Bar) -->
+<tr class="bg-secondary-container/20 dark:bg-secondary-container/10 font-bold border-y-2 border-secondary/30">
+<td class="py-3.5 px-4 text-secondary flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<span class="font-headline-md text-headline-md">۳. سود ناخالص عملیاتی دوره</span>
+</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-title-lg text-secondary">۱,۸۵۰,۰۰۰,۰۰۰</td>
+<td class="py-3.5 px-4 text-center font-tabular-num text-title-md text-secondary">۳۴.۴٪</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-on-surface-variant">۱,۴۷۰,۰۰۰,۰۰۰</td>
+<td class="py-3.5 px-4 text-center text-secondary font-bold">+۲۵.۸٪</td>
+</tr>
+<!-- SECTION 4: OPERATING EXPENSES (Parent) -->
+<tr class="bg-surface-container-low/60 dark:bg-surface/30 font-semibold cursor-pointer hover:bg-surface-container-low transition-colors" onclick="toggleStatementRow('group-opex')">
+<td class="py-3.5 px-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary transition-transform" id="icon-group-opex">expand_more</span>
+<span class="text-on-surface dark:text-inverse-on-surface font-title-md text-title-md">۴. هزینه‌های فروش، عمومی و اداری (OPEX)</span>
+</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-error font-semibold">(۴۸۰,۰۰۰,۰۰۰)</td>
+<td class="py-3.5 px-4 text-center font-tabular-num text-label-md text-error">۸.۹٪</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-on-surface-variant">(۵۰۰,۰۰۰,۰۰۰)</td>
+<td class="py-3.5 px-4 text-center text-secondary">-۴.۰٪</td>
+</tr>
+<!-- Sub items: OPEX -->
+<tr class="group-opex-child bg-surface-container-lowest dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant">
+<td class="py-2.5 px-8 pr-12">حقوق، دستمزد و پاداش پرسنل ستادی و فروش</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۲۶۰,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">۴.۸٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۲۵۵,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center text-error">+۲.۰٪</td>
+</tr>
+<tr class="group-opex-child bg-surface-container-lowest dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant">
+<td class="py-2.5 px-8 pr-12">تبلیغات، بازاریابی دیجیتال و جشنواره‌های فصلی</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۹۵,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">۱.۸٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۱۲۰,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center text-secondary">-۲۰.۸٪</td>
+</tr>
+<tr class="group-opex-child bg-surface-container-lowest dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant">
+<td class="py-2.5 px-8 pr-12">هزینه استهلاک دارایی‌های ثابت و تجهیزات دفتری</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۶۵,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">۱.۲٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۶۵,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center text-on-surface-variant">۰.۰٪</td>
+</tr>
+<tr class="group-opex-child bg-surface-container-lowest dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant">
+<td class="py-2.5 px-8 pr-12">اجاره، نگهداری انبار و قبوض خدماتی</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۶۰,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">۱.۱٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۶۰,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center text-on-surface-variant">۰.۰٪</td>
+</tr>
+<!-- SECTION 5: OPERATING PROFIT -->
+<tr class="bg-surface-container-low/40 dark:bg-surface/20 font-bold border-t border-outline-variant/30">
+<td class="py-3 px-4 text-on-surface dark:text-inverse-on-surface">۵. سود عملیاتی (Operating Profit)</td>
+<td class="py-3 px-4 text-left font-tabular-num text-on-surface dark:text-inverse-on-surface">۱,۳۷۰,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-center font-tabular-num text-primary">۲۵.۵٪</td>
+<td class="py-3 px-4 text-left font-tabular-num text-on-surface-variant">۹۷۰,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-center text-secondary font-bold">+۴۱.۲٪</td>
+</tr>
+<!-- SECTION 6: NON-OPERATING (Parent) -->
+<tr class="bg-surface-container-low/60 dark:bg-surface/30 font-semibold cursor-pointer hover:bg-surface-container-low transition-colors" onclick="toggleStatementRow('group-nonop')">
+<td class="py-3.5 px-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary transition-transform" id="icon-group-nonop">expand_more</span>
+<span class="text-on-surface dark:text-inverse-on-surface font-title-md text-title-md">۶. خالص سایر درآمدها و هزینه‌های غیرعملیاتی</span>
+</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-secondary font-semibold">+۴۰,۰۰۰,۰۰۰</td>
+<td class="py-3.5 px-4 text-center font-tabular-num text-label-md text-secondary">+۰.۷٪</td>
+<td class="py-3.5 px-4 text-left font-tabular-num text-on-surface-variant">+۱۵,۰۰۰,۰۰۰</td>
+<td class="py-3.5 px-4 text-center text-secondary">+۱۶۶.۶٪</td>
+</tr>
+<!-- Sub items: Non-Operating -->
+<tr class="group-nonop-child bg-surface-container-lowest dark:bg-inverse-surface text-secondary">
+<td class="py-2.5 px-8 pr-12">درآمد سود سپرده‌های بانکی و سرمایه‌گذاری کوتاه‌مدت</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">+۶۵,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">+۱.۲٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">+۳۰,۰۰۰,۰۰۰</td>
+<td class="py-2.5 px-4 text-center text-secondary">+۱۱۶.۶٪</td>
+</tr>
+<tr class="group-nonop-child bg-surface-container-lowest dark:bg-inverse-surface text-error">
+<td class="py-2.5 px-8 pr-12">هزینه‌های مالی، کارمزد دستگاه‌های پوز و جرایم تاخیر</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۲۵,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center font-tabular-num">-۰.۵٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num">(۱۵,۰۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center text-error">+۶۶.۶٪</td>
+</tr>
+<!-- SECTION 7: NET PROFIT BEFORE & AFTER TAX (Final Grand Rows) -->
+<tr class="bg-surface-container-high/40 dark:bg-inverse-surface font-bold border-t border-outline-variant/50">
+<td class="py-3 px-4">سود خالص قبل از کسر مالیات</td>
+<td class="py-3 px-4 text-left font-tabular-num text-title-md">۱,۴۱۰,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-center font-tabular-num">۲۶.۲٪</td>
+<td class="py-3 px-4 text-left font-tabular-num">۹۸۵,۰۰۰,۰۰۰</td>
+<td class="py-3 px-4 text-center text-secondary">+۴۳.۱٪</td>
+</tr>
+<tr class="bg-surface-container-lowest dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant">
+<td class="py-2.5 px-8 pr-12 text-error">مالیات بر درآمد برآوردی دوره (نرخ ۲۵٪ شرکت‌های تجاری)</td>
+<td class="py-2.5 px-4 text-left font-tabular-num text-error">(۳۵۲,۵۰۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center font-tabular-num text-error">-۶.۵٪</td>
+<td class="py-2.5 px-4 text-left font-tabular-num text-error">(۲۴۶,۲۵۰,۰۰۰)</td>
+<td class="py-2.5 px-4 text-center text-error">+۴۳.۱٪</td>
+</tr>
+<!-- Final Net Profit Highlight Card Row -->
+<tr class="bg-primary/10 dark:bg-primary/20 text-primary dark:text-inverse-primary font-headline-md border-t-2 border-b-2 border-primary">
+<td class="py-4 px-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[24px]">verified</span>
+<span>سود خالص نهایی دوره مالی (Net Profit)</span>
+</td>
+<td class="py-4 px-4 text-left font-tabular-num text-headline-md font-extrabold">۱,۰۵۷,۵۰۰,۰۰۰</td>
+<td class="py-4 px-4 text-center font-tabular-num text-headline-md font-extrabold">۱۹.۷٪</td>
+<td class="py-4 px-4 text-left font-tabular-num text-title-md">۷۳۸,۷۵۰,۰۰۰</td>
+<td class="py-4 px-4 text-center text-secondary font-extrabold">+۴۳.۱٪</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-3 bg-surface-container-low/40 dark:bg-inverse-surface border-t border-outline-variant/30 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">
+<span>* کلیه ارقام بر حسب تومان ایران و بر پایه استانداردهای جاری سازمان حسابرسی محاسبه شده‌اند.</span>
+<span>آخرین تطبیق تراز دفاتر کل: امروز ساعت ۱۱:۴۵</span>
+</div>
+</section>
+<!-- 4. INVENTORY ANALYTICS & WAREHOUSE EVALUATION -->
+<section class="space-y-4">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface dark:text-inverse-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[24px]">warehouse</span>
+            تحلیل جامع موجودی انبارها و ارزیابی گردش کالا
+          </h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant mt-0.5">
+            پایش ارزش انبار، روزهای ماندگاری، کالاهای کم‌گردش، راکد و اقلام زیر نقطه بحرانی سفارش مجدد
+          </p>
+</div>
+<!-- Inventory Tab Filter -->
+<div class="inline-flex p-1 bg-surface-container dark:bg-inverse-surface rounded-xl border border-outline-variant/30 self-start md:self-auto overflow-x-auto">
+<button class="inv-tab-btn px-3 py-1.5 rounded-lg text-body-sm font-body-sm font-semibold bg-surface-container-lowest dark:bg-surface text-primary shadow-sm" onclick="filterInventoryCategory('all', this)">
+            همه انبارها
+          </button>
+<button class="inv-tab-btn px-3 py-1.5 rounded-lg text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors" onclick="filterInventoryCategory('slow', this)">
+            کالاهای راکد (Slow-moving)
+          </button>
+<button class="inv-tab-btn px-3 py-1.5 rounded-lg text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors" onclick="filterInventoryCategory('critical', this)">
+            زیر نقطه سفارش بحرانی
+          </button>
+<button class="inv-tab-btn px-3 py-1.5 rounded-lg text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors" onclick="filterInventoryCategory('excess', this)">
+            مازاد بر مصرف
+          </button>
+</div>
+</div>
+<!-- Inventory Visual Breakdown Bento (Charts & Distribution) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+<!-- Category Value Distribution -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-5 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<h3 class="text-title-md font-title-md text-on-surface dark:text-inverse-on-surface font-bold">ارزش موجودی برحسب دسته‌بندی</h3>
+<span class="text-label-sm font-label-sm text-on-surface-variant">۴ دسته فعال</span>
+</div>
+<!-- Custom Visual Bars -->
+<div class="mt-4 space-y-3.5">
+<div>
+<div class="flex justify-between text-body-sm font-body-sm mb-1">
+<span class="font-medium text-on-surface dark:text-inverse-on-surface">مواد غذایی و اقلام تندمصرف (FMCG)</span>
+<span class="font-tabular-num font-bold text-primary">۱,۸۵۰ م.ت (۴۳.۵٪)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container">
+<div class="h-2 rounded-full bg-primary" style="width: 43.5%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm font-body-sm mb-1">
+<span class="font-medium text-on-surface dark:text-inverse-on-surface">شوینده و محصولات بهداشتی</span>
+<span class="font-tabular-num font-bold text-secondary">۱,۱۲۰ م.ت (۲۶.۳٪)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container">
+<div class="h-2 rounded-full bg-secondary" style="width: 26.3%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm font-body-sm mb-1">
+<span class="font-medium text-on-surface dark:text-inverse-on-surface">خشکبار و بسته‌بندی صادراتی</span>
+<span class="font-tabular-num font-bold text-tertiary">۸۳۰ م.ت (۱۹.۵٪)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container">
+<div class="h-2 rounded-full bg-tertiary" style="width: 19.5%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm font-body-sm mb-1">
+<span class="font-medium text-on-surface dark:text-inverse-on-surface">نوشیدنی‌ها و آبمیوه طبیعی</span>
+<span class="font-tabular-num font-bold text-on-surface-variant">۴۵۰ م.ت (۱۰.۷٪)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container">
+<div class="h-2 rounded-full bg-outline" style="width: 10.7%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-4 mt-2 border-t border-outline-variant/30 flex items-center justify-between text-label-md font-label-md">
+<span class="text-on-surface-variant dark:text-outline-variant">مجموع کل انبارها:</span>
+<span class="font-bold text-on-surface dark:text-inverse-on-surface">۴,۲۵۰,۰۰۰,۰۰۰ تومان</span>
+</div>
+</div>
+<!-- Warehouse Turnover & Ageing Widget -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-5 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<h3 class="text-title-md font-title-md text-on-surface dark:text-inverse-on-surface font-bold">سلامت گردش و خواب کالا (DOH)</h3>
+<span class="px-2 py-0.5 rounded bg-secondary-container/40 text-secondary text-label-sm font-label-sm font-bold">وضعیت مطلوب</span>
+</div>
+<div class="grid grid-cols-2 gap-3 my-4">
+<div class="p-3 rounded-lg bg-surface-container-low dark:bg-surface/40 border border-outline-variant/20">
+<span class="text-label-sm font-label-sm text-on-surface-variant block">میانگین روزهای ماندگاری</span>
+<span class="text-headline-md font-headline-md font-bold text-on-surface dark:text-inverse-on-surface">۴۲ روز</span>
+<span class="text-label-sm text-secondary block mt-0.5">-۵ روز بهبود</span>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-low dark:bg-surface/40 border border-outline-variant/20">
+<span class="text-label-sm font-label-sm text-on-surface-variant block">نرخ بازگشت دارایی (GMROI)</span>
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary">۲.۱۸</span>
+<span class="text-label-sm text-secondary block mt-0.5">سودآوری عالی موجودی</span>
+</div>
+</div>
+<div class="space-y-1.5 text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant">
+<div class="flex items-center justify-between">
+<span>کالاهای با گردش سریع (زیر ۳۰ روز):</span>
+<span class="font-bold text-on-surface dark:text-inverse-on-surface">۶۲٪ از حجم انبار</span>
+</div>
+<div class="flex items-center justify-between">
+<span>کالاهای مشمول هشدار خواب سرمایه (+۹۰ روز):</span>
+<span class="font-bold text-error">۳۴ قلم کالا (۳۸۰ م.ت)</span>
+</div>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex items-center gap-1.5 text-primary text-label-md font-label-md">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span>سرعت گردش انبار مرکزی تهران بالاترین رتبه را ثبت کرده است.</span>
+</div>
+</div>
+<!-- Quick Summary Action Bento -->
+<div class="bg-gradient-to-br from-primary-fixed/40 to-surface-container dark:from-primary/20 dark:to-inverse-surface p-5 rounded-xl border border-primary/20 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="p-2 rounded-lg bg-primary text-on-primary">
+<span class="material-symbols-outlined text-[20px]">notifications_active</span>
+</span>
+<h3 class="text-title-md font-title-md font-bold text-on-surface dark:text-inverse-on-surface">
+                اقدامات اولویت‌دار انبارداری
+              </h3>
+</div>
+<ul class="mt-4 space-y-2.5 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-error text-[18px] mt-0.5">error</span>
+<span><strong>۸ قلم کالا</strong> به نقطه حداقل موجودی رسیده و نیازمند صدور سفارش خرید فوری هستند.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-tertiary text-[18px] mt-0.5">warning</span>
+<span><strong>۱۲ قلم کالای راکد</strong> پیشنهاد اعمال تخفیف شگفت‌انگیز برای آزادسازی نقدینگی دارند.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">check_circle</span>
+<span>تراز مغایرت انبارگردانی فصلی <strong>کمتر از ۰.۰۴٪</strong> و در محدوده مجاز استاندارد است.</span>
+</li>
+</ul>
+</div>
+<button class="w-full mt-4 h-9 rounded-lg bg-primary text-on-primary hover:bg-primary-container text-body-sm font-body-sm font-semibold transition-all flex items-center justify-center gap-1.5" onclick="simulateToast('درخواست صدور سفارش خرید خودکار به واحد تدارکات ارسال شد')">
+<span class="material-symbols-outlined text-[16px]">add_shopping_cart</span>
+            صدور سفارش خرید اقلام بحرانی
+          </button>
+</div>
+</div>
+<!-- Advanced Inventory Evaluation Table with Excel-Style Column Filters -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm overflow-hidden">
+<div class="p-4 border-b border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="text-title-md font-title-md font-bold text-on-surface dark:text-inverse-on-surface">
+              جدول ارزیابی ارزش دفتری و سلامت موجودی اقلام انبار
+            </span>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">
+              نمایش ۶ ردیف نمونه شاخص
+            </span>
+</div>
+<!-- Quick Search in Table -->
+<div class="relative w-full sm:w-64">
+<input class="w-full h-9 px-3 pl-8 rounded-lg bg-surface-container-low dark:bg-inverse-surface border border-outline-variant/50 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary" id="invSearchInput" onkeyup="filterInventoryTable()" placeholder="جستجوی کد کالا، نام یا انبار..." type="text"/>
+<span class="material-symbols-outlined absolute left-2 top-2 text-outline text-[18px]">search</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse" id="inventoryTable">
+<thead>
+<tr class="bg-surface-container-low dark:bg-inverse-surface text-on-surface-variant dark:text-outline-variant text-label-md font-label-md border-b border-outline-variant/40">
+<!-- Col 1: SKU & Name -->
+<th class="py-3 px-4">
+<div class="flex items-center justify-between">
+<span>کد کالا (SKU) و عنوان اقلام</span>
+<button class="text-outline hover:text-primary transition-colors" onclick="toggleExcelFilter('filter-col-sku')" title="فیلتر ستون">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+</button>
+</div>
+</th>
+<!-- Col 2: Category -->
+<th class="py-3 px-4">
+<div class="flex items-center justify-between">
+<span>گروه کالا</span>
+<button class="text-outline hover:text-primary transition-colors" onclick="toggleExcelFilter('filter-col-cat')">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+</button>
+</div>
+</th>
+<!-- Col 3: Warehouse -->
+<th class="py-3 px-4">
+<div class="flex items-center justify-between">
+<span>انبار نگهداری</span>
+<button class="text-outline hover:text-primary transition-colors" onclick="toggleExcelFilter('filter-col-wh')">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+</button>
+</div>
+</th>
+<!-- Col 4: Qty -->
+<th class="py-3 px-4 text-center">موجودی فیزیکی</th>
+<!-- Col 5: Book Value -->
+<th class="py-3 px-4 text-left">
+<div class="flex items-center justify-between">
+<span>ارزش دفتری (تومان)</span>
+<button class="text-outline hover:text-primary transition-colors" onclick="sortTableByValue()" title="مرتب‌سازی مبلغ">
+<span class="material-symbols-outlined text-[16px]">swap_vert</span>
+</button>
+</div>
+</th>
+<!-- Col 6: Turnover Rate -->
+<th class="py-3 px-4 text-center">گردش سالانه</th>
+<!-- Col 7: Days on Hand -->
+<th class="py-3 px-4 text-center">روز ماندگاری</th>
+<!-- Col 8: Status Badge -->
+<th class="py-3 px-4 text-center">وضعیت سلامت موجودی</th>
+<!-- Actions -->
+<th class="py-3 px-4 text-center">عملیات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 text-body-sm font-body-sm">
+{% for cat in sr_cat_sales %}
+<tr class="hover:bg-surface-container-low dark:hover:bg-inverse-surface/60 transition-colors">
+<td class="py-3 px-4 whitespace-nowrap text-on-surface dark:text-white">
+{{ cat.name }}
+</td>
+<td class="py-3 px-4 whitespace-nowrap font-tabular-num text-on-surface dark:text-white">
+{{ cat.sales|floatformat:"-0" }}
+</td>
+<td class="py-3 px-4 whitespace-nowrap font-tabular-num text-on-surface dark:text-white">
+{{ cat.profit|floatformat:"-0" }}
+</td>
+<td class="py-3 px-4 whitespace-nowrap font-tabular-num text-on-surface dark:text-white">
+{{ cat.margin_pct }}%
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="4" class="text-center py-8 text-[#64748b] dark:text-[#94a3b8]">هیچ داده‌ای ثبت نشده است.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Footer -->
+<div class="p-3 bg-surface-container-low/40 dark:bg-inverse-surface border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm font-body-sm">
+<div class="text-on-surface-variant dark:text-outline-variant text-label-md">
+            نمایش ۱ تا ۶ از مجموع ۳۴۸ قلم کالا در کلیه انبارهای سازمان
+          </div>
+<div class="flex items-center gap-1.5">
+<button class="px-2.5 py-1 rounded border border-outline-variant/40 hover:bg-surface-container text-outline transition-all disabled:opacity-40" disabled="">قبلی</button>
+<span class="px-3 py-1 rounded bg-primary text-on-primary font-bold text-label-md">۱</span>
+<button class="px-2.5 py-1 rounded border border-outline-variant/40 hover:bg-surface-container transition-all text-on-surface">۲</button>
+<button class="px-2.5 py-1 rounded border border-outline-variant/40 hover:bg-surface-container transition-all text-on-surface">۳</button>
+<span class="px-1 text-outline">...</span>
+<button class="px-2.5 py-1 rounded border border-outline-variant/40 hover:bg-surface-container transition-all text-on-surface">۵۸</button>
+<button class="px-2.5 py-1 rounded border border-outline-variant/40 hover:bg-surface-container transition-all text-on-surface">بعدی</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. BUSINESS INTELLIGENCE (BI), TAX & AUDIT COMPLIANCE INSIGHTS -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+<!-- BI Insight 1: Capital Optimization -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-5 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm space-y-3">
+<div class="flex items-center gap-2.5">
+<span class="p-2 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[20px]">lightbulb</span>
+</span>
+<h3 class="text-title-md font-title-md font-bold text-on-surface dark:text-inverse-on-surface">
+            بهینه‌سازی نقدینگی و سرمایه در گردش
+          </h3>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant leading-relaxed">
+          ارزش ریالی ۳۴ قلم کالای راکد با ماندگاری بالای ۹۰ روز معادل <strong>۳۸۰ میلیون تومان</strong> است. اعمال بسته تخفیف ۱۲ درصدی فروش عمده می‌تواند جریان وجوه نقد را ظرف کمتر از ۱۴ روز به چرخه خرید اقلام پرگردش بازگرداند.
+        </p>
+<div class="pt-2 border-t border-outline-variant/30 flex justify-between items-center">
+<span class="text-label-sm font-label-sm text-tertiary font-bold">پتانسیل آزادسازی: +۳۳۴ م.ت</span>
+<a class="text-primary hover:underline text-label-md font-label-md font-semibold inline-flex items-center gap-0.5" href="javascript:void(0)" onclick="simulateToast('گزارش تحلیلی پیشنهاد تخفیف آماده شد')">
+            ایجاد جشنواره فروش
+            <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</a>
+</div>
+</div>
+<!-- BI Insight 2: Gross Margin Defense -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-5 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm space-y-3">
+<div class="flex items-center gap-2.5">
+<span class="p-2 rounded-lg bg-error-container text-error">
+<span class="material-symbols-outlined text-[20px]">warning_amber</span>
+</span>
+<h3 class="text-title-md font-title-md font-bold text-on-surface dark:text-inverse-on-surface">
+            هشدار اقلام با حاشیه سود منفی / لب‌مرزی
+          </h3>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant leading-relaxed">
+          به دلیل رشد نرخ ترابری و خرید آخرین پارت، حاشیه سود گروه نوشیدنی‌ها از ۲۲٪ به <strong>۴.۸٪</strong> تنزل کرده است. بازنگری در قیمت مصرف‌کننده یا تغییر قرارداد با پیمانکاران توزیع قبل از شروع دوره بعدی الزامی است.
+        </p>
+<div class="pt-2 border-t border-outline-variant/30 flex justify-between items-center">
+<span class="text-label-sm font-label-sm text-error font-bold">ریسک سودآوری: متوسط</span>
+<a class="text-primary hover:underline text-label-md font-label-md font-semibold inline-flex items-center gap-0.5" href="javascript:void(0)" onclick="simulateToast('پنل تعدیل قیمت‌ها باز شد')">
+            بازنگری قیمت‌گذاری
+            <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</a>
+</div>
+</div>
+<!-- BI Insight 3: Tax Compliance & Audit Check -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface p-5 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm space-y-3">
+<div class="flex items-center gap-2.5">
+<span class="p-2 rounded-lg bg-secondary-container text-secondary">
+<span class="material-symbols-outlined text-[20px]">policy</span>
+</span>
+<h3 class="text-title-md font-title-md font-bold text-on-surface dark:text-inverse-on-surface">
+            تطبیق سامانه مودیان و ممیزی مالیاتی
+          </h3>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant leading-relaxed">
+          صورت‌های بهای تمام‌شده و ارزش‌گذاری انبارها بر مبنای استاندارد ۱۶ و مواد ۱۳۱ و ۱۴۷ قانون مالیات‌های مستقیم بررسی شد. ۱۰۰٪ فاکتورهای فروش دوره با شناسه اختصاصی در سامانه جامع مودیان تطبیق یافته و تایید گردیدند.
+        </p>
+<div class="pt-2 border-t border-outline-variant/30 flex justify-between items-center">
+<span class="text-label-sm font-label-sm text-secondary font-bold">تطبیق قانونی: ۱۰۰٪ کامل</span>
+<span class="text-on-surface-variant text-label-sm font-label-sm">کد رهگیری: TX-99042</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Lightweight Toast Feedback Notification Component -->
+<div class="fixed bottom-6 left-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none" id="toastNotification">
+<div class="bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 border border-outline/30">
+<span class="material-symbols-outlined text-secondary text-[22px]">check_circle</span>
+<span class="text-body-sm font-body-sm" id="toastMessage">عملیات با موفقیت انجام شد</span>
+</div>
+</div>
+<!-- Inline Vanilla Micro-Interactions Script -->
+<script>
+    // 1. Dark Mode Toggle
+    function toggleTheme() {
+      const htmlEl = document.documentElement;
+      const isDark = htmlEl.classList.toggle('dark');
+      const themeLabel = document.getElementById('themeLabel');
+      const themeIcon = document.getElementById('themeIcon');
+      
+      if (isDark) {
+        themeLabel.textContent = 'حالت روز';
+        themeIcon.textContent = 'light_mode';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        themeLabel.textContent = 'حالت شب';
+        themeIcon.textContent = 'dark_mode';
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    // Persist theme choice
+    (function initTheme() {
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        const themeLabel = document.getElementById('themeLabel');
+        const themeIcon = document.getElementById('themeIcon');
+        if (themeLabel) themeLabel.textContent = 'حالت روز';
+        if (themeIcon) themeIcon.textContent = 'light_mode';
+      }
+    })();
+
+    // 2. Dropdown Actions
+    function toggleDropdown(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle('hidden');
+      }
+    }
+    // Close dropdowns on outside click
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('.relative')) {
+        document.querySelectorAll('[id$="Dropdown"]').forEach(d => d.classList.add('hidden'));
+      }
+    });
+
+    // 3. Expandable Statement Rows
+    function toggleStatementRow(groupKey) {
+      const rows = document.querySelectorAll('.' + groupKey + '-child');
+      const icon = document.getElementById('icon-' + groupKey);
+      
+      rows.forEach(r => {
+        r.classList.toggle('hidden');
+      });
+
+      if (icon) {
+        if (icon.textContent === 'expand_more') {
+          icon.textContent = 'chevron_left';
+        } else {
+          icon.textContent = 'expand_more';
+        }
+      }
+    }
+
+    function toggleAllStatementRows(expand) {
+      const groups = ['group-revenue', 'group-cogs', 'group-opex', 'group-nonop'];
+      groups.forEach(group => {
+        const rows = document.querySelectorAll('.' + group + '-child');
+        const icon = document.getElementById('icon-' + group);
+        rows.forEach(r => {
+          if (expand) {
+            r.classList.remove('hidden');
+          } else {
+            r.classList.add('hidden');
+          }
+        });
+        if (icon) {
+          icon.textContent = expand ? 'expand_more' : 'chevron_left';
+        }
+      });
+    }
+
+    // 4. Inventory Tab Filter
+    function filterInventoryCategory(category, buttonEl) {
+      // Button active styles
+      document.querySelectorAll('.inv-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-surface-container-lowest', 'dark:bg-surface', 'text-primary', 'shadow-sm', 'font-semibold');
+        btn.classList.add('text-on-surface-variant');
+      });
+      buttonEl.classList.add('bg-surface-container-lowest', 'dark:bg-surface', 'text-primary', 'shadow-sm', 'font-semibold');
+      buttonEl.classList.remove('text-on-surface-variant');
+
+      // Table rows filter
+      const rows = document.querySelectorAll('#inventoryTable tbody tr');
+      rows.forEach(row => {
+        const rowCat = row.getAttribute('data-cat');
+        if (category === 'all') {
+          row.style.display = '';
+        } else if (category === 'slow' && rowCat === 'slow') {
+          row.style.display = '';
+        } else if (category === 'critical' && rowCat === 'critical') {
+          row.style.display = '';
+        } else if (category === 'excess' && rowCat === 'excess') {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // 5. Inventory Real-time Search
+    function filterInventoryTable() {
+      const query = document.getElementById('invSearchInput').value.trim().toLowerCase();
+      const rows = document.querySelectorAll('#inventoryTable tbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    }
+
+    // Sort by Value (Simple toggle simulation)
+    let sortAsc = false;
+    function sortTableByValue() {
+      sortAsc = !sortAsc;
+      simulateToast(sortAsc ? 'مرتب‌سازی بر اساس کمترین ارزش دفتری' : 'مرتب‌سازی بر اساس بیشترین ارزش دفتری');
+    }
+
+    function toggleExcelFilter(colKey) {
+      simulateToast('فیلتر پیشرفته اکسل برای این ستون فعال شد');
+    }
+
+    // 6. Toast Simulation Notification
+    function simulateToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+      if (toast && toastMsg) {
+        toastMsg.textContent = msg;
+        toast.classList.remove('translate-y-24', 'opacity-0');
+        setTimeout(() => {
+          toast.classList.add('translate-y-24', 'opacity-0');
+        }, 3200);
+      }
+    }
+  </script>
+
+{% endblock %}

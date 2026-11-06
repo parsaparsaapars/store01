@@ -1,0 +1,976 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+/* Hide import/product notification bars (top and bottom) */
+div.fixed.bottom-0[style*="bg-emerald"], div[class*="import-bar"], div[class*="product-import"],
+div[class*="import-notification"], div:has-text("Import شده"), div:has-text("بدون سریال"),
+div:has-text("Importerde"), div:has-text("Imported"), div:has-text("دیوедини"),
+div.fixed.top-0[style*="bg-emerald"], div.fixed.top-0:has-text("Import"),
+header:has-text("Importerde"), header:has-text("Import شده") {
+  display: none !important;
+}
+</style>
+<!-- Main Container -->
+<div class="max-w-7xl mx-auto space-y-6">
+<!-- Header & Action Bar -->
+<header class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#161f30] p-4 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-[#23304a] shadow-sm">
+<div class="space-y-1">
+<div class="flex items-center gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+<a class="hover:text-blue-600 transition" href="#">داشبورد سازمانی</a>
+<span>/</span>
+<a class="hover:text-blue-600 transition" href="#">کاتالوگ کالاها و خدمات</a>
+<span>/</span>
+<span class="text-slate-800 dark:text-slate-200 font-medium">تعریف کالای جدید</span>
+</div>
+<div class="flex items-center gap-3 pt-1">
+<h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">فرم جامع تعریف و ویرایش محصول</h1>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/70 dark:border-amber-800/50">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+            پیش‌نویس خودکار
+          </span>
+</div>
+<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">شناسه موقت سند: <code class="font-mono text-slate-700 dark:text-slate-300">PRD-DRAFT-2024-884</code> | آخرین ذخیره‌سازی: <span class="text-emerald-600 dark:text-emerald-400 font-medium">۱۴ ثانیه پیش</span></p>
+</div>
+<!-- Quick Action Buttons -->
+<div class="flex items-center flex-wrap gap-2.5">
+<button class="px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700/80 rounded-xl transition flex items-center gap-1.5 border border-slate-200 dark:border-slate-700" type="button">
+<span class="material-symbols-outlined text-base">close</span>
+          انصراف و بستن
+        </button>
+<button class="px-4 py-2 text-xs sm:text-sm font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-xl transition flex items-center gap-1.5 border border-blue-200 dark:border-blue-800" type="button">
+<span class="material-symbols-outlined text-base">save</span>
+          ذخیره به عنوان پیش‌نویس
+        </button>
+<button id="saveProductBtn" class="px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl transition shadow-md shadow-blue-500/20 flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-base">check_circle</span>
+          ثبت نهایی و انتشار در انبار
+        </button>
+</div>
+</header>
+<!-- Stepper Navigation -->
+<div class="bg-white dark:bg-[#161f30] p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-[#23304a] shadow-sm">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 relative">
+<!-- Step 1 -->
+<button class="step-btn flex items-center gap-3 p-3 rounded-xl transition text-right bg-blue-50/70 dark:bg-blue-950/30 border-2 border-blue-500 dark:border-blue-500" id="step-tab-1" onclick="goToStep(1)" type="button">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white bg-blue-600 shadow-sm shrink-0">
+<span>۱</span>
+</div>
+<div class="min-w-0">
+<span class="block text-xs font-semibold text-blue-700 dark:text-blue-400">گام اول</span>
+<span class="block text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">اطلاعات پایه و فنی</span>
+</div>
+</button>
+<!-- Step 2 -->
+<button class="step-btn flex items-center gap-3 p-3 rounded-xl transition text-right bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 opacity-90 hover:opacity-100" id="step-tab-2" onclick="goToStep(2)" type="button">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-slate-700 dark:text-slate-300 bg-slate-200 dark:bg-slate-700 shrink-0">
+<span>۲</span>
+</div>
+<div class="min-w-0">
+<span class="block text-xs font-medium text-slate-500 dark:text-slate-400">گام دوم</span>
+<span class="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">قیمت‌گذاری، مالیات و سود</span>
+</div>
+</button>
+<!-- Step 3 -->
+<button class="step-btn flex items-center gap-3 p-3 rounded-xl transition text-right bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 opacity-90 hover:opacity-100" id="step-tab-3" onclick="goToStep(3)" type="button">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-slate-700 dark:text-slate-300 bg-slate-200 dark:bg-slate-700 shrink-0">
+<span>۳</span>
+</div>
+<div class="min-w-0">
+<span class="block text-xs font-medium text-slate-500 dark:text-slate-400">گام سوم</span>
+<span class="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">موجودی، انبار و سفارش</span>
+</div>
+</button>
+<!-- Step 4 -->
+<button class="step-btn flex items-center gap-3 p-3 rounded-xl transition text-right bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 opacity-90 hover:opacity-100" id="step-tab-4" onclick="goToStep(4)" type="button">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-slate-700 dark:text-slate-300 bg-slate-200 dark:bg-slate-700 shrink-0">
+<span>۴</span>
+</div>
+<div class="min-w-0">
+<span class="block text-xs font-medium text-slate-500 dark:text-slate-400">گام چهارم</span>
+<span class="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">تصاویر، ویژگی‌ها و پیش‌نمایش</span>
+</div>
+</button>
+</div>
+</div>
+<!-- Main Content Layout: Form Steps (Right/Center) + Live Preview Sticky Panel (Left) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Stepper Form Sections (8 Cols on Desktop) -->
+<div class="lg:col-span-8 space-y-6">
+<!-- STEP 1: Basic & Technical Details -->
+<section class="step-content space-y-5 bg-white dark:bg-[#161f30] p-5 sm:p-7 rounded-2xl border border-slate-200/80 dark:border-[#23304a] shadow-sm" id="step-1">
+<div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+<div>
+<h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-600 dark:text-blue-400">info</span>
+                مرحله اول: اطلاعات پایه، شناسه‌ها و مشخصات فنی کالا
+              </h2>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">نام رسمی، بارکد اسکن‌شده، کد SKU یکتا و دسته‌بندی موضوعی کالا در انبار</p>
+</div>
+<span class="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-2.5 py-1 rounded-lg">گام ۱ از ۴</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+<!-- Product Title -->
+<div class="md:col-span-2 space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                نام تجاری و رسمی کالا <span class="text-rose-500">*</span>
+</label>
+<input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm transition" id="input-title" name="name" oninput="updatePreview()" placeholder="مثال: روغن زیتون ۱ لیتری فرابکر اکسترا" type="text" value="{% if pf_product %}{{ pf_product.name }}{% else %}دانه قهوه اسپرسو تجاری ۱۰۰٪ عربیکا{% endif %}"/>
+<p class="text-[11px] text-slate-400 dark:text-slate-500">نام کامل کالا همان عنوانی است که در صدور فاکتور و صندوق فروش نمایش داده خواهد شد.</p>
+</div>
+<!-- SKU Code -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                  شناسه کالا (SKU) <span class="text-rose-500">*</span>
+</label>
+<button class="text-[11px] text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-0.5" onclick="generateSKU()" type="button">
+<span class="material-symbols-outlined text-xs">auto_awesome</span> تولید خودکار
+                </button>
+</div>
+<div class="relative">
+<input class="w-full font-mono px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm uppercase" id="input-sku" name="sku" oninput="updatePreview()" type="text" value="{% if pf_product %}{{ pf_product.sku }}{% else %}CF-ESP-8820{% endif %}"/>
+<span class="absolute left-3 top-3 text-xs text-slate-400 font-mono">یکتا</span>
+</div>
+</div>
+<!-- Barcode with Scanner -->
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                بارکد استاندارد (EAN-13 / GS1)
+              </label>
+<div class="relative">
+<input class="w-full font-mono pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="input-barcode" name="barcode" oninput="updatePreview()" type="text" value="{% if pf_product %}{{ pf_product.barcode }}{% else %}6260194820194{% endif %}"/>
+<button class="absolute left-2 top-2 p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="اتصال به بارکدخوان بارکد اسکنر" type="button">
+<span class="material-symbols-outlined text-lg">barcode_scanner</span>
+</button>
+</div>
+</div>
+<!-- Category -->
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                دسته‌بندی اصلی کالا <span class="text-rose-500">*</span>
+</label>
+<select class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="input-category" name="category" onchange="updatePreview()">
+  <option value="">— انتخاب دسته‌بندی —</option>
+  {% for c in pf_categories %}
+  <option value="{{ c.id }}" {% if pf_product and pf_product.category_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+  {% endfor %}
+</select>
+</div>
+<!-- Brand / Manufacturer -->
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                برند یا کارخانه سازنده
+              </label>
+<select class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="input-brand" name="brand" onchange="updatePreview()">
+  <option value="">— انتخاب برند —</option>
+  {% for b in pf_brands %}
+  <option value="{{ b.id }}" {% if pf_product and pf_product.brand_id == b.id %}selected{% endif %}>{{ b.name }}</option>
+  {% endfor %}
+</select>
+</div>
+<!-- Item Type -->
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                نوع موجودیت در سامانه
+              </label>
+<div class="grid grid-cols-2 gap-2">
+<label class="flex items-center gap-2 p-2.5 rounded-xl border border-blue-500/80 bg-blue-50/30 dark:bg-blue-950/20 cursor-pointer text-xs font-semibold text-blue-700 dark:text-blue-300">
+<input checked="" class="text-blue-600 focus:ring-blue-500" name="item_type" type="radio" value="physical"/>
+<span>کالای فیزیکی (انبارپذیر)</span>
+</label>
+<label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300">
+<input class="text-blue-600 focus:ring-blue-500" name="item_type" type="radio" value="service"/>
+<span>خدمات / بدون انبارداری</span>
+</label>
+</div>
+</div>
+<!-- Main & Secondary Unit -->
+<div class="grid grid-cols-2 gap-3">
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                  واحد شمارش اصلی <span class="text-rose-500">*</span>
+</label>
+<select class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="input-unit" name="unit" onchange="updatePreview()">
+  <option value="">— انتخاب واحد —</option>
+  {% for u in pf_units %}
+  <option value="{{ u.id }}" {% if pf_product and pf_product.unit_id == u.id %}selected{% endif %}>{{ u.name }}</option>
+  {% endfor %}
+</select>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                  واحد فرعی (ضریب تبدیل)
+                </label>
+<input class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" placeholder="مثال: ۱ کارتن = ۱۲ عدد" type="text" value="۲۵ کیلوگرم خالص"/>
+</div>
+</div>
+</div>
+<div class="pt-4 flex justify-end">
+<button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition shadow-sm" onclick="goToStep(2)" type="button">
+<span>گام بعدی: قیمت‌گذاری و سود</span>
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+</button>
+</div>
+</section>
+<!-- STEP 2: Pricing, Taxes, Profit Margins -->
+<section class="step-content space-y-5 bg-white dark:bg-[#161f30] p-5 sm:p-7 rounded-2xl border border-slate-200/80 dark:border-[#23304a] shadow-sm" id="step-2">
+<div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+<div>
+<h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400">price_check</span>
+                مرحله دوم: قیمت خرید، قیمت فروش، مالیات و حاشیه سود
+              </h2>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">محاسبه خودکار حاشیه سود خالص و هشدار قیمت‌گذاری با ضرر بر مبنای قوانین مالیاتی</p>
+</div>
+<span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1 rounded-lg">گام ۲ از ۴</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+<!-- Buy Price -->
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                قیمت خرید (بهای تمام‌شده ورودی) <span class="text-rose-500">*</span>
+</label>
+<div class="relative">
+<input class="w-full pl-16 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono font-bold" id="input-buy-price" name="cost_price" oninput="calculateMargin()" type="number" value="{% if pf_product %}{{ pf_product.cost_price }}{% else %}12500000{% endif %}"/>
+<span class="absolute left-3 top-2.5 text-xs text-slate-400 dark:text-slate-500 font-medium">تومان</span>
+</div>
+<p class="text-[11px] text-slate-400 dark:text-slate-500" id="buy-price-text">معادل: ۱۲ میلیون و ۵۰۰ هزار تومان</p>
+</div>
+<!-- Sell Price -->
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                قیمت فروش مصوب (پیش‌فرض) <span class="text-rose-500">*</span>
+</label>
+<div class="relative">
+<input class="w-full pl-16 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono font-bold text-blue-600 dark:text-blue-400" id="input-sell-price" name="sale_price" oninput="calculateMargin()" type="number" value="{% if pf_product %}{{ pf_product.sale_price }}{% else %}15900000{% endif %}"/>
+<span class="absolute left-3 top-2.5 text-xs text-slate-400 dark:text-slate-500 font-medium">تومان</span>
+</div>
+<p class="text-[11px] text-slate-400 dark:text-slate-500" id="sell-price-text">معادل: ۱۵ میلیون و ۹۰۰ هزار تومان</p>
+</div>
+<!-- Discount Max -->
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                حداکثر تخفیف مجاز برای فروشنده (%)
+              </label>
+<div class="relative">
+<input class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono" id="input-discount" max="100" min="0" oninput="calculateMargin()" type="number" value="8"/>
+<span class="absolute left-3 top-2.5 text-xs text-slate-400 font-medium">درصد</span>
+</div>
+<p class="text-[11px] text-slate-400">سقف اختیارات صندوق‌دار بدون نیاز به تایید مدیر</p>
+</div>
+<!-- Tax Rate -->
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                نرخ مالیات بر ارزش افزوده (VAT)
+              </label>
+<select class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="input-tax" name="tax_rate" onchange="calculateMargin()">
+  <option value="10" {% if pf_product and pf_product.tax_rate == '10' %}selected{% elif not pf_product %}selected{% endif %}>۱۰٪ مشمول ارزش افزوده قانونی ۱۴۰۳</option>
+  <option value="0" {% if pf_product and pf_product.tax_rate == '0' %}selected{% endif %}>معاف از مالیات بر ارزش افزوده (کالای اساسی)</option>
+  <option value="custom" {% if pf_product and pf_product.tax_rate != '0' and pf_product.tax_rate != '10' %}selected{% endif %}>نرخ سفارشی و عوارض خاص</option>
+</select>
+</div>
+</div>
+<!-- Dynamic Profit Margin Calculator Box -->
+<div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/20 p-4 sm:p-5 rounded-2xl border border-emerald-200/80 dark:border-emerald-800/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm shrink-0">
+<span class="material-symbols-outlined text-2xl">trending_up</span>
+</div>
+<div>
+<span class="text-xs font-semibold text-emerald-800 dark:text-emerald-300">محاسبه برخط حاشیه سود تجاری</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="text-2xl font-black text-emerald-700 dark:text-emerald-400" id="margin-pct">۲۷.۲٪</span>
+<span class="text-xs text-slate-600 dark:text-slate-400">(سود ناخالص: <strong class="text-slate-800 dark:text-slate-200" id="margin-amount">۳,۴۰۰,۰۰۰ تومان</strong> در هر واحد)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1.5 rounded-xl bg-emerald-500 text-white text-xs font-bold inline-flex items-center gap-1 shadow-sm" id="margin-badge">
+<span class="material-symbols-outlined text-sm">verified</span>
+                سودآوری بهینه و مجاز
+              </span>
+</div>
+</div>
+<!-- Negative Margin Warning Alert (Hidden by default, shown if sell < buy) -->
+<div class="hidden p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs sm:text-sm flex items-start gap-3" id="negative-margin-alert">
+<span class="material-symbols-outlined text-rose-600 shrink-0 text-xl">warning</span>
+<div>
+<strong class="font-bold block">هشدار حاشیه سود منفی!</strong>
+<span>قیمت فروش تعیین‌شده از بهای تمام‌شده خرید کمتر است. این کالا با زیان فروخته خواهد شد و نیازمند تاییدیه مکتوب مدیر مالی سازمان است.</span>
+</div>
+</div>
+<div class="pt-4 flex justify-between">
+<button class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition" onclick="goToStep(1)" type="button">
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span>مرحله قبلی</span>
+</button>
+<button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition shadow-sm" onclick="goToStep(3)" type="button">
+<span>گام بعدی: انبار و کنترل موجودی</span>
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+</button>
+</div>
+</section>
+<!-- STEP 3: Inventory, Warehouses & Reorder Points -->
+<section class="step-content space-y-5 bg-white dark:bg-[#161f30] p-5 sm:p-7 rounded-2xl border border-slate-200/80 dark:border-[#23304a] shadow-sm" id="step-3">
+<div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+<div>
+<h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-600 dark:text-amber-400">warehouse</span>
+                مرحله سوم: موجودی اولیه، تعیین انبارها، نقطه سفارش و ردیابی
+              </h2>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">توزیع موجودی در انبارهای سازمان و تنظیم هشدارهای هوشمند کسری کالا</p>
+</div>
+<span class="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 px-2.5 py-1 rounded-lg">گام ۳ از ۴</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                موجودی اولیه کل
+              </label>
+<input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono font-bold" id="input-stock" oninput="updatePreview()" type="number" value="420"/>
+<p class="text-[11px] text-slate-400">تعداد ورودی اولیه در سند رسید افتتاحیه</p>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                حداقل موجودی (نقطه هشدار سفارش)
+              </label>
+<input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono" id="input-min-stock" name="min_stock" oninput="updatePreview()" type="number" value="{% if pf_product %}{{ pf_product.min_stock }}{% else %}50{% endif %}"/>
+<p class="text-[11px] text-amber-600 dark:text-amber-400">اعلام هشدار در کاردکس با رسیدن به این عدد</p>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                حداکثر سقف مجاز انبار
+              </label>
+<input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-mono" type="number" value="1000"/>
+<p class="text-[11px] text-slate-400">جلوگیری از انباشت بیش از ظرفیت فیزیکی</p>
+</div>
+</div>
+<!-- Warehouse Allocation Table -->
+<div class="space-y-2 pt-2">
+<div class="flex items-center justify-between">
+<span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">تخصیص موجودی اولیه در انبارهای فعال سازمان:</span>
+<button class="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-sm">add</span> افزودن انبار دیگر
+              </button>
+</div>
+<div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+<table class="w-full text-right text-xs">
+<thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+<tr>
+<th class="p-3">نام و کد انبار</th>
+<th class="p-3">آدرس محل قفسه‌بندی</th>
+<th class="p-3">تعداد تخصیصی</th>
+<th class="p-3 text-center">وضعیت نگهداری</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+<td class="p-3 font-semibold text-slate-800 dark:text-slate-200">انبار مرکزی سردخانه (کد ۰۱)</td>
+<td class="p-3 text-slate-500 font-mono">سالن A - قفسه ۱۲ - ردیف ۳</td>
+<td class="p-3"><input class="w-24 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 font-mono" type="number" value="300"/> کیسه</td>
+<td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold">کنترل دما فعال</span></td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+<td class="p-3 font-semibold text-slate-800 dark:text-slate-200">انبار توزیع سریع شعبه فردوسی (کد ۰۳)</td>
+<td class="p-3 text-slate-500 font-mono">قفسه فروشگاهی B - بخش بارکد</td>
+<td class="p-3"><input class="w-24 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 font-mono" type="number" value="120"/> کیسه</td>
+<td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 text-[10px] font-bold">آماده فروش مستقیم</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Tracking, Expiration & Batch Settings -->
+<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 space-y-3">
+<span class="text-xs font-bold text-slate-800 dark:text-slate-200 block">ویژگی‌های ردیابی پیشرفته:</span>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+<input checked="" class="rounded text-blue-600 focus:ring-blue-500" type="checkbox"/>
+<span>ردیابی سری ساخت (Batch No)</span>
+</label>
+<label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+<input checked="" class="rounded text-blue-600 focus:ring-blue-500" type="checkbox"/>
+<span>کنترل تاریخ انقضا و اخطار فساد</span>
+</label>
+<label class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+<input class="rounded text-blue-600 focus:ring-blue-500" type="checkbox"/>
+<span>شماره سریال اختصاصی (IMEI/Serial)</span>
+</label>
+</div>
+</div>
+<div class="pt-4 flex justify-between">
+<button class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition" onclick="goToStep(2)" type="button">
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span>مرحله قبلی</span>
+</button>
+<button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition shadow-sm" onclick="goToStep(4)" type="button">
+<span>گام بعدی: تصاویر و پیش‌نمایش</span>
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+</button>
+</div>
+</section>
+<!-- STEP 4: Media, Attributes & Final Confirmation -->
+<section class="step-content space-y-5 bg-white dark:bg-[#161f30] p-5 sm:p-7 rounded-2xl border border-slate-200/80 dark:border-[#23304a] shadow-sm" id="step-4">
+<div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+<div>
+<h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-purple-600 dark:text-purple-400">photo_library</span>
+                مرحله چهارم: گالری تصاویر، ویژگی‌های تکمیلی و توضیحات تجاری
+              </h2>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">آپلود چند تصویر کالا با برش خودکار، شرح محصول و نمایش کارت نهایی</p>
+</div>
+<span class="text-xs font-mono font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50 px-2.5 py-1 rounded-lg">گام ۴ از ۴</span>
+</div>
+<!-- Multi-Image Upload Zone -->
+<div class="space-y-2">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+              گالری تصاویر کالا (تصویر اصلی و تصاویر تکمیلی)
+            </label>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="galleryGrid">
+<!-- Image thumbnails will be added here dynamically -->
+<!-- Upload Area Dropzone -->
+<div class="col-span-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 transition p-4 flex flex-col items-center justify-center text-center cursor-pointer bg-slate-50/50 dark:bg-slate-900/50" id="galleryDropzone">
+<span class="material-symbols-outlined text-3xl text-slate-400 dark:text-slate-500 mb-1">cloud_upload</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-300">کلیک یا کشیدن تصویر به اینجا</span>
+<span class="text-[10px] text-slate-400 mt-1">فرمت‌های PNG، JPG، WEBP تا حداکثر ۵ مگابایت</span>
+</div>
+<input id="productImageInput" type="file" accept="image/*" multiple style="display:none" onchange="handleMultipleImages(this)"/>
+</div>
+</div>
+<!-- Product Technical Specs / Attributes -->
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                مشخصات فنی و ویژگی‌های تجاری
+              </label>
+<button class="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-medium" onclick="addAttributeRow()" type="button">
+<span class="material-symbols-outlined text-sm">add</span> افزودن ویژگی جدید
+              </button>
+</div>
+<div class="space-y-2" id="attributes-container">
+<!-- attributes added dynamically by user -->
+</div>
+</div>
+<!-- Long Description -->
+<div class="space-y-1.5">
+<label class="block text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+              توضیحات و نکات کاربردی کالا
+            </label>
+<textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs sm:text-sm leading-relaxed" placeholder="شرح تفصیلی کاربرد کالا، نحوه نگهداری و شرایط ضمانت بازگشت..." rows="3" id="input-description">{% if pf_product %}{{ pf_product.description }}{% else %}دانه قهوه با کیفیت ممتاز تهیه شده از مزارع آمریکای جنوبی، دارای بادی غنی و کرمای پایدار، مناسب برای استفاده در کافه‌ها، رستوران‌ها و خطوط تولید هورکا. وکیوم شده در کیسه‌های ۲۵ کیلوگرمی مجهز به شیر یک‌طرفه تخلیه گاز.{% endif %}</textarea>
+</div>
+<div class="pt-4 flex justify-between">
+<button class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition" onclick="goToStep(3)" type="button">
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span>مرحله قبلی</span>
+</button>
+<button class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition shadow-md shadow-emerald-600/20" type="button" onclick="submitProduct()">
+<span class="material-symbols-outlined text-base">check_circle</span>
+<span>تایید نهایی و ثبت کالا</span>
+</button>
+</div>
+</section>
+</div>
+<!-- Live Preview Sticky Card (4 Cols on Desktop) -->
+<aside class="lg:col-span-4 lg:sticky lg:top-6 space-y-4">
+<!-- Live Card Preview -->
+<div class="bg-white dark:bg-[#161f30] rounded-2xl border border-slate-200/80 dark:border-[#23304a] shadow-sm p-4 sm:p-5 space-y-4">
+<div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-600 text-lg">visibility</span>
+<span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">پیش‌نمایش زنده کارت کالا</span>
+</div>
+<span class="text-[10px] bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded font-mono font-bold">Live Card</span>
+</div>
+<!-- Mock Product Card inside POS/Catalog -->
+<div class="rounded-xl border border-slate-200 dark:border-slate-700/80 overflow-hidden bg-slate-50 dark:bg-slate-900 shadow-sm transition hover:shadow-md">
+<!-- Product Image Slider -->
+<div class="relative h-44 w-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+<div class="flex h-full w-full transition-transform duration-500 ease-in-out" id="previewImageSlider">
+<!-- slider images added dynamically -->
+</div>
+<div class="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-1.5" id="previewSliderDots">
+<!-- navigation dots added dynamically -->
+</div>
+<img alt="قهوه" class="w-full h-full object-cover hidden" id="preview-main-image" src="/static/ui/product-form/assets/769d78f4805e.svg"/>
+<div class="absolute top-2 right-2 flex flex-col gap-1 items-start">
+<span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-500 text-white shadow-sm flex items-center gap-1" id="preview-badge-status">
+<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                  موجود و فعال
+                </span>
+<span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-black/60 text-white backdrop-blur-sm" id="preview-badge-cat">
+                  مواد غذایی و نوشیدنی
+                </span>
+</div>
+<div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 text-white text-[10px] font-mono tracking-wider">
+<span id="preview-sku">CF-ESP-8820</span>
+</div>
+</div>
+<!-- Product Card Content -->
+<div class="p-3.5 space-y-2.5">
+<div>
+<h3 class="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 leading-snug" id="preview-title">
+                  دانه قهوه اسپرسو تجاری ۱۰۰٪ عربیکا
+                </h3>
+<div class="flex items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+<span id="preview-brand">آروما رُسترز</span>
+<span>•</span>
+<span id="preview-unit">کیسه ۲۵ کیلویی</span>
+</div>
+</div>
+<!-- Inventory Status Bar -->
+<div class="p-2.5 rounded-lg bg-white dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60 space-y-1.5">
+<div class="flex items-center justify-between text-[11px]">
+<span class="text-slate-500 dark:text-slate-400">موجودی انبار مرکزی:</span>
+<span class="font-bold text-slate-800 dark:text-slate-100 font-mono"><span id="preview-stock">۴۲۰</span> کیسه</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
+<div class="bg-blue-600 h-1.5 rounded-full" style="width: 78%"></div>
+</div>
+<div class="flex items-center justify-between text-[10px] text-slate-400">
+<span>حد سفارش: <span class="font-mono" id="preview-min-stock">۵۰</span></span>
+<span class="text-emerald-600 dark:text-emerald-400 font-semibold">تامین مطمئن</span>
+</div>
+</div>
+<!-- Price Box -->
+<div class="pt-1 flex items-baseline justify-between">
+<div>
+<span class="text-[10px] text-slate-400 block">قیمت مصوب مصرف‌کننده:</span>
+<div class="flex items-baseline gap-1">
+<span class="text-base font-black text-blue-600 dark:text-blue-400 font-mono" id="preview-sell-price">۱۵,۹۰۰,۰۰۰</span>
+<span class="text-[10px] text-slate-500 dark:text-slate-400">تومان</span>
+</div>
+</div>
+<div class="text-left">
+<span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block" id="preview-margin-badge">+۲۷.۲٪ حاشیه سود</span>
+<span class="text-[9px] text-slate-400 line-through" id="preview-cost-price">۰</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Summary Checklist -->
+<div class="rounded-xl bg-slate-50 dark:bg-slate-900/40 p-3 text-xs space-y-2 border border-slate-100 dark:border-slate-800">
+<span class="font-bold text-slate-700 dark:text-slate-300 block text-[11px]">چک‌لیست سلامت اطلاعات محصول:</span>
+<div class="space-y-1.5 text-[11px]">
+<div class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
+<span class="material-symbols-outlined text-sm">check</span>
+<span>کد بارکد استاندارد EAN با موفقیت اعتبارسنجی شد.</span>
+</div>
+<div class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
+<span class="material-symbols-outlined text-sm">check</span>
+<span>حاشیه سود مثبت بالاتر از حداقل مصوب هیئت مدیره.</span>
+</div>
+<div class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
+<span class="material-symbols-outlined text-sm">check</span>
+<span>تخصیص انبار و مکان‌یابی قفسه تکمیل گردید.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- System Shortcut Info Card -->
+<div class="bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40 rounded-2xl p-4 text-xs text-slate-600 dark:text-slate-300 space-y-2">
+<div class="flex items-center gap-1.5 font-bold text-blue-700 dark:text-blue-300">
+<span class="material-symbols-outlined text-base">keyboard</span>
+<span>کلیدهای میانبر فرم</span>
+</div>
+<p class="text-[11px] leading-relaxed">
+            استفاده از <kbd class="px-1.5 py-0.5 bg-white dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700 font-mono text-[10px]">Ctrl + S</kbd> برای ذخیره سریع پیش‌نویس، و <kbd class="px-1.5 py-0.5 bg-white dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700 font-mono text-[10px]">Alt + N</kbd> برای رفتن به گام بعدی بدون نیاز به موس.
+          </p>
+</div>
+</aside>
+</div>
+</div>
+<script>
+    // Theme Switcher Logic
+    function toggleTheme() {
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      const themeText = document.getElementById('themeText');
+
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        themeIcon.textContent = 'dark_mode';
+        themeText.textContent = 'حالت شب';
+      } else {
+        html.classList.add('dark');
+        themeIcon.textContent = 'light_mode';
+        themeText.textContent = 'حالت روز';
+      }
+    }
+
+    // Stepper Navigation Logic
+    function goToStep(stepNumber) {
+      // Hide all step sections
+      for (let i = 1; i <= 4; i++) {
+        const stepEl = document.getElementById(`step-${i}`);
+        const tabEl = document.getElementById(`step-tab-${i}`);
+        if (stepEl) {
+          if (i === stepNumber) {
+            stepEl.classList.remove('hidden');
+          } else {
+            stepEl.classList.add('hidden');
+          }
+        }
+        if (tabEl) {
+          if (i === stepNumber) {
+            tabEl.className = "step-btn flex items-center gap-3 p-3 rounded-xl transition text-right bg-blue-50/70 dark:bg-blue-950/30 border-2 border-blue-500 dark:border-blue-500";
+            tabEl.querySelector('.w-10').className = "w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white bg-blue-600 shadow-sm shrink-0";
+          } else {
+            tabEl.className = "step-btn flex items-center gap-3 p-3 rounded-xl transition text-right bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 opacity-90 hover:opacity-100";
+            tabEl.querySelector('.w-10').className = "w-10 h-10 rounded-xl flex items-center justify-center font-bold text-slate-700 dark:text-slate-300 bg-slate-200 dark:bg-slate-700 shrink-0";
+          }
+        }
+      }
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    // Live Card Preview Update
+    function updatePreview() {
+      const titleEl = document.getElementById('input-title');
+      const skuEl = document.getElementById('input-sku');
+      const brandEl = document.getElementById('input-brand');
+      const categoryEl = document.getElementById('input-category');
+      const unitEl = document.getElementById('input-unit');
+      const stockEl = document.getElementById('input-stock');
+      const minStockEl = document.getElementById('input-min-stock');
+      const title = titleEl ? titleEl.value || 'نام کالا وارد نشده' : 'نام کالا وارد نشده';
+      const sku = skuEl ? skuEl.value || 'SKU-000' : 'SKU-000';
+      const brand = brandEl ? brandEl.value || 'بدون برند' : 'بدون برند';
+      const category = categoryEl ? categoryEl.value : '';
+      const unit = unitEl ? unitEl.value : '';
+      const stock = stockEl ? stockEl.value || '0' : '0';
+      const minStock = minStockEl ? minStockEl.value || '0' : '0';
+
+      const pt = document.getElementById('preview-title');
+      const ps = document.getElementById('preview-sku');
+      const pb = document.getElementById('preview-brand');
+      const pbc = document.getElementById('preview-badge-cat');
+      const pu = document.getElementById('preview-unit');
+      const pstock = document.getElementById('preview-stock');
+      const pmin = document.getElementById('preview-min-stock');
+      if (pt) pt.textContent = title;
+      if (ps) ps.textContent = sku;
+      if (pb) pb.textContent = brand;
+      if (pbc) pbc.textContent = category;
+      if (pu) pu.textContent = unit;
+      if (pstock) pstock.textContent = Number(stock).toLocaleString('fa-IR');
+      if (pmin) pmin.textContent = Number(minStock).toLocaleString('fa-IR');
+    }
+
+    // Profit Margin Calculation
+    function calculateMargin() {
+      const buyEl = document.getElementById('input-buy-price');
+      const sellEl = document.getElementById('input-sell-price');
+      if (!buyEl || !sellEl) return;
+      const buy = parseFloat(buyEl.value) || 0;
+      const sell = parseFloat(sellEl.value) || 0;
+
+      document.getElementById('preview-sell-price').textContent = sell.toLocaleString('fa-IR');
+
+      const profit = sell - buy;
+      const marginBox = document.getElementById('margin-pct');
+      const marginAmount = document.getElementById('margin-amount');
+      const badge = document.getElementById('margin-badge');
+      const previewBadge = document.getElementById('preview-margin-badge');
+      const negativeAlert = document.getElementById('negative-margin-alert');
+
+      if (sell > 0) {
+        const pct = ((profit / sell) * 100).toFixed(1);
+        marginBox.textContent = Number(pct).toLocaleString('fa-IR') + '٪';
+        marginAmount.textContent = profit.toLocaleString('fa-IR') + ' تومان';
+        previewBadge.textContent = '+' + Number(pct).toLocaleString('fa-IR') + '٪ حاشیه سود';
+
+        if (profit < 0) {
+          marginBox.className = "text-2xl font-black text-rose-600 dark:text-rose-400";
+          badge.className = "px-3 py-1.5 rounded-xl bg-rose-500 text-white text-xs font-bold inline-flex items-center gap-1 shadow-sm";
+          badge.innerHTML = '<span class="material-symbols-outlined text-sm">warning</span> حاشیه سود منفی!';
+          previewBadge.className = "text-[10px] text-rose-600 dark:text-rose-400 font-bold block";
+          negativeAlert.classList.remove('hidden');
+        } else {
+          marginBox.className = "text-2xl font-black text-emerald-700 dark:text-emerald-400";
+          badge.className = "px-3 py-1.5 rounded-xl bg-emerald-500 text-white text-xs font-bold inline-flex items-center gap-1 shadow-sm";
+          badge.innerHTML = '<span class="material-symbols-outlined text-sm">verified</span> سودآوری بهینه و مجاز';
+          previewBadge.className = "text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block";
+          negativeAlert.classList.add('hidden');
+        }
+      }
+    }
+
+    // Auto-generate SKU
+    function generateSKU() {
+      const prefix = "PRD-";
+      const randomCode = Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('input-sku').value = prefix + randomCode;
+      updatePreview();
+    }
+
+    // Add Attribute Row
+    function addAttributeRow() {
+      const container = document.getElementById('attributes-container');
+      const div = document.createElement('div');
+      div.className = "flex items-center gap-2";
+      div.innerHTML = `
+        <input type="text" placeholder="عنوان ویژگی" class="w-1/3 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs">
+        <input type="text" placeholder="مقدار ویژگی" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs">
+        <button type="button" onclick="this.parentElement.remove()" class="p-2 text-slate-400 hover:text-rose-500"><span class="material-symbols-outlined text-base">close</span></button>
+      `;
+      container.appendChild(div);
+    }
+
+    // Initialize Default State
+    document.addEventListener('DOMContentLoaded', () => {
+      goToStep(1);
+      calculateMargin();
+      updatePreview();
+      // Load existing product image(s) in edit mode
+      {% if pf_product and pf_product.image %}
+      galleryImages.push("{{ pf_product.image }}");
+      renderGalleryThumbnails();
+      updatePreviewSlider();
+      {% endif %}
+    });
+  </script>
+
+
+{% csrf_token %}
+<script>
+let galleryImages = [];
+
+function previewProductImage(input) {
+  handleMultipleImages(input);
+}
+
+function handleMultipleImages(input) {
+  const files = Array.from(input.files || []);
+  if (files.length === 0) return;
+  files.forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      galleryImages.push(e.target.result);
+      renderGalleryThumbnails();
+      updatePreviewSlider();
+      if (typeof showToast === 'function') showToast('تصویر به گالری افزوده شد', 'info');
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function renderGalleryThumbnails() {
+  const grid = document.getElementById('galleryGrid');
+  if (!grid) return;
+  // Preserve the file input element
+  const fileInput = document.getElementById('productImageInput');
+  grid.innerHTML = '';
+  // Re-append the file input so it survives re-renders
+  if (fileInput) grid.appendChild(fileInput);
+  galleryImages.forEach((src, idx) => {
+    const card = document.createElement('div');
+    card.className = 'relative group rounded-xl overflow-hidden border-2 border-blue-500 dark:border-blue-400 aspect-square bg-slate-100 dark:bg-slate-800 flex items-center justify-center ' + (idx === 0 ? 'border-blue-500 dark:border-blue-400' : 'border-transparent');
+    card.innerHTML = '<img alt="گالری ' + (idx+1) + '" class="w-full h-full object-cover" src="' + src + '"/>' +
+      (idx === 0 ? '<span class="absolute top-2 right-2 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow">تصویر شاخص</span>' : '') +
+      '<button class="absolute bottom-2 left-2 p-1.5 rounded-lg bg-black/60 text-white hover:bg-rose-600 transition text-xs" type="button" onclick="removeGalleryImage(' + idx + ')"><span class="material-symbols-outlined text-xs">delete</span></button>';
+    grid.appendChild(card);
+  });
+  // Dropzone always last
+  const dropzone = document.createElement('div');
+  dropzone.className = 'col-span-2 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 transition p-4 flex flex-col items-center justify-center text-center cursor-pointer bg-slate-50/50 dark:bg-slate-900/50';
+  dropzone.id = 'galleryDropzone';
+  dropzone.addEventListener('click', function() {
+    var input = document.getElementById('productImageInput');
+    if (input) input.click();
+  });
+  dropzone.innerHTML = '<span class="material-symbols-outlined text-3xl text-slate-400 dark:text-slate-500 mb-1">cloud_upload</span><span class="text-xs font-bold text-slate-700 dark:text-slate-300">کلیک یا کشیدن تصویر به اینجا</span><span class="text-[10px] text-slate-400 mt-1">فرمت‌های PNG، JPG، WEBP تا حداکثر ۵ مگابایت</span>';
+  grid.appendChild(dropzone);
+}
+
+function removeGalleryImage(idx) {
+  galleryImages.splice(idx, 1);
+  renderGalleryThumbnails();
+  updatePreviewSlider();
+  if (typeof showToast === 'function') showToast('تصویر از گالری حذف شد', 'info');
+}
+
+function updatePreviewSlider() {
+  const slider = document.getElementById('previewImageSlider');
+  const dotsContainer = document.getElementById('previewSliderDots');
+  const mainImg = document.getElementById('preview-main-image');
+  if (!slider || !dotsContainer) return;
+  slider.innerHTML = '';
+  dotsContainer.innerHTML = '';
+  if (galleryImages.length === 0) {
+    mainImg.classList.remove('hidden');
+    return;
+  }
+  mainImg.classList.add('hidden');
+  galleryImages.forEach((src, idx) => {
+    const slide = document.createElement('img');
+    slide.className = 'w-full h-full object-cover flex-shrink-0 min-w-[calc(100%-2rem)]';
+    slide.src = src;
+    slider.appendChild(slide);
+    const dot = document.createElement('button');
+    dot.className = 'w-2 h-2 rounded-full ' + (idx === 0 ? 'bg-blue-600' : 'bg-slate-400/50') + ' transition-colors';
+    dot.onclick = () => { slider.style.transform = 'translateX(-' + (idx * 100) + '%)'; updateDots(idx); };
+    dotsContainer.appendChild(dot);
+  });
+  updateDots(0);
+}
+
+function updateDots(activeIdx) {
+  const dots = document.getElementById('previewSliderDots');
+  if (!dots) return;
+  Array.from(dots.children).forEach((dot, i) => {
+    dot.className = 'w-2 h-2 rounded-full transition-colors ' + (i === activeIdx ? 'bg-blue-600' : 'bg-slate-400/50');
+  });
+}
+
+function updateLiveCard() {
+  const titleEl = document.getElementById('preview-title');
+  const brandEl = document.getElementById('preview-brand');
+  const unitEl = document.getElementById('preview-unit');
+  const sellEl = document.getElementById('preview-sell-price');
+  const costEl = document.getElementById('preview-cost-price');
+  const marginEl = document.getElementById('preview-margin-badge');
+  const stockEl = document.getElementById('preview-stock');
+  const minStockEl = document.getElementById('preview-min-stock');
+  const stockBar = document.getElementById('preview-stock-bar');
+
+  const name = document.getElementById('input-title')?.value || 'محصول جدید';
+  const brand = document.getElementById('input-brand')?.value || 'برند نامشخص';
+  const unit = document.getElementById('input-unit')?.value || 'عدد';
+  const cost = parseFloat(document.getElementById('input-buy-price')?.value) || 0;
+  const sell = parseFloat(document.getElementById('input-sell-price')?.value) || 0;
+  const minStock = parseFloat(document.getElementById('input-min-stock')?.value) || 0;
+
+  if (titleEl) titleEl.textContent = name;
+  if (brandEl) brandEl.textContent = brand;
+  if (unitEl) unitEl.textContent = unit;
+  if (sellEl) sellEl.textContent = new Intl.NumberFormat('fa-IR').format(Math.round(sell));
+  if (costEl) costEl.textContent = new Intl.NumberFormat('fa-IR').format(Math.round(cost));
+
+  if (stockEl) stockEl.textContent = new Intl.NumberFormat('fa-IR').format(Math.round(minStock));
+  if (minStockEl) minStockEl.textContent = new Intl.NumberFormat('fa-IR').format(Math.round(minStock));
+  if (stockBar) stockBar.style.width = Math.min(100, (minStock / 100) * 100) + '%';
+
+  let marginPct = 0;
+  if (cost > 0) marginPct = ((sell - cost) / cost) * 100;
+  if (marginEl) {
+    marginEl.textContent = (marginPct >= 0 ? '+' : '') + marginPct.toFixed(1) + '% حاشیه سود';
+    marginEl.className = marginPct >= 20 ? 'text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block' :
+                         marginPct >= 10 ? 'text-[10px] text-amber-600 dark:text-amber-400 font-bold block' :
+                         'text-[10px] text-rose-600 dark:text-rose-400 font-bold block';
+  }
+  updatePreviewSlider();
+}
+
+function initLiveCardListeners() {
+  const fields = ['input-title','input-brand','input-unit','input-buy-price','input-sell-price','input-min-stock'];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', updateLiveCard);
+      el.addEventListener('change', updateLiveCard);
+    }
+  });
+  const catEl = document.getElementById('input-category');
+  if (catEl) catEl.addEventListener('change', updateLiveCard);
+  updateLiveCard();
+  // Initial dropzone click handler
+  const dz = document.getElementById('galleryDropzone');
+  if (dz) {
+    dz.addEventListener('click', function() {
+      var input = document.getElementById('productImageInput');
+      if (input) input.click();
+    });
+  }
+}
+
+async function submitProduct() {
+  const get = (id) => { const el = document.getElementById(id); return el ? (el.value || '') : ''; };
+  const btn = document.getElementById('saveProductBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'در حال ثبت...'; }
+  const urlParams = new URLSearchParams(window.location.search);
+  const isEdit = urlParams.has('id');
+  const editId = urlParams.get('id') || '';
+  const imgInput = document.getElementById('productImageInput');
+  const coverImage = galleryImages.length > 0 ? galleryImages[0] : (imgInput && imgInput.files && imgInput.files[0]);
+  const hasImage = !!coverImage;
+  const csrftoken = (document.cookie.split('; ').find(r=>r.startsWith('csrftoken=')) || '').split('=')[1];
+  const apiUrl = isEdit ? '/api/products/products/' + editId + '/' : '/api/products/products/';
+  const method = isEdit ? 'PUT' : 'POST';
+  try {
+    let res, data;
+    if (hasImage) {
+      const formData = new FormData();
+      formData.append('name', get('input-title'));
+      formData.append('sku', get('input-sku'));
+      formData.append('barcode', get('input-barcode'));
+      formData.append('category', get('input-category') || '');
+      formData.append('brand', get('input-brand') || '');
+      formData.append('unit', get('input-unit') || '');
+      formData.append('cost_price', parseFloat(get('input-buy-price')) || 0);
+      formData.append('sale_price', parseFloat(get('input-sell-price')) || 0);
+      formData.append('tax_rate', parseFloat(get('input-tax')) || 0);
+      formData.append('min_stock', parseFloat(get('input-min-stock')) || 0);
+      formData.append('description', get('input-description') || '');
+      formData.append('is_active', 'true');
+      if (typeof coverImage === 'string') {
+        const blob = await (await fetch(coverImage)).blob();
+        formData.append('image', new File([blob], 'cover.png', { type: 'image/png' }));
+      } else {
+        formData.append('image', coverImage);
+      }
+      res = await fetch(apiUrl, { method: method, credentials: 'same-origin', headers: {'X-CSRFToken': csrftoken || ''}, body: formData });
+    } else {
+      const payload = {
+        name: get('input-title'), sku: get('input-sku'), barcode: get('input-barcode'),
+        category: get('input-category') || null, brand: get('input-brand') || null, unit: get('input-unit') || null,
+        cost_price: parseFloat(get('input-buy-price')) || 0, sale_price: parseFloat(get('input-sell-price')) || 0,
+        tax_rate: parseFloat(get('input-tax')) || 0, min_stock: parseFloat(get('input-min-stock')) || 0,
+        description: get('input-description') || '', is_active: true,
+      };
+      res = await fetch(apiUrl, { method: method, credentials: 'same-origin', headers: {'Content-Type':'application/json', 'X-CSRFToken': csrftoken || ''}, body: JSON.stringify(payload) });
+    }
+    data = await res.json().catch(() => ({}));
+    if (btn) { btn.disabled = false; btn.textContent = 'ثبت نهایی و انتشار در انبار'; }
+    if (res.ok) {
+      if (typeof showToast === 'function') showToast('کالای «' + get('input-title') + '» با موفقیت ' + (isEdit ? 'بروزرسانی' : 'ثبت') + ' شد' + (hasImage ? ' و تصویر آپلود شد' : ''), 'check_circle');
+      setTimeout(function() { window.location.href = '/ui/product-list/'; }, 900);
+    } else {
+      let msg = 'خطا در ثبت کالا';
+      if (data && typeof data === 'object') {
+        const parts = [];
+        Object.keys(data).forEach(k => { const v = data[k]; parts.push(k + ': ' + (Array.isArray(v) ? v.join('، ') : v)); });
+        if (parts.length) msg = parts.join(' ');
+      }
+      if (typeof showToast === 'function') showToast(msg, 'error'); else alert(msg);
+    }
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'ثبت نهایی و انتشار در انبار'; }
+    if (typeof showToast === 'function') showToast('ارتباط با سرور برقرار نشد', 'error'); else alert('ارتباط با سرور برقرار نشد.');
+  }
+}
+const btn0 = document.getElementById('saveProductBtn');
+if (btn0) btn0.addEventListener('click', submitProduct);
+
+initLiveCardListeners();
+
+function addAttributeRow() {
+  const container = document.getElementById('attributes-container');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'flex items-center gap-2';
+  row.innerHTML = '<input class="w-1/3 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs" type="text" placeholder="ویژ品番" />' +
+    '<input class="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs" type="text" placeholder="مقدار ویژگی" />' +
+    '<button class="p-2 text-slate-400 hover:text-rose-500" type="button" onclick="removeAttributeRow(this)"><span class="material-symbols-outlined text-base">close</span></button>';
+  container.appendChild(row);
+}
+
+function removeAttributeRow(btn) {
+  const row = btn.closest('.flex.items-center.gap-2');
+  if (row) row.remove();
+  if (typeof showToast === 'function') showToast('ویژگی حذف شد', 'info');
+}
+</script>
+
+{% endblock %}

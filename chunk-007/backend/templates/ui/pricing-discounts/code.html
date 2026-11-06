@@ -1,0 +1,744 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Content Canvas Container -->
+<div class="w-full ] p-4 sm:p-6 lg:p-8 space-y-6">
+<!-- 1. Header Area: Local Title, Actions & Dark Mode Toggle -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 rounded-xl p-5 shadow-sm transition-colors duration-200">
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+<!-- Page Title & Hierarchy Badge -->
+<div class="flex items-start sm:items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed/60 dark:bg-primary/20 text-primary dark:text-inverse-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[28px]">local_offer</span>
+</div>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h1 class="font-headline-xl text-headline-xl text-on-surface dark:text-inverse-on-surface font-extrabold tracking-tight">
+                مدیریت قیمت‌گذاری و کمپین‌های تخفیف
+              </h1>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high dark:bg-surface-container-highest text-primary dark:text-inverse-primary font-bold">
+                نسخه سازمانی ۲.۴
+              </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant mt-1">
+              تنظیم پروموشن‌های هوشمند، حاشیه سود پویا، کنترل ضد تداخل قوانین و نظارت زنده بر فاکتورها
+            </p>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-wrap items-center gap-2.5 sm:gap-3 self-end lg:self-center">
+<!-- Export Report Button -->
+<button class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg border border-outline-variant/50 bg-surface-container-lowest dark:bg-surface/10 hover:bg-surface-container-low dark:hover:bg-surface/20 text-on-surface dark:text-inverse-on-surface font-title-md text-title-md transition-all active:scale-95 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px] text-secondary">table_view</span>
+<span>خروجی اکسل و گزارش</span>
+</button>
+<!-- Update Base Prices Button -->
+<button class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg border border-outline-variant/50 bg-surface-container-lowest dark:bg-surface/10 hover:bg-surface-container-low dark:hover:bg-surface/20 text-on-surface dark:text-inverse-on-surface font-title-md text-title-md transition-all active:scale-95 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary">published_with_changes</span>
+<span>به‌روزرسانی قیمت‌های پایه</span>
+</button>
+<!-- Create Campaign Primary Button -->
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary-container text-on-secondary font-title-md text-title-md hover:bg-primary transition-all active:scale-95 shadow-md shadow-primary/20 font-bold" onclick="document.getElementById('campaignBuilderSection').scrollIntoView({behavior: 'smooth'})" type="button">
+<span class="material-symbols-outlined text-[22px]">add_circle</span>
+<span>ایجاد کمپین جدید</span>
+</button>
+</div>
+</div>
+</header>
+<!-- 2. KPI Cards Row (Grid 4-cols, Non-overflow, Compact Layout) -->
+<section aria-label="شاخص‌های کلیدی عملکرد" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<!-- Card 1: Active Campaigns -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 rounded-xl p-5 shadow-sm flex flex-col justify-between min-w-0 transition-colors">
+<div class="flex items-center justify-between gap-2 mb-3">
+<span class="font-title-md text-title-md text-on-surface-variant dark:text-outline-variant truncate">کمپین‌های فعال</span>
+<div class="w-9 h-9 rounded-lg bg-primary-fixed/50 dark:bg-primary/20 text-primary dark:text-inverse-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between gap-2 flex-wrap min-w-0">
+<div class="font-display-lg text-display-lg text-on-surface dark:text-inverse-on-surface tracking-tight">
+            ۶ <span class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant font-normal">کمپین</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-error-container/60 dark:bg-error/20 text-error font-bold whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px]">timer</span>
+            ۲ در آستانه انقضا
+          </span>
+</div>
+<div class="mt-3 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">
+<span>ظرفیت جذب مشتری: ۹۲٪</span>
+<span class="text-secondary font-bold">بدون توقف بحرانی</span>
+</div>
+</div>
+<!-- Card 2: Discount Granted Today -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 rounded-xl p-5 shadow-sm flex flex-col justify-between min-w-0 transition-colors">
+<div class="flex items-center justify-between gap-2 mb-3">
+<span class="font-title-md text-title-md text-on-surface-variant dark:text-outline-variant truncate">تخفیف اعطا شده امروز</span>
+<div class="w-9 h-9 rounded-lg bg-tertiary-fixed/60 dark:bg-tertiary-container/30 text-tertiary dark:text-tertiary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">price_check</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between gap-2 flex-wrap min-w-0">
+<div class="font-headline-xl text-headline-xl sm:font-display-lg sm:text-display-lg text-on-surface dark:text-inverse-on-surface tracking-tight truncate">
+            ۲۴,۵۰۰,۰۰۰ <span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant font-normal">تومان</span>
+</div>
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-container/40 dark:bg-secondary/20 text-secondary dark:text-secondary-fixed font-bold whitespace-nowrap">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+            +۸.۴٪
+          </span>
+</div>
+<div class="mt-3 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">
+<span>میانگین تخفیف سبد: ۴.۸٪</span>
+<span>سقف بودجه: ۱۰۰ م ت</span>
+</div>
+</div>
+<!-- Card 3: Discounted Items -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 rounded-xl p-5 shadow-sm flex flex-col justify-between min-w-0 transition-colors">
+<div class="flex items-center justify-between gap-2 mb-3">
+<span class="font-title-md text-title-md text-on-surface-variant dark:text-outline-variant truncate">اقلام مشمول تخفیف</span>
+<div class="w-9 h-9 rounded-lg bg-secondary-container/50 dark:bg-secondary/20 text-secondary dark:text-secondary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">category</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between gap-2 flex-wrap min-w-0">
+<div class="font-display-lg text-display-lg text-on-surface dark:text-inverse-on-surface tracking-tight">
+            ۱۲۸ <span class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant font-normal">قلم کالا</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-high dark:bg-surface-container-highest text-primary dark:text-inverse-primary font-bold whitespace-nowrap">
+            ۴۲ دسته کالایی
+          </span>
+</div>
+<div class="mt-3 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">
+<span>پوشش انبار فعال: ۱۸.۵٪</span>
+<span>بررسی موجودی: کامل</span>
+</div>
+</div>
+<!-- Card 4: Promotional Revenue -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 rounded-xl p-5 shadow-sm flex flex-col justify-between min-w-0 transition-colors">
+<div class="flex items-center justify-between gap-2 mb-3">
+<span class="font-title-md text-title-md text-on-surface-variant dark:text-outline-variant truncate">فروش ناشی از کمپین‌ها</span>
+<div class="w-9 h-9 rounded-lg bg-surface-container-high dark:bg-surface-container-highest text-primary dark:text-inverse-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">query_stats</span>
+</div>
+</div>
+<div class="flex items-baseline justify-between gap-2 flex-wrap min-w-0">
+<div class="font-headline-xl text-headline-xl sm:font-display-lg sm:text-display-lg text-on-surface dark:text-inverse-on-surface tracking-tight truncate">
+            ۴۸۵,۰۰۰,۰۰۰ <span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant font-normal">تومان</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-fixed/80 dark:bg-primary/30 text-primary dark:text-inverse-primary font-bold whitespace-nowrap">
+            ۳۲٪ کل ماه
+          </span>
+</div>
+<div class="mt-3 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">
+<span>ROI تخفیفات: ۳.۸x</span>
+<span class="text-secondary font-bold">سودآور و پایدار</span>
+</div>
+</div>
+</section>
+<!-- 3. Enterprise Campaigns Table with Excel-Like Filtering & Quick Actions -->
+<section class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 rounded-xl shadow-sm overflow-hidden transition-colors">
+<!-- Table Header Bar: Search, Quick Filters & Stats -->
+<div class="p-4 sm:p-5 border-b border-outline-variant/30 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[24px] text-primary">view_list</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface font-bold">
+            لیست جامع کمپین‌ها و قوانین فعال قیمت‌گذاری
+          </h2>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container-low dark:bg-surface/20 text-on-surface-variant dark:text-outline-variant">
+            ۵ مورد ثبت شده
+          </span>
+</div>
+<!-- Quick Search & Filter Chips -->
+<div class="flex flex-wrap items-center gap-2.5">
+<div class="relative min-w-[240px]">
+<input class="w-full h-10 pr-9 pl-4 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/40 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface placeholder:text-on-surface-variant/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="جستجو در کمپین‌ها، کالاها و شعب..." type="text"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-[20px] text-on-surface-variant dark:text-outline-variant">search</span>
+</div>
+<button class="h-10 px-3 rounded-lg border border-outline-variant/40 bg-surface-container-lowest dark:bg-surface/10 hover:bg-surface-container-low dark:hover:bg-surface/20 text-on-surface-variant dark:text-inverse-on-surface flex items-center gap-1.5 text-body-sm font-body-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+<span>فیلترهای پیشرفته</span>
+</button>
+<button class="h-10 px-3 rounded-lg border border-tertiary-container/40 bg-tertiary-fixed/30 dark:bg-tertiary-container/20 hover:bg-tertiary-fixed/50 text-tertiary dark:text-tertiary-fixed flex items-center gap-1.5 text-body-sm font-body-sm font-bold" onclick="openConflictModal()" type="button">
+<span class="material-symbols-outlined text-[18px]">rule_folder</span>
+<span>مدیریت تداخل‌ها (۱ مورد)</span>
+</button>
+</div>
+</div>
+<!-- Responsive Table Container with Horizontal Scroll -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse min-w-[1100px]">
+<!-- Table Head with Excel-Style Filter Buttons -->
+<thead class="bg-surface-container-low dark:bg-surface/30 text-on-surface-variant dark:text-outline-variant font-title-md text-title-md border-b border-outline-variant/30 select-none">
+<tr>
+<th class="py-3 px-4 w-12 text-center" scope="col">
+<input class="rounded border-outline-variant/50 text-primary focus:ring-primary" type="checkbox"/>
+</th>
+<!-- Column: Campaign Name -->
+<th class="py-3 px-4" scope="col">
+<div class="flex items-center justify-between gap-1 group cursor-pointer">
+<span>نام کمپین و پروموشن</span>
+<div class="flex items-center text-outline opacity-70 group-hover:opacity-100">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+</div>
+</div>
+</th>
+<!-- Column: Type -->
+<th class="py-3 px-3" scope="col">
+<div class="flex items-center justify-between gap-1 group cursor-pointer">
+<span>نوع تخفیف</span>
+<span class="material-symbols-outlined text-[16px] text-outline opacity-70">filter_list</span>
+</div>
+</th>
+<!-- Column: Scope -->
+<th class="py-3 px-3" scope="col">
+<div class="flex items-center justify-between gap-1 group cursor-pointer">
+<span>دامنه و دسته‌بندی</span>
+<span class="material-symbols-outlined text-[16px] text-outline opacity-70">filter_list</span>
+</div>
+</th>
+<!-- Column: Channel / Branches -->
+<th class="py-3 px-3" scope="col">
+<div class="flex items-center justify-between gap-1 group cursor-pointer">
+<span>شعب و کانال</span>
+<span class="material-symbols-outlined text-[16px] text-outline opacity-70">filter_list</span>
+</div>
+</th>
+<!-- Column: Dates -->
+<th class="py-3 px-3" scope="col">
+<div class="flex items-center justify-between gap-1 group cursor-pointer">
+<span>اعتبار و روزشمار</span>
+<span class="material-symbols-outlined text-[16px] text-outline opacity-70">swap_vert</span>
+</div>
+</th>
+<!-- Column: Priority -->
+<th class="py-3 px-3 text-center" scope="col">
+<div class="flex items-center justify-center gap-1 group cursor-pointer">
+<span>اولویت</span>
+<span class="material-symbols-outlined text-[16px] text-outline opacity-70">filter_list</span>
+</div>
+</th>
+<!-- Column: Conflict Status -->
+<th class="py-3 px-3 text-center" scope="col">
+<div class="flex items-center justify-center gap-1 group cursor-pointer">
+<span>وضعیت تداخل</span>
+<span class="material-symbols-outlined text-[16px] text-outline opacity-70">filter_list</span>
+</div>
+</th>
+<!-- Column: Active Switch -->
+<th class="py-3 px-3 text-center" scope="col">
+<span>وضعیت</span>
+</th>
+<!-- Column: Actions -->
+<th class="py-3 px-4 text-center" scope="col">
+<span>عملیات</span>
+</th>
+</tr>
+</thead>
+<!-- Table Body with 5 Real Specified Rows -->
+<tbody class="divide-y divide-outline-variant/40 dark:divide-outline/30 text-body-md font-body-md">
+{% for p in pd_products %}
+<tr class="hover:bg-surface-container-low/60 dark:hover:bg-inverse-surface/70 transition-colors">
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface-variant dark:text-outline-variant text-body-sm">
+{{ p.sku }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface dark:text-slate-200">
+{{ p.name }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface dark:text-slate-200">
+{{ p.unit_price|floatformat:"-0" }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface dark:text-slate-200">
+{{ p.sale_price|floatformat:"-0" }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300">
+فعال
+</span>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-center">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]" title="ویرایش">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]" title="حذف">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="7" class="text-center py-8 text-[#64748b] dark:text-[#94a3b8]">هیچ کالا ثبت نشده است.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="p-4 border-t border-outline-variant/30 bg-surface-container-low/40 dark:bg-surface/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-label-md font-label-md text-on-surface-variant dark:text-outline-variant">
+<div>نمایش ۱ تا ۵ از ۵ کمپین تعریف شده</div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded border border-outline-variant/30 bg-surface-container-lowest dark:bg-surface/10 hover:bg-surface-container transition-colors disabled:opacity-40" disabled="">قبلی</button>
+<span class="px-3 py-1 rounded bg-primary-container text-on-secondary font-bold">۱</span>
+<button class="px-2.5 py-1 rounded border border-outline-variant/30 bg-surface-container-lowest dark:bg-surface/10 hover:bg-surface-container transition-colors disabled:opacity-40" disabled="">بعدی</button>
+</div>
+</div>
+</section>
+<!-- 4. Split Grid: Campaign Builder Panel (Section 4) & Live Invoice Impact Preview (Section 5) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Section 4: Campaign Builder (7 Columns) -->
+<section class="lg:col-span-7 bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 rounded-xl p-5 sm:p-6 shadow-sm transition-colors" id="campaignBuilderSection">
+<!-- Form Header -->
+<div class="flex items-center justify-between pb-4 border-b border-outline-variant/30 mb-5">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed/60 dark:bg-primary/20 text-primary dark:text-inverse-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">tune</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface font-bold">
+                فرم ایجاد و ویرایش سریع کمپین و قواعد قیمت‌گذاری
+              </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">
+                تعریف پارامترهای تخفیف، محدودیت‌های سبد خرید، تاریخ و گروه‌بندی مخاطبین
+              </p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-secondary-container/50 dark:bg-secondary/20 text-secondary dark:text-secondary-fixed font-bold">
+            قاعده‌ساز پویا
+          </span>
+</div>
+<form class="space-y-4" onsubmit="event.preventDefault(); recalculatePreview();">
+<!-- Field Row: Name & Coupon Code -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                نام کمپین / تخفیف <span class="text-error">*</span>
+</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="builderCampaignName" placeholder="مثال: تخفیف ۱۰ درصدی لبنیات" required="" type="text" value="جشنواره شگفت‌انگیز یلدا ۱۴۰۳"/>
+</div>
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                کد کوپن تخفیف (اختیاری)
+              </label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-mono text-left" placeholder="مثال: OFF50 (در صورت نیاز به ورود کد)" type="text" value="YALDA1403"/>
+</div>
+</div>
+<!-- Field Row: Type & Value -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                نوع تخفیف <span class="text-error">*</span>
+</label>
+<select class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="builderDiscountType" onchange="recalculatePreview()">
+<option value="percent">درصدی (%)</option>
+<option value="fixed">مبلغ ثابت (ریالی)</option>
+<option value="tiered">پلکانی بر اساس حجم</option>
+<option value="bogo">خرید X دریافت Y رایگان</option>
+</select>
+</div>
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                میزان تخفیف (%) <span class="text-error">*</span>
+</label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="builderDiscountValue" max="100" min="1" oninput="recalculatePreview()" type="number" value="۱۵"/>
+</div>
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                سقف ریالی تخفیف (تومان)
+              </label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" id="builderMaxDiscount" type="text" value="۱۵۰,۰۰۰"/>
+</div>
+</div>
+<!-- Field Row: Minimum Cart & Priority -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                حداقل مبلغ خرید (تومان)
+              </label>
+<input class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" type="text" value="۵۰۰,۰۰۰"/>
+</div>
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                اولویت اعمال قانون
+              </label>
+<select class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+<option value="0">۰ - اولویت مطلق (VIP و قوانین حاکم)</option>
+<option selected="" value="1">۱ - اولویت بالا (جشنواره‌ها)</option>
+<option value="2">۲ - اولویت متوسط (عمومی)</option>
+<option value="3">۳ - اولویت پایه (تخفیف حجم عادی)</option>
+</select>
+</div>
+</div>
+<!-- Field Row: Scope & Branches -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                انتخاب دسته‌بندی یا اقلام مشمول
+              </label>
+<select class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+<option selected="">دسته‌بندی تنقلات، خشکبار و شیرینی‌جات</option>
+<option>کالاهای اساسی و خواربار</option>
+<option>شوینده و بهداشتی</option>
+<option>انتخاب دستی بارکدهای خاص (آیتم‌محور)...</option>
+</select>
+</div>
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                سهم شعب و کانال‌های عرضه
+              </label>
+<select class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+<option selected="">تمام شعب فیزیکی + فروشگاه آنلاین</option>
+<option>فقط شعبه مرکزی و آنلاین</option>
+<option>فقط کانال فروش سازمانی B2B</option>
+</select>
+</div>
+</div>
+<!-- Field Row: Dates & Customer Segment -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                بازه اعتبار شمسی
+              </label>
+<div class="flex items-center gap-2">
+<input class="w-1/2 h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary" placeholder="از تاریخ" type="text" value="۱۴۰۳/۰۹/۲۰"/>
+<span class="text-on-surface-variant">تا</span>
+<input class="w-1/2 h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary" placeholder="تا تاریخ" type="text" value="۱۴۰۳/۱۰/۰۲"/>
+</div>
+</div>
+<div>
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface mb-1.5 font-bold">
+                گروه مشتریان مشمول
+              </label>
+<select class="w-full h-10 px-3 rounded-lg bg-surface-container-low dark:bg-surface/20 border border-outline-variant/50 text-body-md font-body-md text-on-surface dark:text-inverse-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+<option selected="">تمامی مشتریان (عمومی)</option>
+<option>فقط مشتریان VIP و طلایی</option>
+<option>خریداران عمده و سازمانی</option>
+<option>مشتریان جدید (خرید اول)</option>
+</select>
+</div>
+</div>
+<!-- Actions Row -->
+<div class="pt-4 border-t border-outline-variant/30 flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded border-outline-variant/50 text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">
+                  فعال‌سازی آنی پس از ذخیره
+                </span>
+</label>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2.5 rounded-lg border border-outline-variant/50 text-on-surface-variant dark:text-outline-variant hover:bg-surface-container font-title-md text-title-md transition-colors" type="reset">
+                پاک‌کردن فرم
+              </button>
+<button class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary-container text-on-secondary font-title-md text-title-md hover:bg-primary font-bold shadow-md shadow-primary/20 transition-all active:scale-95" type="submit">
+<span class="material-symbols-outlined text-[20px]">save</span>
+<span>ذخیره و اعتبارسنجی قاعده</span>
+</button>
+</div>
+</div>
+</form>
+</section>
+<!-- Section 5: Live Invoice Impact Preview & Anti-Margin Loss Alert (5 Columns) -->
+<section class="lg:col-span-5 bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 rounded-xl p-5 sm:p-6 shadow-sm transition-colors flex flex-col justify-between">
+<div>
+<!-- Panel Header -->
+<div class="flex items-center justify-between pb-4 border-b border-outline-variant/30 mb-4">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high dark:bg-surface-container-highest text-primary dark:text-inverse-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">receipt_long</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface font-bold">
+                  پیش‌نمایش زنده اثر تخفیف بر فاکتور
+                </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">
+                  شبیه‌سازی حاشیه سود و بررسی ایمنی مالی قبل از انتشار
+                </p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container-low dark:bg-surface/20 text-on-surface-variant font-bold">
+              فاکتور نمونه #۹۴۲۱
+            </span>
+</div>
+<!-- Sample Invoice Items Mini-Table -->
+<div class="bg-surface-container-low/60 dark:bg-surface/20 rounded-xl p-3 mb-4 space-y-2.5 border border-outline-variant/20">
+<div class="text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant font-bold flex justify-between">
+<span>اقلام موجود در سبد تست:</span>
+<span>۳ ردیف کالا</span>
+</div>
+<div class="space-y-1.5 text-body-sm font-body-sm">
+<div class="flex items-center justify-between text-on-surface dark:text-inverse-on-surface">
+<span>روغن آفتابگردان ۱.۸ لیتری (۲ عدد)</span>
+<span class="font-mono">۲۸۰,۰۰۰ تومان</span>
+</div>
+<div class="flex items-center justify-between text-on-surface dark:text-inverse-on-surface">
+<span>پسته اکبری اعلا ۵۰۰ گرمی (۱ بسته)</span>
+<span class="font-mono">۴۵۰,۰۰۰ تومان</span>
+</div>
+<div class="flex items-center justify-between text-on-surface dark:text-inverse-on-surface">
+<span>مایع ظرفشویی ۴ لیتری (۱ عدد)</span>
+<span class="font-mono">۱۷۰,۰۰۰ تومان</span>
+</div>
+</div>
+</div>
+<!-- Calculation Comparison Grid (Before vs After) -->
+<div class="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-surface-container-low dark:bg-surface/10 border border-outline-variant/20 mb-4">
+<!-- Before Discount -->
+<div class="border-l border-outline-variant/30 pl-3">
+<span class="text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant block mb-1">قبل از اعمال تخفیف</span>
+<div class="font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">
+                ۹۰۰,۰۰۰ <span class="font-body-sm text-body-sm font-normal">تومان</span>
+</div>
+<div class="mt-2 text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">
+                حاشیه سود ناخالص: <span class="text-secondary font-bold">۲۶.۴٪</span> (۲۳۸ هزار ت)
+              </div>
+</div>
+<!-- After Discount -->
+<div class="pr-2">
+<span class="text-label-sm font-label-sm text-primary dark:text-inverse-primary font-bold block mb-1">پس از اعمال کمپین</span>
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary" id="previewPayableTotal">
+                ۷۶۵,۰۰۰ <span class="font-body-sm text-body-sm font-normal">تومان</span>
+</div>
+<div class="mt-2 text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant">
+                حاشیه سود باقی‌مانده: <span class="text-secondary font-bold" id="previewMarginPercent">۱۴.۸٪</span>
+</div>
+</div>
+</div>
+<!-- Summary Breakdown -->
+<div class="space-y-2 mb-4 text-body-sm font-body-sm border-t border-b border-outline-variant/20 py-3">
+<div class="flex justify-between text-on-surface-variant dark:text-outline-variant">
+<span>مبلغ کسر شده از فاکتور:</span>
+<span class="font-bold text-error" id="previewDiscountAmount">-۱۳۵,۰۰۰ تومان (۱۵٪)</span>
+</div>
+<div class="flex justify-between text-on-surface-variant dark:text-outline-variant">
+<span>مالیات بر ارزش افزوده (۱۰٪):</span>
+<span class="font-mono">۷۶,۵۰۰ تومان</span>
+</div>
+<div class="flex justify-between text-on-surface dark:text-inverse-on-surface font-title-md text-title-md font-bold pt-1">
+<span>مبلغ نهایی قابل پرداخت مشتری:</span>
+<span class="text-primary dark:text-inverse-primary" id="previewFinalGrand">۸۴۱,۵۰۰ تومان</span>
+</div>
+</div>
+<!-- Anti-Margin Loss Alert (Enterprise Protection Rule) -->
+<div class="rounded-xl p-3.5 bg-surface-container-high/60 dark:bg-surface-container-highest/20 border border-outline-variant/40 flex items-start gap-2.5" id="antiMarginBanner">
+<span class="material-symbols-outlined text-[22px] text-secondary shrink-0 mt-0.5">verified_user</span>
+<div>
+<div class="font-title-md text-title-md font-bold text-secondary dark:text-secondary-fixed">
+                وضعیت حاشیه سود: ایمن و مجاز (Anti-Margin Loss Pass)
+              </div>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant mt-0.5">
+                حاشیه سود با ۱۴.۸٪ از حداقل کف الزامی سازمان (۱۲٪) بالاتر است. هیچ‌گونه ریسک منفی روی تراز مالی وجود ندارد.
+              </p>
+</div>
+</div>
+</div>
+<!-- Quick Test Selector -->
+<div class="pt-4 border-t border-outline-variant/30 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span>شبیه‌سازی بر اساس داده‌های میانگین ماه جاری</span>
+<button class="text-primary dark:text-inverse-primary hover:underline font-bold flex items-center gap-1" onclick="testStressMargin()" type="button">
+<span class="material-symbols-outlined text-[16px]">speed</span>
+            تست حاشیه سود بحرانی (افت شدید)
+          </button>
+</div>
+</section>
+</div>
+<!-- 6. Rule Conflict Resolution Dialog / Bottom Anchor Panel -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 rounded-xl p-5 sm:p-6 shadow-sm transition-colors" id="conflictResolutionSection">
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 pb-4 border-b border-outline-variant/30 mb-4">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-lg bg-tertiary-fixed/60 dark:bg-tertiary-container/30 text-tertiary dark:text-tertiary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">call_split</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface font-bold">
+              مدیریت تداخل قوانین قیمت‌گذاری (Rule Conflict Resolution)
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">
+              تنظیم اولویت و نحوه رفتار سیستم زمانی که چند قانون یا کوپن همزمان روی یک سبد فعال می‌شوند
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-tertiary-fixed/60 dark:bg-tertiary-container/30 text-tertiary dark:text-tertiary-fixed font-bold">
+            ۱ مورد تداخل شناسایی شده در سبد خرید
+          </span>
+</div>
+</div>
+<!-- Conflict Scenario Visualizer -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+<!-- Setting 1: Conflict Behavior -->
+<div class="p-4 rounded-xl bg-surface-container-low dark:bg-surface/15 border border-outline-variant/20">
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface font-bold mb-2">
+            رفتار پیش‌فرض هنگام هم‌پوشانی:
+          </label>
+<div class="space-y-2 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary" name="conflictPolicy" type="radio"/>
+<span>فقط اعمال بالاترین تخفیف به نفع مشتری</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary" name="conflictPolicy" type="radio"/>
+<span>تجمع تجمیعی تا سقف حاشیه سود مجاز (Stacking)</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary" name="conflictPolicy" type="radio"/>
+<span>رد کامل تخفیف دوم و نمایش پیام به صندوقدار</span>
+</label>
+</div>
+</div>
+<!-- Setting 2: Stacking Ceiling -->
+<div class="p-4 rounded-xl bg-surface-container-low dark:bg-surface/15 border border-outline-variant/20">
+<label class="block font-title-md text-title-md text-on-surface dark:text-inverse-on-surface font-bold mb-2">
+            سقف حداکثر تخفیف کل در حالت تجمعی:
+          </label>
+<div class="space-y-3">
+<div>
+<span class="text-label-sm font-label-sm text-on-surface-variant block mb-1">حداکثر تخفیف کل فاکتور:</span>
+<input class="w-full h-9 px-3 rounded-lg bg-surface-container-lowest dark:bg-surface/30 border border-outline-variant/40 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface" type="text" value="۲۵٪ از کل مبلغ"/>
+</div>
+<div>
+<span class="text-label-sm font-label-sm text-on-surface-variant block mb-1">کف حاشیه سود غیرقابل شکستن:</span>
+<input class="w-full h-9 px-3 rounded-lg bg-surface-container-lowest dark:bg-surface/30 border border-outline-variant/40 text-body-sm font-body-sm text-on-surface dark:text-inverse-on-surface" type="text" value="۱۰٪ سود الزامی سازمان"/>
+</div>
+</div>
+</div>
+<!-- Setting 3: Live Identified Conflict -->
+<div class="p-4 rounded-xl bg-error-container/20 dark:bg-error/10 border border-error/30 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-1.5 text-error font-bold font-title-md text-title-md mb-1.5">
+<span class="material-symbols-outlined text-[18px]">report_problem</span>
+<span>تداخل فعال: سبد بالای ۲م + VIP طلایی</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant">
+              اگر مشتری VIP خرید بالای ۲ میلیون ثبت کند، طبق قاعده فعلی تخفیف ۱۵٪ VIP اجرا شده و تخفیف نقدی ۱۰۰ هزار تومانی رد می‌شود.
+            </p>
+</div>
+<div class="pt-2 flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-secondary font-bold">وضعیت: حل شده با اولویت ۰</span>
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest dark:bg-surface/30 border border-outline-variant/40 text-label-sm font-label-sm hover:bg-surface-container" type="button">
+              تنظیم استثنا
+            </button>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-outline-variant/20 text-label-md font-label-md text-on-surface-variant">
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>موتور قیمت‌گذاری با الگوریتم اولویت‌بندی در وضعیت آنلاین و آماده به کار است.</span>
+</div>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-secondary font-title-md text-title-md font-bold hover:bg-primary transition-all" type="button">
+          به‌روزرسانی و ثبت قواعد ضد تداخل
+        </button>
+</div>
+</div>
+</div>
+<!-- Interactive JavaScript: Dark Mode & Live Pricing Simulation -->
+<script>
+    // 1. Dark Mode Toggle Script
+    function toggleDarkMode() {
+      const htmlEl = document.documentElement;
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        htmlEl.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Initialize Theme Preference
+    if (localStorage.getItem('theme') === 'dark' || 
+       (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    // 2. Dynamic Live Invoice Calculator
+    function recalculatePreview() {
+      const valInput = document.getElementById('builderDiscountValue');
+      const typeInput = document.getElementById('builderDiscountType');
+      const val = parseFloat(valInput.value) || 0;
+      const type = typeInput.value;
+      const baseSubtotal = 900000; // Original sample total
+
+      let discountAmount = 0;
+      if (type === 'percent') {
+        discountAmount = Math.round(baseSubtotal * (val / 100));
+      } else if (type === 'fixed') {
+        discountAmount = val * 1000;
+      } else {
+        discountAmount = Math.round(baseSubtotal * 0.12);
+      }
+
+      if (discountAmount > baseSubtotal) discountAmount = baseSubtotal;
+
+      const payableTotal = baseSubtotal - discountAmount;
+      const tax = Math.round(payableTotal * 0.10);
+      const grandTotal = payableTotal + tax;
+      
+      // Calculate realistic remaining profit margin
+      // Assuming Cost of Goods Sold is 662,000 تومان (26.4% original margin)
+      const cogs = 662000;
+      const remainingProfit = payableTotal - cogs;
+      const remainingMarginPercent = ((remainingProfit / payableTotal) * 100).toFixed(1);
+
+      // Update UI elements
+      document.getElementById('previewPayableTotal').innerHTML = `${payableTotal.toLocaleString('fa-IR')} <span class="font-body-sm text-body-sm font-normal">تومان</span>`;
+      document.getElementById('previewDiscountAmount').innerText = `-${discountAmount.toLocaleString('fa-IR')} تومان (${val}٪)`;
+      document.getElementById('previewFinalGrand').innerText = `${grandTotal.toLocaleString('fa-IR')} تومان`;
+      
+      const marginEl = document.getElementById('previewMarginPercent');
+      const alertBanner = document.getElementById('antiMarginBanner');
+
+      if (remainingMarginPercent < 12.0) {
+        marginEl.className = 'text-error font-bold';
+        marginEl.innerText = `${remainingMarginPercent}٪ (هشدار ریسک)`;
+        alertBanner.className = 'rounded-xl p-3.5 bg-error-container/30 dark:bg-error/20 border border-error/40 flex items-start gap-2.5';
+        alertBanner.innerHTML = `
+          <span class="material-symbols-outlined text-[22px] text-error shrink-0 mt-0.5">warning</span>
+          <div>
+            <div class="font-title-md text-title-md font-bold text-error">
+              هشدار بحرانی: افت حاشیه سود زیر حداقل مجاز سازمان (Anti-Margin Loss Alert)
+            </div>
+            <p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant mt-0.5">
+              حاشیه سود با ${remainingMarginPercent}٪ به زیر کف استاندارد سازمان (۱۲٪) سقوط کرده است. این تخفیف نیازمند مجوز مدیر ارشد مالی است.
+            </p>
+          </div>
+        `;
+      } else {
+        marginEl.className = 'text-secondary font-bold';
+        marginEl.innerText = `${remainingMarginPercent}٪`;
+        alertBanner.className = 'rounded-xl p-3.5 bg-surface-container-high/60 dark:bg-surface-container-highest/20 border border-outline-variant/40 flex items-start gap-2.5';
+        alertBanner.innerHTML = `
+          <span class="material-symbols-outlined text-[22px] text-secondary shrink-0 mt-0.5">verified_user</span>
+          <div>
+            <div class="font-title-md text-title-md font-bold text-secondary dark:text-secondary-fixed">
+              وضعیت حاشیه سود: ایمن و مجاز (Anti-Margin Loss Pass)
+            </div>
+            <p class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant mt-0.5">
+              حاشیه سود با ${remainingMarginPercent}٪ از حداقل کف الزامی سازمان (۱۲٪) بالاتر است. هیچ‌گونه ریسک منفی روی تراز مالی وجود ندارد.
+            </p>
+          </div>
+        `;
+      }
+    }
+
+    // 3. Stress Test Trigger
+    function testStressMargin() {
+      const valInput = document.getElementById('builderDiscountValue');
+      valInput.value = "25";
+      recalculatePreview();
+    }
+
+    // 4. Smooth Anchor to Conflict Section
+    function openConflictModal() {
+      const el = document.getElementById('conflictResolutionSection');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        el.classList.add('ring-2', 'ring-primary');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-primary'), 2000);
+      }
+    }
+  </script>
+
+{% endblock %}

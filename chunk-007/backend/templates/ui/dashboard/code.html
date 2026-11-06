@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block content %}
+<script src="/static/ui/dashboard/assets/chart.umd.min.js"></script>
+<main class="w-full p-4 sm:p-6 lg:p-8 space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-bold text-on-surface dark:text-slate-100">داشبورد جامع سامانه</h1>
+      <p class="text-sm text-on-surface-variant dark:text-slate-400 mt-1">نمای کلی عملکرد فروش، موجودی و مالی</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-on-surface-variant dark:text-slate-400">آخرین به‌روزرسانی: {% now "Y/m/d H:i" %}</span>
+      <a href="/ui/pos/" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-bold shadow-sm hover:bg-blue-500 transition-colors">+ ثبت فاکتور</a>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-4 border border-outline-variant/40 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <span class="text-label-sm text-on-surface-variant dark:text-slate-400">مجموع فروش</span>
+        <span class="material-symbols-outlined text-emerald-500 text-xl">payments</span>
+      </div>
+      <div class="text-2xl font-bold text-secondary dark:text-emerald-400 mt-2 font-tabular-num">{{ total_sales }}</div>
+      <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-1">تومان</div>
+    </div>
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-4 border border-outline-variant/40 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <span class="text-label-sm text-on-surface-variant dark:text-slate-400">فاکتورها</span>
+        <span class="material-symbols-outlined text-blue-500 text-xl">receipt_long</span>
+      </div>
+      <div class="text-2xl font-bold text-on-surface dark:text-white mt-2 font-tabular-num">{{ invoices_count }}</div>
+      <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-1">{{ paid_count }} پرداخت شده</div>
+    </div>
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-4 border border-outline-variant/40 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <span class="text-label-sm text-on-surface-variant dark:text-slate-400">مشتریان</span>
+        <span class="material-symbols-outlined text-violet-500 text-xl">group</span>
+      </div>
+      <div class="text-2xl font-bold text-on-surface dark:text-white mt-2 font-tabular-num">{{ customers_count }}</div>
+      <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-1">فعال</div>
+    </div>
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-4 border border-outline-variant/40 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <span class="text-label-sm text-on-surface-variant dark:text-slate-400">کالاها</span>
+        <span class="material-symbols-outlined text-amber-500 text-xl">inventory_2</span>
+      </div>
+      <div class="text-2xl font-bold text-on-surface dark:text-white mt-2 font-tabular-num">{{ products_count }}</div>
+      <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-1">{{ low_stock_count }} موجودی کم</div>
+    </div>
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-4 border border-outline-variant/40 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <span class="text-label-sm text-on-surface-variant dark:text-slate-400">انبارها</span>
+        <span class="material-symbols-outlined text-cyan-500 text-xl">warehouse</span>
+      </div>
+      <div class="text-2xl font-bold text-on-surface dark:text-white mt-2 font-tabular-num">{{ warehouses_count }}</div>
+      <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-1">فعال</div>
+    </div>
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-4 border border-outline-variant/40 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <span class="text-label-sm text-on-surface-variant dark:text-slate-400">تأمین‌کنندگان</span>
+        <span class="material-symbols-outlined text-orange-500 text-xl">local_shipping</span>
+      </div>
+      <div class="text-2xl font-bold text-on-surface dark:text-white mt-2 font-tabular-num">{{ suppliers_count }}</div>
+      <div class="text-xs text-on-surface-variant dark:text-slate-500 mt-1">ثبت‌شده</div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div class="lg:col-span-2 bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-5 border border-outline-variant/40 dark:border-slate-700 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-bold text-on-surface dark:text-slate-100">روند فروش (۳۰ روز گذشته)</h2>
+        <span class="text-xs text-on-surface-variant dark:text-slate-400">به تومان</span>
+      </div>
+      <div class="relative h-48"><canvas id="salesChart"></canvas></div>
+    </div>
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-5 border border-outline-variant/40 dark:border-slate-700 shadow-sm">
+      <h2 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-3">پرفروش‌ترین کالاها</h2>
+      <div class="relative h-64"><canvas id="topProductsChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Alerts + Recent Invoices -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <!-- Low Stock Alerts -->
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-5 border border-outline-variant/40 dark:border-slate-700 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-bold text-on-surface dark:text-slate-100">هشدار موجودی کم</h2>
+        <span class="px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs font-bold">{{ low_stock_count }}</span>
+      </div>
+      <div class="space-y-2 max-h-64 overflow-y-auto">
+        {% for st in low_stock_items %}
+        <div class="flex items-center justify-between p-2 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30">
+          <div class="min-w-0">
+            <div class="text-sm font-bold text-on-surface dark:text-slate-200 truncate">{{ st.product.name }}</div>
+            <div class="text-xs text-on-surface-variant dark:text-slate-400">{{ st.warehouse.name }}</div>
+          </div>
+          <div class="text-sm font-bold text-red-600 dark:text-red-400 font-tabular-num">{{ st.quantity }}</div>
+        </div>
+        {% empty %}
+        <div class="text-center text-sm text-slate-500 py-4">هیچ هشداری وجود ندارد</div>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- Recent Invoices -->
+    <div class="lg:col-span-2 bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-5 border border-outline-variant/40 dark:border-slate-700 shadow-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-bold text-on-surface dark:text-slate-100">آخرین فاکتورها</h2>
+        <a href="/ui/sales-report/" class="text-sm text-primary dark:text-blue-400 hover:underline">مشاهده همه</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="text-on-surface-variant dark:text-slate-400 border-b border-outline-variant/40 dark:border-slate-700">
+            <tr><th class="text-right py-2 px-2">شماره</th><th class="text-right py-2 px-2">مشتری</th><th class="text-right py-2 px-2">مبلغ</th><th class="text-right py-2 px-2">وضعیت</th><th class="text-right py-2 px-2">تاریخ</th></tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/30 dark:divide-slate-700">
+            {% for inv in recent_invoices %}
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+              <td class="py-2 px-2 font-tabular-num">{{ inv.invoice_no }}</td>
+              <td class="py-2 px-2">{{ inv.customer.name|default:"-" }}</td>
+              <td class="py-2 px-2 font-bold font-tabular-num">{{ inv.total }}</td>
+              <td class="py-2 px-2">
+                {% if inv.payment_status == 'paid' %}
+                <span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold">پرداخت شده</span>
+                {% else %}
+                <span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-xs font-bold">پرداخت نشده</span>
+                {% endif %}
+              </td>
+              <td class="py-2 px-2 text-on-surface-variant dark:text-slate-400">{{ inv.invoice_date }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="py-6 text-center text-slate-500">داده‌ای یافت نشد</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-xl p-5 border border-outline-variant/40 dark:border-slate-700 shadow-sm">
+    <h2 class="text-lg font-bold text-on-surface dark:text-slate-100 mb-3">دسترسی سریع</h2>
+    <div class="flex flex-wrap gap-2">
+      <a href="/ui/pos/" class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-bold shadow-sm hover:bg-blue-500 transition-colors flex items-center gap-1.5"><span class="material-symbols-outlined text-base">add_circle</span> ثبت فاکتور</a>
+      <a href="/ui/product-list/" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-on-surface dark:text-slate-200 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1.5"><span class="material-symbols-outlined text-base">inventory_2</span> کالاها</a>
+      <a href="/ui/customer-management/" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-on-surface dark:text-slate-200 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1.5"><span class="material-symbols-outlined text-base">group</span> مشتریان</a>
+      <a href="/ui/warehouse-management/" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-on-surface dark:text-slate-200 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1.5"><span class="material-symbols-outlined text-base">warehouse</span> انبارها</a>
+      <a href="/ui/finance-center/" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-on-surface dark:text-slate-200 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1.5"><span class="material-symbols-outlined text-base">account_balance</span> مرکز مالی</a>
+      <a href="/ui/sales-report/" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-on-surface dark:text-slate-200 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1.5"><span class="material-symbols-outlined text-base">receipt_long</span> گزارش فروش</a>
+      <a href="/ui/profit-loss-report/" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-on-surface dark:text-slate-200 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors flex items-center gap-1.5"><span class="material-symbols-outlined text-base">bar_chart</span> سود و زیان</a>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Sales trend chart
+  (function() {
+    var labels = {{ sales_trend_labels|safe }};
+    var values = {{ sales_trend_values|safe }};
+    var ctx = document.getElementById('salesChart');
+    if (ctx && window.Chart) {
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'فروش روزانه (تومان)',
+            data: values,
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37,99,235,0.1)',
+            fill: true,
+            tension: 0.35,
+            pointRadius: 2,
+            pointHoverRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { maxTicksLimit: 8, font: { size: 10 } }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+    }
+  })();
+  // Top products chart
+  (function() {
+    var labels = {{ top_products_labels|safe }};
+    var values = {{ top_products_values|safe }};
+    var ctx = document.getElementById('topProductsChart');
+    if (ctx && window.Chart) {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'تعداد فروش',
+            data: values,
+            backgroundColor: ['#2563eb','#10b981','#f59e0b','#8b5cf6','#ef4444'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, ticks: { font: { size: 10 } } },
+            y: { ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+    }
+  })();
+</script>
+{% endblock %}

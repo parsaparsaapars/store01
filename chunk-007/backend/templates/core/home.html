@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head><meta charset="utf-8"><title>سامانه فروشگاه</title></head>
+<body>
+<h1>صفحات UI</h1>
+<ul>
+{% for slug, name in pages %}
+  <li><a href="/ui/{{ slug }}/">{{ name }}</a></li>
+{% endfor %}
+</ul>
+</body>
+</html>

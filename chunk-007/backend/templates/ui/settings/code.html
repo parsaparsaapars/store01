@@ -1,0 +1,955 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="] p-4 sm:p-6 lg:p-8 space-y-6">
+<!-- ۱. هدر ماژول محلی (Top Toolbar) -->
+<header class="bg-surface-container-lowest dark:bg-surface-container-highest/10 rounded-xl p-4 sm:p-6 border border-outline-variant/40 dark:border-outline/30 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-inverse-primary">
+<span class="material-symbols-outlined text-[28px]">tune</span>
+</div>
+<div>
+<div class="flex items-center gap-2.5">
+<h1 class="font-headline-xl text-headline-xl text-on-surface dark:text-inverse-on-surface tracking-tight">{{ settings_store_name }}</h1>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-primary/10 dark:bg-primary/20 text-primary dark:text-inverse-primary border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+              نسخه ۴.۲.۱ سازمانی
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-1">پیکربندی هسته مرکزی، اتصال درگاه‌ها، اتوماسیون هشدارها، امنیت داده‌ها و انبارداری یکپارچه</p>
+</div>
+</div>
+<div class="flex items-center flex-wrap gap-2.5">
+<!-- دکمه بازنشانی پیش‌فرض -->
+<button class="h-10 px-3.5 rounded-lg border border-outline-variant/60 dark:border-outline/40 hover:bg-surface-container-low dark:hover:bg-surface-container text-on-surface-variant dark:text-inverse-on-surface transition-all flex items-center gap-2 font-label-md text-label-md" onclick="openResetModal()">
+<span class="material-symbols-outlined text-[20px]">restart_alt</span>
+<span>بازنشانی پیش‌فرض</span>
+</button>
+<!-- دکمه شاخص ذخیره تغییرات -->
+<button class="h-10 px-5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-title-md text-title-md transition-all shadow-sm active:scale-[0.98] flex items-center gap-2.5" onclick="triggerSaveNotification()">
+<span class="material-symbols-outlined text-[20px]">cloud_sync</span>
+<span>ذخیره تغییرات پیکربندی</span>
+</button>
+</div>
+</header>
+<!-- ۲. کارت‌های شاخص وضعیت زیرساخت و پیکربندی (KPI Cards) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1: Uptime -->
+<div class="bg-surface-container-lowest dark:bg-surface-container-highest/10 p-5 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant">سلامت و دسترس‌پذیری</span>
+<span class="p-2 rounded-lg bg-surface-container-low dark:bg-surface-container text-secondary">
+<span class="material-symbols-outlined text-[20px]">dns</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg font-tabular-num text-on-surface dark:text-inverse-on-surface">۹۹.۹۸٪</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-fixed/20 px-2 py-0.5 rounded-full font-bold">پایدار</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-2 flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary inline-block"></span>
+          تمامی ۱۰ میکروسرویس فعال و برخط
+        </p>
+<div class="mt-3 h-1.5 w-full bg-surface-container-high dark:bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 99.98%;"></div>
+</div>
+</div>
+<!-- KPI 2: Backup -->
+<div class="bg-surface-container-lowest dark:bg-surface-container-highest/10 p-5 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant">آخرین پشتیبان‌گیری موفق</span>
+<span class="p-2 rounded-lg bg-surface-container-low dark:bg-surface-container text-primary">
+<span class="material-symbols-outlined text-[20px]">backup</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl font-tabular-num text-on-surface dark:text-inverse-on-surface">۲ ساعت پیش</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-outline-variant">حجم: ۱.۴ گیگابایت</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-2 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">cloud_done</span>
+          فضای ابری امن پارس + نسخه لوکال انبار
+        </p>
+<div class="mt-3 flex items-center justify-between font-label-sm text-label-sm text-primary dark:text-inverse-primary cursor-pointer hover:underline" onclick="scrollToBackups()">
+<span>مشاهده و بازیابی آرشیو</span>
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+</div>
+</div>
+<!-- KPI 3: SMS Credits -->
+<div class="bg-surface-container-lowest dark:bg-surface-container-highest/10 p-5 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant">اعتبار پیامک و نوتیفیکیشن</span>
+<span class="p-2 rounded-lg bg-surface-container-low dark:bg-surface-container text-tertiary">
+<span class="material-symbols-outlined text-[20px]">chat</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg font-tabular-num text-on-surface dark:text-inverse-on-surface">۴۸,۵۰۰</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-outline-variant">پیامک باقی‌مانده</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-2 flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary inline-block"></span>
+          خط خدماتی ۳۰۰۰ (بدون بلک‌لیست)
+        </p>
+<div class="mt-3 flex items-center justify-between font-label-sm text-label-sm text-tertiary dark:text-tertiary-fixed cursor-pointer hover:underline">
+<span>افزایش اعتبار فوری</span>
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+</div>
+</div>
+<!-- KPI 4: License & Security -->
+<div class="bg-surface-container-lowest dark:bg-surface-container-highest/10 p-5 rounded-xl border border-outline-variant/40 dark:border-outline/30 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant">مجوز و رمزنگاری امنیتی</span>
+<span class="p-2 rounded-lg bg-surface-container-low dark:bg-surface-container text-primary">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl font-tabular-num text-on-surface dark:text-inverse-on-surface">پایان سال ۱۴۰۴</span>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-fixed/20 px-2 py-0.5 rounded-full font-bold">معتبر</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-2 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">enhanced_encryption</span>
+          رمزنگاری سرتاسری پایگاه AES-256
+        </p>
+<div class="mt-3 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant dark:text-outline-variant">
+<span>شناسه: LIC-ORG-98341-IR</span>
+<span class="material-symbols-outlined text-[16px]">security</span>
+</div>
+</div>
+</section>
+<!-- ۳. ساختار تب‌های تنظیمات و بدنه اصلی صفحه -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- نوار ناوبری جانبی تب‌های تنظیمات (Settings Sidebar Tabs) -->
+<nav class="lg:col-span-3 bg-surface-container-lowest dark:bg-surface-container-highest/10 rounded-xl p-3 border border-outline-variant/40 dark:border-outline/30 shadow-sm space-y-1.5 h-fit sticky top-4">
+<div class="px-3 py-2 text-label-sm font-label-sm text-on-surface-variant dark:text-outline-variant border-b border-outline-variant/30 mb-2">
+          سرفصل‌های پیکربندی سازمانی
+        </div>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-container text-on-primary font-title-md text-title-md transition-all" id="tabBtn-profile" onclick="switchTab('profile')">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+<span class="flex-1 text-right">اطلاعات فروشگاه و شرکت</span>
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container font-title-md text-title-md transition-all" id="tabBtn-branches" onclick="switchTab('branches')">
+<span class="material-symbols-outlined text-[20px]">warehouse</span>
+<span class="flex-1 text-right">مدیریت شعب و انبارها</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container font-title-md text-title-md transition-all" id="tabBtn-invoices" onclick="switchTab('invoices')">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="flex-1 text-right">قالب فاکتور و شخصی‌سازی چاپ</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container font-title-md text-title-md transition-all" id="tabBtn-numbering" onclick="switchTab('numbering')">
+<span class="material-symbols-outlined text-[20px]">format_list_numbered_rtl</span>
+<span class="flex-1 text-right">شماره‌گذاری اسناد و سال مالی</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container font-title-md text-title-md transition-all" id="tabBtn-tax" onclick="switchTab('tax')">
+<span class="material-symbols-outlined text-[20px]">percent</span>
+<span class="flex-1 text-right">مالیات، واحد پول و تسویه</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container font-title-md text-title-md transition-all" id="tabBtn-pos" onclick="switchTab('pos')">
+<span class="material-symbols-outlined text-[20px]">point_of_sale</span>
+<span class="flex-1 text-right">درگاه‌های پرداخت و کارت‌خوان</span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container font-title-md text-title-md transition-all" id="tabBtn-notifications" onclick="switchTab('notifications')">
+<span class="material-symbols-outlined text-[20px]">notifications_active</span>
+<span class="flex-1 text-right">اعلان‌ها و ارسال پیامک/ایمیل</span>
+<span class="w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container font-title-md text-title-md transition-all" id="tabBtn-backups" onclick="switchTab('backups')">
+<span class="material-symbols-outlined text-[20px]">security_update_good</span>
+<span class="flex-1 text-right">امنیت و پشتیبان‌گیری خودکار</span>
+</button>
+</nav>
+<!-- پنل محتوای اصلی (Tab Content Area) -->
+<main class="lg:col-span-9 space-y-6">
+<!-- بخش ۴: اطلاعات فروشگاه و قالب فاکتور -->
+<section class="bg-surface-container-lowest dark:bg-surface-container-highest/10 rounded-xl p-5 sm:p-7 border border-outline-variant/40 dark:border-outline/30 shadow-sm space-y-6" id="panel-profile">
+<div class="border-b border-outline-variant/30 pb-4 flex items-center justify-between">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">domain</span>
+                مشخصات حقوقی سازمان و برند فروشگاهی
+              </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-1">
+                اطلاعات درج شده در این فرم مستقیماً در سربرگ فاکتورهای رسمی سامانه مودیان، اسناد حواله انبار و پیش‌فاکتورها ثبت می‌گردند.
+              </p>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-label-sm text-label-sm bg-secondary-fixed/20 text-secondary font-bold">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+              مورد تایید دارایی
+            </span>
+</div>
+<!-- فرم اطلاعات حقوقی -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">نام تجاری فروشگاه / سازمان *</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-body-md text-body-md text-on-surface dark:text-inverse-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" type="text" value="شرکت توسعه تجارت پیشرو آریا (سهامی خاص)"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">شناسه ملی حقوقی (۱۱ رقمی) *</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-tabular-num text-body-md text-on-surface dark:text-inverse-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" type="text" value="۱۰۱۰۳۴۹۲۸۱۱"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">کد اقتصادی جدید سازمان مالیاتی *</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-tabular-num text-body-md text-on-surface dark:text-inverse-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" type="text" value="۴۱۱۵۶۷۸۹۲۳۴۱"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">شماره ثبت شرکت</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-tabular-num text-body-md text-on-surface dark:text-inverse-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" type="text" value="۴۸۹۲۳۰"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">تلفن‌های تماس رسمی</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-body-md text-body-md text-on-surface dark:text-inverse-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" type="text" value="۰۲۱-۸۸۴۵۰۰۰۰ الی ۵"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">کد پستی ۱۰ رقمی مرکز</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-tabular-num text-body-md text-on-surface dark:text-inverse-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" type="text" value="۱۹۹۷۸۳۴۵۲۱"/>
+</div>
+<div class="md:col-span-2 lg:col-span-3">
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">نشانی دقیق دفتر مرکزی و انبار اصلی</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-body-md text-body-md text-on-surface dark:text-inverse-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" type="text" value="تهران، بزرگراه شهید حقانی، بعد از چهارراه جهان کودک، پلاک ۲۸، برج تجاری آریا، طبقه ۸، واحد ۳"/>
+</div>
+</div>
+<!-- مدیریت لوگو و مهر و امضا سازمانی -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-3 border-t border-outline-variant/30">
+<div class="border border-dashed border-outline-variant dark:border-outline/50 rounded-xl p-4 flex items-center gap-4 bg-surface-container-low/40 dark:bg-surface-container/20">
+<div class="w-20 h-20 rounded-lg bg-surface-container-lowest dark:bg-surface-container flex items-center justify-center border border-outline-variant/40 shadow-xs relative overflow-hidden">
+<span class="material-symbols-outlined text-[36px] text-primary">local_convenience_store</span>
+</div>
+<div class="flex-1">
+<span class="font-title-md text-title-md block text-on-surface dark:text-inverse-on-surface">لوگوی چاپی فاکتورها</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant block mt-0.5">فرمت PNG شفاف، ابعاد ترجیحی ۵۰۰×۵۰۰ پیکسل</span>
+<div class="mt-2.5 flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-all">بارگذاری تصویر جدید</button>
+<button class="px-2.5 py-1.5 rounded-lg border border-outline-variant/60 text-error hover:bg-error-container/20 font-label-md text-label-md">حذف لوگو</button>
+</div>
+</div>
+</div>
+<div class="border border-dashed border-outline-variant dark:border-outline/50 rounded-xl p-4 flex items-center gap-4 bg-surface-container-low/40 dark:bg-surface-container/20">
+<div class="w-20 h-20 rounded-lg bg-surface-container-lowest dark:bg-surface-container flex items-center justify-center border border-outline-variant/40 shadow-xs">
+<span class="material-symbols-outlined text-[36px] text-secondary">approval</span>
+</div>
+<div class="flex-1">
+<span class="font-title-md text-title-md block text-on-surface dark:text-inverse-on-surface">مهر و امضای دیجیتال رسمی</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant block mt-0.5">برای درج خودکار در نسخه‌های PDF خروجی</span>
+<div class="mt-2.5 flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high dark:bg-surface-container text-on-surface dark:text-inverse-on-surface font-label-md text-label-md hover:bg-outline-variant/40 transition-all">انتخاب فایل مهر</button>
+<label class="flex items-center gap-1.5 cursor-pointer font-label-md text-label-md text-on-surface-variant dark:text-outline-variant">
+<input checked="" class="rounded text-primary focus:ring-primary/20" type="checkbox"/>
+<span>درج خودکار در فاکتور</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- انتخابگر و شخصی‌سازی موتور چاپ فاکتور -->
+<div class="pt-4 border-t border-outline-variant/30 space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">print</span>
+                انتخابگر و پیش‌نمایش قالب موتور چاپ فاکتور (Print Engine)
+              </h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">پیش‌نمایش لحظه‌ای قالب انتخاب‌شده</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+<!-- کنترل‌های فرمت چاپ -->
+<div class="lg:col-span-5 space-y-3.5">
+<div class="p-3.5 rounded-xl border-2 border-primary bg-primary/5 dark:bg-primary/10 cursor-pointer transition-all flex items-start gap-3" id="tmpl-official" onclick="selectInvoiceTemplate('official')">
+<span class="material-symbols-outlined text-primary text-[24px] mt-0.5">description</span>
+<div>
+<span class="font-title-md text-title-md text-on-surface dark:text-inverse-on-surface block font-bold">۱. استاندارد رسمی سازمان امور مالیاتی (A4 / A5)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-1">مطابق استانداردهای سامانه جامع مودیان با جدول تجمیعی مالیات بر ارزش افزوده و شناسه یکتا</p>
+</div>
+</div>
+<div class="p-3.5 rounded-xl border border-outline-variant/60 dark:border-outline/40 hover:bg-surface-container-low dark:hover:bg-surface-container cursor-pointer transition-all flex items-start gap-3" id="tmpl-corporate" onclick="selectInvoiceTemplate('corporate')">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px] mt-0.5">view_compact</span>
+<div>
+<span class="font-title-md text-title-md text-on-surface dark:text-inverse-on-surface block font-bold">۲. قالب مینیمال شرکتی و B2B (Landscape / Portrait)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-1">مناسب سفارشات تیراژ بالا، تحویل انبارداری و پیش‌فاکتورهای پروفرما با بارکد دوبعدی</p>
+</div>
+</div>
+<div class="p-3.5 rounded-xl border border-outline-variant/60 dark:border-outline/40 hover:bg-surface-container-low dark:hover:bg-surface-container cursor-pointer transition-all flex items-start gap-3" id="tmpl-thermal" onclick="selectInvoiceTemplate('thermal')">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px] mt-0.5">receipt</span>
+<div>
+<span class="font-title-md text-title-md text-on-surface dark:text-inverse-on-surface block font-bold">۳. فیش حرارتی صندوق فروشگاهی POS (۸ سانتی‌متری)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-1">بهینه برای تحویل سریع پیشخوان، چاپگرهای بارکدخوان و صندوق‌های فروش با برش خودکار</p>
+</div>
+</div>
+<!-- تنظیمات جانبی چاپگر -->
+<div class="p-3.5 bg-surface-container-low/50 dark:bg-surface-container/20 rounded-xl space-y-2.5">
+<span class="font-label-md text-label-md text-on-surface dark:text-inverse-on-surface font-bold block">تنظیمات پیشرفته سربرگ و پاورقی</span>
+<div class="grid grid-cols-2 gap-2 text-body-sm font-body-sm">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded text-primary focus:ring-primary/20" type="checkbox"/>
+<span>چاپ بارکد سفارش</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded text-primary focus:ring-primary/20" type="checkbox"/>
+<span>نمایش مانده حساب پیشین</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="rounded text-primary focus:ring-primary/20" type="checkbox"/>
+<span>درج QR Code مالیاتی</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="rounded text-primary focus:ring-primary/20" type="checkbox"/>
+<span>امکان چاپ دورو اتوماتیک</span>
+</label>
+</div>
+</div>
+</div>
+<!-- شبیه‌ساز پیش‌نمایش سند زنده (Interactive Paper Mockup) -->
+<div class="lg:col-span-7 bg-white dark:bg-surface-container-lowest text-neutral-900 p-5 rounded-xl border border-outline-variant/60 shadow-md min-h-[380px] font-sans text-[13px] leading-relaxed relative">
+<div class="flex items-center justify-between border-b-2 border-neutral-900 pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[26px] text-blue-700">corporate_fare</span>
+<div>
+<h4 class="font-bold text-[14px]">صورتحساب فروش کالا و خدمات</h4>
+<span class="text-[11px] text-neutral-600">شرکت توسعه تجارت پیشرو آریا</span>
+</div>
+</div>
+<div class="text-left text-[11px] font-tabular-num space-y-0.5">
+<div>شماره فاکتور: <strong>INV-1403-8942</strong></div>
+<div>تاریخ صدور: <strong>۱۴۰۳/۰۸/۲۴</strong></div>
+<div>کد رهگیری مالیاتی: <strong>TX-998124</strong></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 my-3 p-2 bg-neutral-100 rounded text-[11px]">
+<div><strong>فروشنده:</strong> شرکت توسعه تجارت پیشرو آریا | ش.م: ۱۰۱۰۳۴۹۲۸۱۱</div>
+<div><strong>خریدار:</strong> فروشگاه زنجیره‌ای البرز نوین | ش.م: ۱۰۹۲۸۴۷۲۹۰۱</div>
+</div>
+<table class="w-full text-right border-collapse text-[11px] my-3">
+<thead>
+<tr class="bg-neutral-200 border-b border-neutral-300 font-bold">
+<th class="p-1.5">ردیف</th>
+<th class="p-1.5">شرح کالا یا خدمت</th>
+<th class="p-1.5">تعداد</th>
+<th class="p-1.5">مبلغ واحد (تومان)</th>
+<th class="p-1.5">ارزش افزوده (۱۰٪)</th>
+<th class="p-1.5">مبلغ کل (تومان)</th>
+</tr>
+</thead>
+<tbody>
+{% for s in settings_store %}
+<tr class="hover:bg-surface-container-low/60 dark:hover:bg-inverse-surface/70 transition-colors">
+<td class="py-3 px-3.5 whitespace-nowrap text-on-surface dark:text-white">
+{{ s.name }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-on-surface dark:text-white">
+{{ s.address }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap font-tabular-num text-on-surface dark:text-white">
+{{ s.phone }}
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300">
+فعال
+</span>
+</td>
+<td class="py-3 px-3.5 whitespace-nowrap text-center">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-[#e2e8f0] dark:hover:bg-[#334155] text-[#475569] dark:text-[#cbd5e1]" title="ویرایش">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+</div>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="5" class="text-center py-8 text-[#64748b] dark:text-[#94a3b8]">هیچ تنظیماتی ثبت نشده است.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+<div class="border-t border-neutral-300 pt-2 flex items-center justify-between text-[11px]">
+<div class="space-y-0.5">
+<div>وضعیت تسویه: <span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">نقدی / درگاه بانکی</span></div>
+<div class="text-neutral-500">مهر دیجیتال و تاییدیه مالیاتی در این بخش درج می‌شود.</div>
+</div>
+<div class="text-left font-tabular-num space-y-0.5">
+<div>جمع کل اقلام: <strong>۱۰۰,۰۰۰,۰۰۰ تومان</strong></div>
+<div>مالیات و عوارض (۱۰٪): <strong>۹,۸۰۰,۰۰۰ تومان</strong></div>
+<div class="text-[13px] font-bold text-blue-900 border-t border-neutral-400 pt-0.5">مبلغ قابل پرداخت: ۱۰۷,۸۰۰,۰۰۰ تومان</div>
+</div>
+</div>
+<div class="absolute bottom-2 left-3 flex gap-2">
+<span class="inline-flex items-center gap-1 text-[11px] bg-neutral-200 px-2 py-0.5 rounded text-neutral-700">
+<span class="material-symbols-outlined text-[14px]">qr_code_2</span>
+                    تایید سامانه مودیان
+                  </span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- بخش ۵: مرکز اعلان‌ها و هشدارهای هوشمند (Notification Matrix) -->
+<section class="bg-surface-container-lowest dark:bg-surface-container-highest/10 rounded-xl p-5 sm:p-7 border border-outline-variant/40 dark:border-outline/30 shadow-sm space-y-5" id="panel-notifications">
+<div class="border-b border-outline-variant/30 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">notifications_active</span>
+                ماتریس اعلان‌ها و سامانه هشدارهای اضطراری
+              </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-1">
+                تنظیم دقیق کانال‌های اطلاع‌رسانی خودکار پیامکی، ایمیلی و پوش‌نوتیفیکیشن سامانه برای رویدادهای بحرانی و مالی
+              </p>
+</div>
+<button class="px-3.5 py-2 rounded-lg border border-outline-variant/60 hover:bg-surface-container-low dark:hover:bg-surface-container text-on-surface dark:text-inverse-on-surface font-label-md text-label-md flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-[18px]">send</span>
+              ارسال پیامک تستی به مدیر
+            </button>
+</div>
+<!-- ماتریس تنظیم اعلان‌ها -->
+<div class="overflow-x-auto custom-scroll">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low dark:bg-surface-container font-label-md text-label-md text-on-surface-variant dark:text-outline-variant border-b border-outline-variant/40">
+<th class="py-3 px-4 rounded-r-lg">شرح رویداد سیستمی و هشدار</th>
+<th class="py-3 px-4">گیرنده / بخش هدف</th>
+<th class="py-3 px-4 text-center">پوش نوتیفیکیشن سامانه</th>
+<th class="py-3 px-4 text-center">ارسال پیامک فوری</th>
+<th class="py-3 px-4 text-center rounded-l-lg">ایمیل سازمانی</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 font-body-md text-body-md text-on-surface dark:text-inverse-on-surface">
+<!-- ردیف ۱: نقطه سفارش کالا -->
+<tr class="hover:bg-surface-container-low/40 dark:hover:bg-surface-container/20 transition-colors">
+<td class="py-4 px-4">
+<div class="font-title-md text-title-md font-bold text-on-surface dark:text-inverse-on-surface">رسیدن موجودی کالا به نقطه سفارش بحرانی</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">هنگامی که موجودی انبار کمتر از ۵ قلم یا حد آستانه تعیین شده شود</span>
+</td>
+<td class="py-4 px-4 font-body-sm text-body-sm">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high dark:bg-surface-container text-on-surface dark:text-inverse-on-surface">سرپرست انبارداری و خرید</span>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+</tr>
+<!-- ردیف ۲: سررسید چک‌ها -->
+<tr class="hover:bg-surface-container-low/40 dark:hover:bg-surface-container/20 transition-colors">
+<td class="py-4 px-4">
+<div class="font-title-md text-title-md font-bold text-on-surface dark:text-inverse-on-surface">سررسید اسناد دریافتی / پرداختی (۴۸ ساعت قبل)</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">هشدار موعد پاس شدن چک‌های صیادی و موعد پرداخت مشتریان اعتباری</span>
+</td>
+<td class="py-4 px-4 font-body-sm text-body-sm">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high dark:bg-surface-container text-on-surface dark:text-inverse-on-surface">مدیر امور مالی و خزانه‌دار</span>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+</tr>
+<!-- ردیف ۳: ورود ناشناس یا مشکوک -->
+<tr class="hover:bg-surface-container-low/40 dark:hover:bg-surface-container/20 transition-colors">
+<td class="py-4 px-4">
+<div class="font-title-md text-title-md font-bold text-on-surface dark:text-inverse-on-surface flex items-center gap-2">
+<span>ورود با آدرس IP ناشناس یا تلاش ناموفق مکرر</span>
+<span class="font-label-sm text-label-sm bg-error-container/40 text-error px-2 py-0.5 rounded-full">امنیتی</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">ارسال فوری کد تأیید دو مرحله‌ای و گزارش موقعیت مکانی ورود</span>
+</td>
+<td class="py-4 px-4 font-body-sm text-body-sm">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high dark:bg-surface-container text-on-surface dark:text-inverse-on-surface">مدیر ارشد امنیت و صاحب سیستم</span>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+</tr>
+<!-- ردیف ۴: مغایرت انبارگردانی -->
+<tr class="hover:bg-surface-container-low/40 dark:hover:bg-surface-container/20 transition-colors">
+<td class="py-4 px-4">
+<div class="font-title-md text-title-md font-bold text-on-surface dark:text-inverse-on-surface">ثبت مغایرت در انبارگردانی دوره‌ای یا اصلاح کاردکس</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">اختلاف میان موجودی عینی اسکن‌شده و موجودی سیستمی کاردکس</span>
+</td>
+<td class="py-4 px-4 font-body-sm text-body-sm">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high dark:bg-surface-container text-on-surface dark:text-inverse-on-surface">حسابرس داخلی و مدیریت بازرگانی</span>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+<td class="py-4 px-4 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest dark:bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- باکس الگوهای متن پیامک سریع -->
+<div class="mt-4 p-4 rounded-xl border border-outline-variant/40 bg-surface-container-low/30 dark:bg-surface-container/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[24px] text-tertiary">sms</span>
+<div>
+<span class="font-title-md text-title-md font-bold text-on-surface dark:text-inverse-on-surface">قالب پیامک خوش‌آمدگویی و صدور فاکتور مشتریان</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant">مشتری گرامی {نام}، فاکتور {شماره} به مبلغ {مبلغ} ثبت گردید. لینک مشاهده: {لینک}</p>
+</div>
+</div>
+<button class="px-3.5 py-1.5 rounded-lg border border-outline-variant/60 hover:bg-surface-container font-label-md text-label-md shrink-0">ویرایش متن الگوها</button>
+</div>
+</section>
+<!-- بخش ۶: عملیات حساس، پشتیبان‌گیری و شماره‌گذاری اسناد -->
+<section class="bg-surface-container-lowest dark:bg-surface-container-highest/10 rounded-xl p-5 sm:p-7 border border-outline-variant/40 dark:border-outline/30 shadow-sm space-y-6" id="panel-backups">
+<div class="border-b border-outline-variant/30 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">security_update_good</span>
+                عملیات حساس، پایگاه داده و مدیریت نسخه‌های پشتیبان (Backups)
+              </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-1">
+                تهیه نسخه‌های فشرده رمزنگاری‌شده از دیتابیس SQL، فایل‌های پیوست و کاردکس انبار با قابلیت بازیابی در شرایط اضطراری
+              </p>
+</div>
+<!-- دکمه بکاپ آنی -->
+<button class="px-4 py-2.5 rounded-lg bg-secondary hover:opacity-90 text-on-secondary font-title-md text-title-md transition-all shadow-sm flex items-center gap-2" id="manualBackupBtn" onclick="takeManualBackup()">
+<span class="material-symbols-outlined text-[20px]">cloud_upload</span>
+<span>تهیه نسخه پشتیبان آنی</span>
+</button>
+</div>
+<!-- بنر زمان‌بندی خودکار بکاپ -->
+<div class="p-4 rounded-xl border border-secondary/30 bg-secondary/5 dark:bg-secondary/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">schedule</span>
+</div>
+<div>
+<span class="font-title-md text-title-md font-bold text-on-surface dark:text-inverse-on-surface">پشتیبان‌گیری خودکار روزانه فعال است</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-0.5">
+                  هر شب رأس ساعت <strong class="font-tabular-num text-on-surface dark:text-inverse-on-surface">۰۲:۰۰ بامداد</strong> نسخه کامل پایگاه‌داده به سرور پشتیبان مجزا (Off-site Disaster Recovery) منتقل می‌شود.
+                </p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-label-md text-label-md text-secondary bg-secondary-fixed/30 px-3 py-1 rounded-full font-bold">چرخه ۷ روزه</span>
+<button class="text-primary dark:text-inverse-primary font-label-md text-label-md underline">تغییر زمان‌بندی</button>
+</div>
+</div>
+<!-- جدول نسخه‌های پشتیبان اخیر -->
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="font-title-lg text-title-lg text-on-surface dark:text-inverse-on-surface">آرشیو آخرین نسخه‌های ایجاد شده</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant font-tabular-num">نمایش ۴ نسخه از کل ۳۸ نسخه ذخیره‌شده</span>
+</div>
+<div class="overflow-x-auto custom-scroll border border-outline-variant/40 rounded-xl">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low dark:bg-surface-container font-label-md text-label-md text-on-surface-variant dark:text-outline-variant border-b border-outline-variant/40">
+<th class="py-3 px-4">تاریخ و ساعت ایجاد (شمسی)</th>
+<th class="py-3 px-4">نوع پشتیبان‌گیری</th>
+<th class="py-3 px-4">حجم فایل</th>
+<th class="py-3 px-4">صحت داده‌ها (Hash Check)</th>
+<th class="py-3 px-4 text-center">عملیات بازیابی و دانلود</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 font-body-md text-body-md text-on-surface dark:text-inverse-on-surface">
+<tr>
+<td class="py-3.5 px-4 font-tabular-num">
+<div class="font-bold">۱۴۰۳/۰۸/۲۴ - ساعت ۰۲:۰۰ بامداد</div>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant">بکاپ خودکار شبانه سیستم</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">دیتابیس کامل + اسناد و فاکتورها</span>
+</td>
+<td class="py-3.5 px-4 font-tabular-num font-bold">۱.۴۲ گیگابایت</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 text-secondary font-label-sm text-label-sm bg-secondary-fixed/20 px-2.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                        SHA-256 تایید شده
+                      </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-2">
+<button class="h-8 px-2.5 rounded-lg border border-outline-variant/60 hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5" title="دانلود فایل فشرده">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                          دانلود
+                        </button>
+<button class="h-8 px-2.5 rounded-lg bg-error-container/40 text-error hover:bg-error hover:text-white font-label-md text-label-md flex items-center gap-1.5 transition-all" onclick="openRestoreModal('۱۴۰۳/۰۸/۲۴ - ساعت ۰۲:۰۰')">
+<span class="material-symbols-outlined text-[16px]">settings_backup_restore</span>
+                          بازیابی (Restore)
+                        </button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="py-3.5 px-4 font-tabular-num">
+<div class="font-bold">۱۴۰۳/۰۸/۲۳ - ساعت ۰۲:۰۰ بامداد</div>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant">بکاپ خودکار شبانه سیستم</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">دیتابیس کامل + اسناد و فاکتورها</span>
+</td>
+<td class="py-3.5 px-4 font-tabular-num font-bold">۱.۳۹ گیگابایت</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 text-secondary font-label-sm text-label-sm bg-secondary-fixed/20 px-2.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                        SHA-256 تایید شده
+                      </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-2">
+<button class="h-8 px-2.5 rounded-lg border border-outline-variant/60 hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                          دانلود
+                        </button>
+<button class="h-8 px-2.5 rounded-lg bg-error-container/40 text-error hover:bg-error hover:text-white font-label-md text-label-md flex items-center gap-1.5 transition-all" onclick="openRestoreModal('۱۴۰۳/۰۸/۲۳ - ساعت ۰۲:۰۰')">
+<span class="material-symbols-outlined text-[16px]">settings_backup_restore</span>
+                          بازیابی (Restore)
+                        </button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="py-3.5 px-4 font-tabular-num">
+<div class="font-bold">۱۴۰۳/۰۸/۲۲ - ساعت ۱۶:۴۵ عصر</div>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant">تهیه نسخه دستی پیش از ارتقای کاتالوگ انبار</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">کاردکس انبار و جدول قیمت‌ها</span>
+</td>
+<td class="py-3.5 px-4 font-tabular-num font-bold">۲۴۰ مگابایت</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 text-secondary font-label-sm text-label-sm bg-secondary-fixed/20 px-2.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                        SHA-256 تایید شده
+                      </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-2">
+<button class="h-8 px-2.5 rounded-lg border border-outline-variant/60 hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                          دانلود
+                        </button>
+<button class="h-8 px-2.5 rounded-lg bg-error-container/40 text-error hover:bg-error hover:text-white font-label-md text-label-md flex items-center gap-1.5 transition-all" onclick="openRestoreModal('۱۴۰۳/۰۸/۲۲ - ساعت ۱۶:۴۵')">
+<span class="material-symbols-outlined text-[16px]">settings_backup_restore</span>
+                          بازیابی (Restore)
+                        </button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="py-3.5 px-4 font-tabular-num">
+<div class="font-bold">۱۴۰۳/۰۸/۲۲ - ساعت ۰۲:۰۰ بامداد</div>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-outline-variant">بکاپ خودکار شبانه سیستم</span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">دیتابیس کامل + اسناد و فاکتورها</span>
+</td>
+<td class="py-3.5 px-4 font-tabular-num font-bold">۱.۳۸ گیگابایت</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1 text-secondary font-label-sm text-label-sm bg-secondary-fixed/20 px-2.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                        SHA-256 تایید شده
+                      </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="flex items-center justify-center gap-2">
+<button class="h-8 px-2.5 rounded-lg border border-outline-variant/60 hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                          دانلود
+                        </button>
+<button class="h-8 px-2.5 rounded-lg bg-error-container/40 text-error hover:bg-error hover:text-white font-label-md text-label-md flex items-center gap-1.5 transition-all" onclick="openRestoreModal('۱۴۰۳/۰۸/۲۲ - ساعت ۰۲:۰۰')">
+<span class="material-symbols-outlined text-[16px]">settings_backup_restore</span>
+                          بازیابی (Restore)
+                        </button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- بخش تنظیمات شماره‌گذاری خودکار فاکتورها و سال مالی -->
+<div class="pt-5 border-t border-outline-variant/30 space-y-4">
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">tag</span>
+              پیکربندی شماره‌گذاری هوشمند اسناد فروش و انبارداری
+            </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">پیشوند شماره فاکتور فروش</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-tabular-num text-body-md text-on-surface dark:text-inverse-on-surface outline-none" type="text" value="INV-1403-"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">شماره سریال آغازین دوره</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-tabular-num text-body-md text-on-surface dark:text-inverse-on-surface outline-none" type="text" value="۱۰,۰۰۱"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">پیشوند حواله خروج انبار</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-tabular-num text-body-md text-on-surface dark:text-inverse-on-surface outline-none" type="text" value="WH-OUT-"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface mb-1.5">رفتار قفل اسناد مالی</label>
+<select class="w-full h-10 px-3 rounded-lg border border-outline-variant/60 dark:border-outline/40 bg-surface-container-lowest dark:bg-surface-container font-body-md text-body-md text-on-surface dark:text-inverse-on-surface outline-none">
+<option selected="">قفل خودکار پس از تایید حسابداری</option>
+<option>قفل فوری پس از چاپ فاکتور</option>
+<option>امکان ویرایش فقط با مجوز مدیر ارشد</option>
+</select>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<!-- مودال حساس تأیید بازیابی نسخه پشتیبان (Restore Re-Authentication Modal) -->
+<div class="fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-xs hidden items-center justify-center p-4" id="restoreModal">
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-2xl max-w-md w-full p-6 border border-error/30 shadow-2xl space-y-4">
+<div class="w-12 h-12 rounded-xl bg-error-container/50 text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">warning</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface font-bold">عملیات حساس: بازیابی پایگاه‌داده</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-1.5">
+          شما در حال بازیابی نسخه مورخ <strong class="text-error font-tabular-num" id="restoreTargetDate"></strong> هستید. با این عمل تمام داده‌های ثبت‌شده پس از این تاریخ بازنویسی خواهند شد.
+        </p>
+</div>
+<div class="p-3 bg-surface-container-low dark:bg-surface-container rounded-lg space-y-2">
+<label class="block font-label-md text-label-md text-on-surface dark:text-inverse-on-surface">کلمه عبور امنیتی مدیر ارشد (جهت احراز مجدد)</label>
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest dark:bg-surface-container font-body-md text-on-surface dark:text-inverse-on-surface outline-none focus:border-error" placeholder="••••••••••••" type="password"/>
+</div>
+<div class="flex items-center gap-3 pt-2">
+<button class="flex-1 h-10 rounded-lg bg-error hover:bg-error/90 text-white font-title-md text-title-md transition-all" onclick="confirmRestoreAction()">تایید قطعی و شروع بازیابی</button>
+<button class="h-10 px-4 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md" onclick="closeRestoreModal()">انصراف</button>
+</div>
+</div>
+</div>
+<!-- مودال بازنشانی تنظیمات پیش‌فرض -->
+<div class="fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-xs hidden items-center justify-center p-4" id="resetModal">
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-2xl max-w-md w-full p-6 border border-outline-variant shadow-2xl space-y-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">restart_alt</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface font-bold">بازنشانی تنظیمات به مقادیر پیش‌فرض</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant mt-1.5">
+          آیا مطمئن هستید؟ قالب‌های چاپ، ساختار ماتریس اعلان‌ها و پارامترهای عمومی به تنظیمات اولیه کارخانه سامانه بازمی‌گردند. اطلاعات مالی و کالاها دست‌نخورده باقی می‌مانند.
+        </p>
+</div>
+<div class="flex items-center gap-3 pt-2">
+<button class="flex-1 h-10 rounded-lg bg-primary-container text-on-primary font-title-md text-title-md" onclick="confirmResetDefaults()">تایید بازنشانی</button>
+<button class="h-10 px-4 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md" onclick="closeResetModal()">انصراف</button>
+</div>
+</div>
+</div>
+<!-- اعلان Toast پیام موفقیت -->
+<div class="fixed bottom-6 left-6 z-50 bg-on-surface text-surface px-4 py-3 rounded-xl shadow-lg border border-outline/30 flex items-center gap-3 transition-all transform translate-y-20 opacity-0 pointer-events-none" id="toastNotification">
+<span class="material-symbols-outlined text-secondary" id="toastIcon">check_circle</span>
+<span class="font-body-md text-body-md" id="toastMessage">تغییرات پیکربندی با موفقیت در فضای ابری ذخیره شدند.</span>
+</div>
+<script>
+    // کنترل حالت تیره و روشن (Dark Mode Toggle)
+    function toggleDarkMode() {
+      const htmlEl = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      const themeText = document.getElementById('themeText');
+
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        htmlEl.classList.add('light');
+        themeIcon.textContent = 'dark_mode';
+        themeText.textContent = 'حالت تاریک';
+        localStorage.setItem('theme', 'light');
+      } else {
+        htmlEl.classList.remove('light');
+        htmlEl.classList.add('dark');
+        themeIcon.textContent = 'light_mode';
+        themeText.textContent = 'حالت روشن';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // بازنشانی وضعیت تم از حافظه محلی در زمان بارگذاری
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+      const themeIcon = document.getElementById('themeIcon');
+      const themeText = document.getElementById('themeText');
+      if (themeIcon) themeIcon.textContent = 'light_mode';
+      if (themeText) themeText.textContent = 'حالت روشن';
+    }
+
+    // سوئیچ تب‌های سایدمنوی تنظیمات
+    function switchTab(tabKey) {
+      const tabButtons = document.querySelectorAll('[id^="tabBtn-"]');
+      tabButtons.forEach(btn => {
+        btn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant dark:text-inverse-on-surface hover:bg-surface-container-low dark:hover:bg-surface-container font-title-md text-title-md transition-all";
+        const chevron = btn.querySelector('.material-symbols-outlined:last-child');
+        if (chevron && chevron.textContent === 'chevron_left') {
+          chevron.remove();
+        }
+      });
+
+      const activeBtn = document.getElementById(`tabBtn-${tabKey}`);
+      if (activeBtn) {
+        activeBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-container text-on-primary font-title-md text-title-md transition-all";
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'material-symbols-outlined text-[18px]';
+        iconSpan.textContent = 'chevron_left';
+        activeBtn.appendChild(iconSpan);
+      }
+
+      // هدایت اسکرول نرم به بخش مربوطه
+      const targetMap = {
+        'profile': 'panel-profile',
+        'invoices': 'panel-profile',
+        'notifications': 'panel-notifications',
+        'backups': 'panel-backups',
+        'numbering': 'panel-backups',
+        'branches': 'panel-profile',
+        'tax': 'panel-profile',
+        'pos': 'panel-profile'
+      };
+
+      const targetEl = document.getElementById(targetMap[tabKey] || 'panel-profile');
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // اسکرول اختصاصی به بخش بکاپ
+    function scrollToBackups() {
+      switchTab('backups');
+    }
+
+    // انتخابگر تعاملی قالب فاکتور
+    function selectInvoiceTemplate(type) {
+      const tmpls = ['tmpl-official', 'tmpl-corporate', 'tmpl-thermal'];
+      tmpls.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.className = "p-3.5 rounded-xl border border-outline-variant/60 dark:border-outline/40 hover:bg-surface-container-low dark:hover:bg-surface-container cursor-pointer transition-all flex items-start gap-3";
+          const icon = el.querySelector('.material-symbols-outlined');
+          if (icon) icon.className = "material-symbols-outlined text-on-surface-variant text-[24px] mt-0.5";
+        }
+      });
+
+      const selected = document.getElementById(`tmpl-${type}`);
+      if (selected) {
+        selected.className = "p-3.5 rounded-xl border-2 border-primary bg-primary/5 dark:bg-primary/10 cursor-pointer transition-all flex items-start gap-3";
+        const icon = selected.querySelector('.material-symbols-outlined');
+        if (icon) icon.className = "material-symbols-outlined text-primary text-[24px] mt-0.5";
+      }
+
+      showToast(`قالب فاکتور به "${type === 'official' ? 'رسمی دارایی' : type === 'corporate' ? 'شرکتی B2B' : 'فیش حرارتی ۸ سانتی'}" تغییر یافت.`);
+    }
+
+    // Toast نمایش نوتیفیکیشن
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toastNotification');
+      const toastMessage = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMessage.textContent = message;
+      toastIcon.textContent = isError ? 'error' : 'check_circle';
+      toastIcon.className = isError ? 'material-symbols-outlined text-error' : 'material-symbols-outlined text-secondary';
+
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3500);
+    }
+
+    function triggerSaveNotification() {
+      showToast('تمامی پیکربندی‌ها با موفقیت ذخیره و در تمامی کلاینت‌ها همگام شدند.');
+    }
+
+    // مودال بازنشانی
+    function openResetModal() {
+      document.getElementById('resetModal').classList.remove('hidden');
+      document.getElementById('resetModal').classList.add('flex');
+    }
+    function closeResetModal() {
+      document.getElementById('resetModal').classList.add('hidden');
+      document.getElementById('resetModal').classList.remove('flex');
+    }
+    function confirmResetDefaults() {
+      closeResetModal();
+      showToast('تنظیمات به حالت پیش‌فرض بازنشانی شدند.');
+    }
+
+    // مودال بازیابی پشتیبان
+    function openRestoreModal(dateStr) {
+      document.getElementById('restoreTargetDate').textContent = dateStr;
+      document.getElementById('restoreModal').classList.remove('hidden');
+      document.getElementById('restoreModal').classList.add('flex');
+    }
+    function closeRestoreModal() {
+      document.getElementById('restoreModal').classList.add('hidden');
+      document.getElementById('restoreModal').classList.remove('flex');
+    }
+    function confirmRestoreAction() {
+      closeRestoreModal();
+      showToast('درخواست بازیابی تایید شد. سیستم در حال بررسی تمامیت داده‌ها است...');
+    }
+
+    // تهیه نسخه پشتیبان آنی
+    function takeManualBackup() {
+      const btn = document.getElementById('manualBackupBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> در حال ایجاد نسخه فشرده...`;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        showToast('نسخه پشتیبان آنی با حجم ۱.۴۳ گیگابایت تهیه و آرشیو شد.');
+      }, 2000);
+    }
+  </script>
+
+{% endblock %}

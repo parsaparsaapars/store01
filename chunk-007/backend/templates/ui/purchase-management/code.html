@@ -1,0 +1,779 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Container for the pure canvas content -->
+<div class="] space-y-6">
+<!-- Top Utility & Mode Switcher Bar -->
+<div class="flex items-center justify-between pb-4 border-b border-outline-variant/40 dark:border-slate-800">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-surface-container dark:bg-slate-900 text-primary dark:text-blue-400 text-xs font-semibold border border-outline-variant/30 dark:border-slate-800">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 ml-1.5 animate-pulse"></span>
+          زنجیره تأمین فعال • نسخه سازمانی ۴.۲
+        </span>
+</div>
+<!-- Quick Action Controls & Dark/Light Switcher -->
+<div class="flex items-center gap-3">
+
+<button class="p-2 rounded-lg border border-outline-variant/50 dark:border-slate-700 bg-white dark:bg-slate-900 text-on-surface-variant dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 transition-colors shadow-sm" onclick="window.location.reload()" title="به‌روزرسانی داده‌ها" type="button">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</div>
+<!-- Page Header -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<div>
+<h1 class="text-2xl sm:text-3xl font-extrabold text-[#121b2e] dark:text-white tracking-tight">
+          مدیریت خرید و سفارشات خرید
+        </h1>
+<p class="text-sm text-on-surface-variant dark:text-slate-400 mt-1">
+          رهگیری زنجیره تأمین، سفارشات باز، رسیدهای انبار و بدهی تأمین‌کنندگان
+        </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-wrap items-center gap-3">
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-outline-variant dark:border-slate-700 bg-white dark:bg-slate-900 text-[#121b2e] dark:text-slate-100 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-outline dark:text-slate-400">file_download</span>
+<span>خروجی اکسل / PDF</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container-highest dark:bg-slate-800 text-primary dark:text-blue-300 text-sm font-semibold hover:bg-surface-variant dark:hover:bg-slate-700 transition-colors border border-outline-variant/40 dark:border-slate-700" onclick="toggleReceiptDrawer(true)" type="button">
+<span class="material-symbols-outlined">move_to_inbox</span>
+<span>رسید سریع کالا (GRN)</span>
+</button>
+<button class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary-container hover:bg-primary text-white text-sm font-semibold transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+<span>ثبت سفارش خرید جدید</span>
+</button>
+</div>
+</div>
+<!-- KPIs Section -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<!-- KPI 1: خرید این ماه -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 sm:p-5 border border-outline-variant/50 dark:border-slate-800 shadow-sm relative overflow-hidden min-w-0 flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-xs sm:text-sm font-semibold text-on-surface-variant dark:text-slate-400 truncate">خرید این ماه</span>
+<div class="w-9 h-9 shrink-0 rounded-lg bg-surface-container dark:bg-slate-800 flex items-center justify-center text-primary dark:text-blue-400">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+<div class="mt-3 min-w-0">
+<div class="flex items-baseline gap-1.5 flex-wrap min-w-0">
+<span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tabular-numbers tracking-tight truncate max-w-full">{{ pm_monthly_purchases|floatformat:"-0" }}</span>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 font-medium shrink-0">تومان</span>
+</div>
+<div class="flex items-center gap-2 mt-2 flex-wrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
+<span class="material-symbols-outlined text-sm ml-0.5">trending_up</span>
+              +۱۲.۳٪
+            </span>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 truncate">نسبت به ماه گذشته</span>
+</div>
+</div>
+<div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-l from-primary-container to-blue-500"></div>
+</div>
+<!-- KPI 2: سفارش‌های باز و در جریان -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 sm:p-5 border border-outline-variant/50 dark:border-slate-800 shadow-sm relative overflow-hidden min-w-0 flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-xs sm:text-sm font-semibold text-on-surface-variant dark:text-slate-400 truncate">سفارش‌های باز و در جریان</span>
+<div class="w-9 h-9 shrink-0 rounded-lg bg-surface-container dark:bg-slate-800 flex items-center justify-center text-primary dark:text-blue-400">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+</div>
+<div class="mt-3 min-w-0">
+<div class="flex items-baseline gap-1.5 flex-wrap min-w-0">
+<span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tabular-numbers tracking-tight truncate">{{ pm_open_orders_count }}</span>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 font-medium shrink-0">سفارش فعال</span>
+</div>
+<div class="flex items-center gap-2 mt-2 flex-wrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-surface-container-high dark:bg-slate-800 text-primary dark:text-blue-300 truncate">
+              ارزش کل: {{ pm_open_orders_value|floatformat:"-0" }} تومان
+            </span>
+</div>
+</div>
+<div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-l from-primary to-blue-300"></div>
+</div>
+<!-- KPI 3: رسیدهای در انتظار انبار -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 sm:p-5 border border-outline-variant/50 dark:border-slate-800 shadow-sm relative overflow-hidden min-w-0 flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-xs sm:text-sm font-semibold text-on-surface-variant dark:text-slate-400 truncate">رسیدهای در انتظار انبار</span>
+<div class="w-9 h-9 shrink-0 rounded-lg bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-700 dark:text-amber-400">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+</div>
+<div class="mt-3 min-w-0">
+<div class="flex items-baseline gap-1.5 flex-wrap min-w-0">
+<span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tabular-numbers tracking-tight truncate">{{ pm_pending_receipts }}</span>>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 font-medium shrink-0">محموله باربری</span>
+</div>
+<div class="flex items-center gap-2 mt-2 flex-wrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100/80 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 truncate">
+              نیازمند انبارگردانی و تخلیه
+            </span>
+</div>
+</div>
+<div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-l from-amber-600 to-amber-400"></div>
+</div>
+<!-- KPI 4: مانده بدهی به تأمین‌کنندگان -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 sm:p-5 border border-outline-variant/50 dark:border-slate-800 shadow-sm relative overflow-hidden min-w-0 flex flex-col justify-between">
+<div class="flex items-center justify-between gap-2">
+<span class="text-xs sm:text-sm font-semibold text-on-surface-variant dark:text-slate-400 truncate">مانده بدهی به تأمین‌کنندگان</span>
+<div class="w-9 h-9 shrink-0 rounded-lg bg-rose-100 dark:bg-rose-950/60 flex items-center justify-center text-rose-700 dark:text-rose-400">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+</div>
+<div class="mt-3 min-w-0">
+<div class="flex items-baseline gap-1.5 flex-wrap min-w-0">
+<span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tabular-numbers tracking-tight truncate max-w-full">{{ pm_supplier_debt|floatformat:"-0" }}</span>
+<span class="text-xs text-on-surface-variant dark:text-slate-400 font-medium shrink-0">تومان</span>
+</div>
+<div class="flex items-center gap-2 mt-2 flex-wrap">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 truncate">
+              سررسید این هفته (۳ چک)
+            </span>
+</div>
+</div>
+<div class="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-l from-rose-600 to-rose-400"></div>
+</div>
+</div>
+<!-- Purchase Orders Table (جدول با فیلترهای اکسلی روی هدر ستون‌ها) -->
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-outline-variant/50 dark:border-slate-800 shadow-sm overflow-visible relative">
+<!-- Table Header & Counter -->
+<div class="p-4 border-b border-outline-variant/40 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/60 rounded-t-xl">
+<div class="flex items-center gap-2">
+<span class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">لیست پرونده‌های سفارش خرید (PO)</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container dark:bg-slate-800 text-primary dark:text-blue-300 text-xs font-semibold tabular-numbers">۱۲۴ پرونده ثبت‌شده</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 text-on-surface-variant dark:text-slate-400 text-xs">
+<span>تعداد در صفحه:</span>
+<select class="h-8 px-2 rounded border border-outline-variant/60 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs">
+<option>۱۰</option>
+<option selected="">۲۵</option>
+<option>۵۰</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Scrollable Table Wrapper with safe overflow for dropdowns -->
+<div class="table-container-responsive">
+<table class="w-full text-right border-collapse text-xs sm:text-sm" id="purchaseTable">
+<thead class="relative z-30">
+<tr class="bg-surface-container-low dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold border-b border-outline-variant/40 dark:border-slate-800 select-none">
+<th class="py-3 px-3 w-10 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</th>
+<!-- Column 1: شماره سند سفارش (با فیلتر اکسلی) -->
+<th class="py-3 px-3 relative" data-col="po">
+<div class="flex items-center justify-between gap-1.5">
+<span class="truncate">شماره سند سفارش</span>
+<button class="excel-filter-trigger p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 transition-colors" onclick="toggleDropdown(this, event)" title="فیلتر اکسل" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+</button>
+</div>
+<!-- Excel Filter Dropdown -->
+<div class="excel-dropdown hidden absolute top-full right-0 mt-1 z-50 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-3 text-xs font-normal text-slate-700 dark:text-slate-200 text-right">
+<div class="space-y-1 pb-2 border-b border-slate-100 dark:border-slate-700">
+<button class="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-right text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm text-primary dark:text-blue-400">arrow_upward</span>
+<span>مرتب‌سازی صعودی (A به Z)</span>
+</button>
+<button class="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-right text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm text-primary dark:text-blue-400">arrow_downward</span>
+<span>مرتب‌سازی نزولی (Z به A)</span>
+</button>
+</div>
+<div class="py-2">
+<div class="relative mb-2">
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-slate-400 text-sm">search</span>
+<input class="w-full h-8 pr-8 pl-2 text-xs rounded border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary" placeholder="جستجو در این ستون..." type="text"/>
+</div>
+<div class="max-h-32 overflow-y-auto space-y-1.5 pr-1">
+<label class="flex items-center gap-2 cursor-pointer font-bold"><input checked="" class="rounded text-primary filter-select-all" type="checkbox"/> انتخاب همه</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> PO-1403-8821</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> PO-1403-8820</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> PO-1403-8819</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> PO-1403-8818</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> PO-1403-8817</label>
+</div>
+</div>
+<div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+<button class="btn-clear text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 px-2 py-1" type="button">پاک‌سازی</button>
+<button class="btn-apply bg-primary hover:bg-primary-container text-white px-3 py-1 rounded" type="button">اعمال فیلتر</button>
+</div>
+</div>
+</th>
+<!-- Column 2: تأمین‌کننده / فروشنده -->
+<th class="py-3 px-3 relative" data-col="supplier">
+<div class="flex items-center justify-between gap-1.5">
+<span class="truncate">تأمین‌کننده / فروشنده</span>
+<button class="excel-filter-trigger p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 transition-colors" onclick="toggleDropdown(this, event)" title="فیلتر اکسل" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+</button>
+</div>
+<!-- Excel Filter Dropdown -->
+<div class="excel-dropdown hidden absolute top-full right-0 mt-1 z-50 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-3 text-xs font-normal text-slate-700 dark:text-slate-200 text-right">
+<div class="space-y-1 pb-2 border-b border-slate-100 dark:border-slate-700">
+<button class="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-right text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm text-primary dark:text-blue-400">arrow_upward</span>
+<span>مرتب‌سازی صعودی (الف تا ی)</span>
+</button>
+<button class="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-right text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm text-primary dark:text-blue-400">arrow_downward</span>
+<span>مرتب‌سازی نزولی (ی تا الف)</span>
+</button>
+</div>
+<div class="py-2">
+<div class="relative mb-2">
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-slate-400 text-sm">search</span>
+<input class="w-full h-8 pr-8 pl-2 text-xs rounded border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-primary" placeholder="جستجوی تأمین‌کننده..." type="text"/>
+</div>
+<div class="max-h-32 overflow-y-auto space-y-1.5 pr-1">
+<label class="flex items-center gap-2 cursor-pointer font-bold"><input checked="" class="rounded text-primary filter-select-all" type="checkbox"/> انتخاب همه</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> شرکت فولاد مبارکه اصفهان</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> پتروشیمی جم (سهامی عام)</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> صنایع شیمیایی البرز</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> بازرگانی پارس قطعه مکران</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> الکترو سیم و کابل سمنان</label>
+</div>
+</div>
+<div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+<button class="btn-clear text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 px-2 py-1" type="button">پاک‌سازی</button>
+<button class="btn-apply bg-primary hover:bg-primary-container text-white px-3 py-1 rounded" type="button">اعمال فیلتر</button>
+</div>
+</div>
+</th>
+<!-- Column 3: انبار مقصد -->
+<th class="py-3 px-3 relative" data-col="warehouse">
+<div class="flex items-center justify-between gap-1.5">
+<span class="truncate">انبار مقصد</span>
+<button class="excel-filter-trigger p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 transition-colors" onclick="toggleDropdown(this, event)" title="فیلتر اکسل" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+</button>
+</div>
+<!-- Excel Filter Dropdown -->
+<div class="excel-dropdown hidden absolute top-full right-0 mt-1 z-50 w-56 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-3 text-xs font-normal text-slate-700 dark:text-slate-200 text-right">
+<div class="max-h-36 overflow-y-auto space-y-1.5 pr-1 py-1">
+<label class="flex items-center gap-2 cursor-pointer font-bold"><input checked="" class="rounded text-primary filter-select-all" type="checkbox"/> همه انبارها</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> مرکزی شورآباد</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> سردخانه صنعتی</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> انبار اصفهان</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> ترانزیت بندرعباس</label>
+</div>
+<div class="pt-2 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+<button class="btn-clear text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 px-2 py-1" type="button">پاک‌سازی</button>
+<button class="btn-apply bg-primary hover:bg-primary-container text-white px-3 py-1 rounded" type="button">اعمال فیلتر</button>
+</div>
+</div>
+</th>
+<!-- Column 4: تاریخ سفارش -->
+<th class="py-3 px-3 relative" data-col="date">
+<div class="flex items-center justify-between gap-1.5">
+<span class="truncate">تاریخ سفارش</span>
+<button class="excel-filter-trigger p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 transition-colors" onclick="toggleDropdown(this, event)" title="فیلتر اکسل" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+</button>
+</div>
+<!-- Excel Filter Dropdown -->
+<div class="excel-dropdown hidden absolute top-full right-0 mt-1 z-50 w-56 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-3 text-xs font-normal text-slate-700 dark:text-slate-200 text-right">
+<button class="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-right mb-1 text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm text-primary dark:text-blue-400">arrow_upward</span>
+<span>قدیمی‌ترین به جدیدترین</span>
+</button>
+<button class="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-right pb-2 border-b border-slate-100 dark:border-slate-700 text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm text-primary dark:text-blue-400">arrow_downward</span>
+<span>جدیدترین به قدیمی‌ترین</span>
+</button>
+<div class="pt-2">
+<label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">فیلتر بازه تاریخ:</label>
+<input class="w-full h-8 px-2 text-xs rounded border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-center" placeholder="۱۴۰۳/۰۸/۰۱ تا ۱۴۰۳/۰۸/۳۰" type="text"/>
+</div>
+<div class="pt-2 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+<button class="btn-clear text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 px-2 py-1" type="button">پاک‌سازی</button>
+<button class="btn-apply bg-primary hover:bg-primary-container text-white px-3 py-1 rounded" type="button">اعمال فیلتر</button>
+</div>
+</div>
+</th>
+<!-- Column 5: موعد تحویل -->
+<th class="py-3 px-3 relative" data-col="due">
+<div class="flex items-center justify-between gap-1.5">
+<span class="truncate">موعد تحویل</span>
+<button class="excel-filter-trigger p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 transition-colors" onclick="toggleDropdown(this, event)" title="فیلتر اکسل" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+</button>
+</div>
+<div class="excel-dropdown hidden absolute top-full right-0 mt-1 z-50 w-52 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-3 text-xs font-normal text-slate-700 dark:text-slate-200 text-right">
+<button class="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-right text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm text-primary dark:text-blue-400">schedule</span>
+<span>سررسیدهای نزدیک‌تر اول</span>
+</button>
+<div class="pt-2 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+<button class="btn-clear text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 px-2 py-1" type="button">پاک‌سازی</button>
+<button class="btn-apply bg-primary hover:bg-primary-container text-white px-3 py-1 rounded" type="button">اعمال</button>
+</div>
+</div>
+</th>
+<!-- Column 6: مبلغ کل (تومان) -->
+<th class="py-3 px-3 relative text-left" data-col="amount">
+<div class="flex items-center justify-end gap-1.5">
+<button class="excel-filter-trigger p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 transition-colors" onclick="toggleDropdown(this, event)" title="فیلتر اکسل" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+</button>
+<span class="truncate">مبلغ کل (تومان)</span>
+</div>
+<!-- Excel Filter Dropdown -->
+<div class="excel-dropdown hidden absolute top-full left-0 mt-1 z-50 w-56 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-3 text-xs font-normal text-slate-700 dark:text-slate-200 text-right">
+<div class="space-y-1 pb-2 border-b border-slate-100 dark:border-slate-700">
+<button class="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-right text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm text-primary dark:text-blue-400">arrow_upward</span>
+<span>مرتب‌سازی از کم به زیاد</span>
+</button>
+<button class="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-right text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm text-primary dark:text-blue-400">arrow_downward</span>
+<span>مرتب‌سازی از زیاد به کم</span>
+</button>
+</div>
+<div class="pt-2 space-y-1">
+<label class="block text-[11px] text-slate-500 dark:text-slate-400">حداقل مبلغ:</label>
+<input class="w-full h-7 px-2 text-xs rounded border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200" placeholder="مثلاً ۱۰۰,۰۰۰,۰۰۰" type="text"/>
+</div>
+<div class="pt-2 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+<button class="btn-clear text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 px-2 py-1" type="button">پاک‌سازی</button>
+<button class="btn-apply bg-primary hover:bg-primary-container text-white px-3 py-1 rounded" type="button">اعمال فیلتر</button>
+</div>
+</div>
+</th>
+<!-- Column 7: وضعیت رسید کالا -->
+<th class="py-3 px-3 relative text-center" data-col="status">
+<div class="flex items-center justify-center gap-1.5">
+<span class="truncate">وضعیت رسید کالا</span>
+<button class="excel-filter-trigger p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 transition-colors" onclick="toggleDropdown(this, event)" title="فیلتر اکسل" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+</button>
+</div>
+<!-- Excel Filter Dropdown -->
+<div class="excel-dropdown hidden absolute top-full right-1/2 translate-x-1/2 mt-1 z-50 w-56 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-3 text-xs font-normal text-slate-700 dark:text-slate-200 text-right">
+<div class="space-y-1.5 py-1">
+<label class="flex items-center gap-2 cursor-pointer font-bold"><input checked="" class="rounded text-primary filter-select-all" type="checkbox"/> همه وضعیت‌ها</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> در انتظار ورود به انبار</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> دریافت جزئی (۴۰٪)</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> تکمیل و تخلیه شده</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> در حال حمل بین‌المللی</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> در انتظار تأیید مدیریت</label>
+</div>
+<div class="pt-2 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+<button class="btn-clear text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 px-2 py-1" type="button">پاک‌سازی</button>
+<button class="btn-apply bg-primary hover:bg-primary-container text-white px-3 py-1 rounded" type="button">اعمال فیلتر</button>
+</div>
+</div>
+</th>
+<!-- Column 8: وضعیت مالی -->
+<th class="py-3 px-3 relative text-center" data-col="finance">
+<div class="flex items-center justify-center gap-1.5">
+<span class="truncate">وضعیت مالی</span>
+<button class="excel-filter-trigger p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 transition-colors" onclick="toggleDropdown(this, event)" title="فیلتر اکسل" type="button">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+</button>
+</div>
+<!-- Excel Filter Dropdown -->
+<div class="excel-dropdown hidden absolute top-full left-0 mt-1 z-50 w-52 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl p-3 text-xs font-normal text-slate-700 dark:text-slate-200 text-right">
+<div class="space-y-1.5 py-1">
+<label class="flex items-center gap-2 cursor-pointer font-bold"><input checked="" class="rounded text-primary filter-select-all" type="checkbox"/> انتخاب همه</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> تسویه کامل</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> پیش‌پرداخت شده</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> بدهکار</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> اعتبار اسنادی (LC)</label>
+<label class="flex items-center gap-2 cursor-pointer"><input checked="" class="rounded text-primary filter-item" type="checkbox"/> ثبت نشده</label>
+</div>
+<div class="pt-2 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+<button class="btn-clear text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 px-2 py-1" type="button">پاک‌سازی</button>
+<button class="btn-apply bg-primary hover:bg-primary-container text-white px-3 py-1 rounded" type="button">اعمال فیلتر</button>
+</div>
+</div>
+</th>
+<!-- Column 9: عملیات -->
+<th class="py-3 px-3 text-center">عملیات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
+{% for order in pm_orders %}
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
+<td class="py-3 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-3 font-bold text-primary dark:text-blue-400 tabular-numbers whitespace-nowrap">
+{{ order.po_number }}
+</td>
+<td class="py-3 px-3">
+<div class="font-semibold text-slate-900 dark:text-white">{{ order.supplier_name }}</div>
+<div class="text-[11px] text-slate-500 dark:text-slate-400">{{ order.warehouse_name }}</div>
+</td>
+<td class="py-3 px-3 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded bg-surface-container dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-xs">warehouse</span>
+{{ order.warehouse_name }}
+</span>
+</td>
+<td class="py-3 px-3 tabular-numbers text-slate-600 dark:text-slate-400 whitespace-nowrap">{{ order.order_date }}</td>
+<td class="py-3 px-3 tabular-numbers text-slate-600 dark:text-slate-400 whitespace-nowrap">{{ order.due_date }}</td>
+<td class="py-3 px-3 text-left font-bold tabular-numbers text-slate-900 dark:text-white whitespace-nowrap">
+{{ order.total|floatformat:"-0" }}
+</td>
+<td class="py-3 px-3 text-center whitespace-nowrap">
+{% if order.status == "received" %}
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300">
+تکمیل و تخلیه شده
+</span>
+{% elif order.status == "pending" %}
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300">
+در انتظار ورود به انبار
+</span>
+{% elif order.status == "approved" %}
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300">
+تأیید شده
+</span>
+{% elif order.status == "cancelled" %}
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300">
+لغو شده
+</span>
+{% else %}
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+{{ order.status }}
+</span>
+{% endif %}
+</td>
+<td class="py-3 px-3 text-center whitespace-nowrap">
+{% if order.finance_status == "tsv" %}
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300">
+تسویه کامل
+</span>
+{% else %}
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300">
+پیش‌پرداخت شده
+</span>
+{% endif %}
+</td>
+<td class="py-3 px-3 text-center whitespace-nowrap">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-primary dark:text-blue-400" onclick="openReceiptModal('{{ order.po_number }}', '{{ order.supplier_name }}')" title="ثبت رسید انبار (GRN)" type="button">
+<span class="material-symbols-outlined text-[19px]">move_to_inbox</span>
+</button>
+<button class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400" title="مشاهده پرونده" type="button">
+<span class="material-symbols-outlined text-[19px]">visibility</span>
+</button>
+<button class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400" title="چاپ پیش‌فاکتور" type="button">
+<span class="material-symbols-outlined text-[19px]">print</span>
+</button>
+</div>
+</td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="10" class="text-center py-8 text-slate-500 dark:text-slate-400">
+هیچ سفارش خریدی ثبت نشده است.
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-4 border-t border-outline-variant/40 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-500 dark:text-slate-400 text-xs bg-slate-50/30 dark:bg-slate-900/40 rounded-b-xl">
+<div>
+          نمایش <span class="font-bold text-slate-900 dark:text-white tabular-numbers">۱</span> تا <span class="font-bold text-slate-900 dark:text-white tabular-numbers">۵</span> از <span class="font-bold text-slate-900 dark:text-white tabular-numbers">۱۲۴</span> سفارش خرید
+        </div>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded border border-outline-variant/50 dark:border-slate-800 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded bg-primary text-white font-bold flex items-center justify-center" type="button">۱</button>
+<button class="w-8 h-8 rounded border border-outline-variant/50 dark:border-slate-800 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200" type="button">۲</button>
+<button class="w-8 h-8 rounded border border-outline-variant/50 dark:border-slate-800 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200" type="button">۳</button>
+<span class="px-1 text-slate-400">...</span>
+<button class="w-8 h-8 rounded border border-outline-variant/50 dark:border-slate-800 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200" type="button">۲۵</button>
+<button class="w-8 h-8 rounded border border-outline-variant/50 dark:border-slate-800 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200" type="button">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Goods Receipt Note (GRN) Slide-over Drawer -->
+<div aria-modal="true" class="fixed inset-0 z-50 overflow-hidden hidden" id="receiptDrawer" role="dialog">
+<div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" onclick="toggleReceiptDrawer(false)"></div>
+<div class="pointer-events-none fixed inset-y-0 left-0 flex max-w-full pl-0 sm:pl-10">
+<div class="pointer-events-auto w-screen max-w-2xl bg-white dark:bg-slate-900 border-r border-outline-variant/50 dark:border-slate-800 shadow-2xl flex flex-col justify-between">
+<!-- Drawer Header -->
+<div class="p-5 sm:p-6 border-b border-outline-variant/40 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container dark:bg-slate-800 flex items-center justify-center text-primary dark:text-blue-400">
+<span class="material-symbols-outlined">move_to_inbox</span>
+</div>
+<div>
+<h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white" id="drawerTitle">ثبت رسید کالا در انبار (GRN)</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" id="drawerSubtitle">سند سفارش: PO-1403-8821 • شرکت فولاد مبارکه</p>
+</div>
+</div>
+<button class="p-2 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" onclick="toggleReceiptDrawer(false)" type="button">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Drawer Body Content -->
+<div class="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1">
+<!-- Quick Receipt Info Box -->
+<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 grid grid-cols-2 gap-4">
+<div>
+<span class="text-xs text-slate-500 dark:text-slate-400 block">انبار تحویل‌گیرنده:</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">مرکزی شورآباد (سالن شماره ۳)</span>
+</div>
+<div>
+<span class="text-xs text-slate-500 dark:text-slate-400 block">مسئول انبار و تحویل:</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">مهندس صادقی (شیفت روز)</span>
+</div>
+</div>
+<!-- Ordered Items & Inspection Table -->
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold text-slate-900 dark:text-white">اقلام محموله دریافتی</h3>
+<span class="text-xs text-primary dark:text-blue-400">تطبیق با فاکتور رسمی فروشنده</span>
+</div>
+<div class="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
+<table class="w-full text-right text-xs">
+<thead class="bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-semibold">
+<tr>
+<th class="py-2.5 px-3">نام و کد کالا</th>
+<th class="py-2.5 px-2 text-center">تعداد سفارشی</th>
+<th class="py-2.5 px-2 text-center">تعداد سالم</th>
+<th class="py-2.5 px-2 text-center">کسری / ضایعات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
+<tr>
+<td class="py-3 px-3">
+<div class="font-bold">پروفیل صنعتی ۴۰×۴۰ ضخامت ۲</div>
+<div class="text-[11px] text-slate-400">SKU-ST-8841</div>
+</td>
+<td class="py-3 px-2 text-center font-bold tabular-numbers">۲,۰۰۰ شاخه</td>
+<td class="py-3 px-2 text-center">
+<input class="w-20 h-8 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-center font-bold tabular-numbers focus:border-primary text-xs" type="number" value="1980"/>
+</td>
+<td class="py-3 px-2 text-center">
+<input class="w-16 h-8 rounded border border-rose-400 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-center font-bold tabular-numbers text-xs" type="number" value="20"/>
+</td>
+</tr>
+<tr>
+<td class="py-3 px-3">
+<div class="font-bold">میلگرد آجدار گرید A3 نمره ۱۶</div>
+<div class="text-[11px] text-slate-400">SKU-RB-1600</div>
+</td>
+<td class="py-3 px-2 text-center font-bold tabular-numbers">۵,۰۰۰ کیلوگرم</td>
+<td class="py-3 px-2 text-center">
+<input class="w-20 h-8 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-center font-bold tabular-numbers focus:border-primary text-xs" type="number" value="5000"/>
+</td>
+<td class="py-3 px-2 text-center">
+<input class="w-16 h-8 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-center font-bold tabular-numbers text-xs" type="number" value="0"/>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Notes -->
+<div class="space-y-1.5">
+<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                توضیحات و گزارش کسری / آسیب‌دیدگی
+              </label>
+<textarea class="w-full p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white text-xs focus:border-primary outline-none" placeholder="در صورت وجود مغایرت در تعداد، شکستگی یا پارگی بسته‌بندی درج شود..." rows="3"></textarea>
+</div>
+<!-- Upload Delivery Note -->
+<div class="space-y-2">
+<label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                بارگذاری تصویر بارنامه و صورت‌جلسه تحویل
+              </label>
+<div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-6 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-3xl text-primary dark:text-blue-400 mb-2">cloud_upload</span>
+<p class="text-xs sm:text-sm font-medium text-slate-800 dark:text-white">فایل صورت‌جلسه یا عکس بارنامه را اینجا رها کنید</p>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">فرمت‌های مجاز: PDF, JPG, PNG حداکثر ۱۰ مگابایت</p>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-between gap-3">
+<button class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800" onclick="toggleReceiptDrawer(false)" type="button">
+              انصراف
+            </button>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-lg border border-primary text-primary dark:text-blue-400 text-xs sm:text-sm font-semibold hover:bg-primary/5" type="button">
+                ثبت رسید موقت
+              </button>
+<button class="px-5 py-2 rounded-lg bg-primary hover:bg-primary-container text-white text-xs sm:text-sm font-semibold shadow-sm" onclick="submitReceipt()" type="button">
+                تأیید نهایی و ورود به انبار
+              </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive JavaScript: Guaranteed Dark Mode & Robust Excel-Style Column Filters -->
+<script>
+    // 1. Guaranteed Dark Mode Switcher
+    function applyTheme(isDark) {
+      const htmlEl = document.documentElement;
+      const bodyEl = document.body;
+      const themeIcon = document.getElementById('themeIcon');
+      const themeText = document.getElementById('themeText');
+
+      if (isDark) {
+        htmlEl.classList.add('dark');
+        htmlEl.classList.remove('light');
+        bodyEl.classList.add('dark');
+        bodyEl.classList.remove('light');
+        if (themeIcon) {
+          themeIcon.innerText = 'light_mode';
+          themeIcon.classList.remove('text-primary');
+          themeIcon.classList.add('text-amber-400');
+        }
+        if (themeText) {
+          themeText.innerText = 'حالت روز';
+        }
+        localStorage.setItem('theme', 'dark');
+      } else {
+        htmlEl.classList.remove('dark');
+        htmlEl.classList.add('light');
+        bodyEl.classList.remove('dark');
+        bodyEl.classList.add('light');
+        if (themeIcon) {
+          themeIcon.innerText = 'dark_mode';
+          themeIcon.classList.remove('text-amber-400');
+          themeIcon.classList.add('text-primary');
+        }
+        if (themeText) {
+          themeText.innerText = 'حالت شب';
+        }
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    function toggleTheme() {
+      const isCurrentlyDark = document.documentElement.classList.contains('dark');
+      applyTheme(!isCurrentlyDark);
+    }
+
+    // Initialize Theme immediately on script load
+    (function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        applyTheme(true);
+      } else {
+        applyTheme(false);
+      }
+    })();
+
+    // 2. Excel-Style Filter Dropdowns Management
+    function closeAllExcelDropdowns() {
+      const dropdowns = document.querySelectorAll('.excel-dropdown');
+      dropdowns.forEach(dd => {
+        dd.classList.add('hidden');
+      });
+    }
+
+    function toggleDropdown(buttonEl, event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      const parentTh = buttonEl.closest('th');
+      if (!parentTh) return;
+      const dropdown = parentTh.querySelector('.excel-dropdown');
+      if (!dropdown) return;
+
+      const isHidden = dropdown.classList.contains('hidden');
+      closeAllExcelDropdowns();
+
+      if (isHidden) {
+        dropdown.classList.remove('hidden');
+      }
+    }
+
+    // Set up interactive internal controls inside each dropdown
+    document.addEventListener('DOMContentLoaded', () => {
+      const dropdowns = document.querySelectorAll('.excel-dropdown');
+      dropdowns.forEach(dropdown => {
+        // Prevent click inside from closing dropdown
+        dropdown.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+
+        // "Select All" checkbox
+        const selectAll = dropdown.querySelector('.filter-select-all');
+        if (selectAll) {
+          selectAll.addEventListener('change', (e) => {
+            const items = dropdown.querySelectorAll('.filter-item');
+            items.forEach(cb => cb.checked = e.target.checked);
+          });
+        }
+
+        // Apply Button
+        const applyBtn = dropdown.querySelector('.btn-apply');
+        if (applyBtn) {
+          applyBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.add('hidden');
+          });
+        }
+
+        // Clear Button
+        const clearBtn = dropdown.querySelector('.btn-clear');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = true);
+            const searchInput = dropdown.querySelector('input[type="text"]');
+            if (searchInput) searchInput.value = '';
+            dropdown.classList.add('hidden');
+          });
+        }
+      });
+    });
+
+    // Close when clicking outside of dropdown and triggers
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.excel-dropdown') && !e.target.closest('.excel-filter-trigger')) {
+        closeAllExcelDropdowns();
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAllExcelDropdowns();
+        toggleReceiptDrawer(false);
+      }
+    });
+
+    // 3. Drawer Functions
+    function toggleReceiptDrawer(open) {
+      const drawer = document.getElementById('receiptDrawer');
+      if (!drawer) return;
+      if (open) {
+        drawer.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      } else {
+        drawer.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }
+
+    function openReceiptModal(poNumber, supplierName) {
+      const dTitle = document.getElementById('drawerTitle');
+      const dSubtitle = document.getElementById('drawerSubtitle');
+      if (dTitle) dTitle.innerText = 'ثبت رسید کالا در انبار (GRN)';
+      if (dSubtitle) dSubtitle.innerText = `سند سفارش: ${poNumber} • ${supplierName}`;
+      toggleReceiptDrawer(true);
+    }
+
+    function submitReceipt() {
+      alert('رسید ورود به انبار (GRN) با موفقیت در سیستم ثبت گردید و موجودی کاردکس انبار به‌روز شد.');
+      toggleReceiptDrawer(false);
+    }
+  </script>
+
+{% endblock %}
